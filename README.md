@@ -1,3 +1,5 @@
+![GitHub Actions](https://github.com/zenosmosis/speaker.app/actions/workflows/ci.yml/badge.svg)
+
 # Speaker.app / zenRTC / Phantom Server
 
 [Speaker.app](https://speaker.app) is a [batteries-included](#whats-in-the-box), web-based, *quasi-*decentralized, WebRTC networking platform, with a primary focus on audio and screen-sharing, and a secondary focus on chat messages and peripheral features.
