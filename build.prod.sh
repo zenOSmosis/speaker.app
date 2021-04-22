@@ -10,7 +10,9 @@
 set -e
 
 # Read in environment variables
-source .env
+if test -f ".env"; then
+  source .env
+fi
 
 GIT_HASH=$(git rev-parse --short=5 HEAD)
 GIT_BRANCH=$(git symbolic-ref --short HEAD)
