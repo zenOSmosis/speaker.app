@@ -1,4 +1,7 @@
-![GitHub Actions](https://github.com/zenosmosis/speaker.app/actions/workflows/ci.yml/badge.svg)
+[![ci][ci-image]][ci-url]
+
+[ci-image]: https://github.com/zenosmosis/speaker.app/actions/workflows/ci.yml/badge.svg
+[ci-url]: https://github.com/zenOSmosis/speaker.app/actions
 
 # Speaker.app / zenRTC / Phantom Server
 
