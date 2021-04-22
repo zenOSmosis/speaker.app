@@ -1,0 +1,7 @@
+.color-swatch {
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  border-radius: 0.5em;
+  vertical-align: middle;
+}

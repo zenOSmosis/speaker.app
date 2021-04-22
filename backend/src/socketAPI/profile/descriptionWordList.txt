@@ -1,0 +1,472 @@
+
+number
+  2
+  3
+  4
+  5
+
+adj
+  Self-made
+  Inspiring
+  Aspiring
+  Professional
+  Amateur
+  Self-taught
+  Angry
+  Attractive
+  Muscular
+  Lazy
+  Mysterious
+  Fierce
+  Six-feet
+  Obnoxious
+  Gen-Z
+  Crowdfunding
+  DIY
+  Adorable
+  Annoyed
+  Enthusiastic
+  Blue-eyed
+  Brown-eyed
+  Blond-haired
+  Defiant
+  Enchanting
+  Grotesque
+  Affordable
+  Old-fashioned
+  Spiritual
+  Open-Minded
+  Miserable
+  Award Winning
+  Ambitious
+  Third Generation
+  Pensive
+  Second Generation
+  Fourth Generation
+  Inspiring 
+
+job
+  Gazillionaire
+  Trillionaire
+  Billionaire
+  Trust Fund Kid
+  Investor
+  Day Trader
+  Millenial
+  Marketing Manager
+  Strategist
+  Planner
+  Thought Leader
+  Entrepeneur
+  Growth Hacker
+  Rapper
+  Needle Threader
+  Stand-in for Indie Films
+  Stan
+  Creator
+  Artist Manager
+  VC
+  Fundraiser
+  TikTok Influencer
+  Instagram Influencer
+  YouTuber
+  Bachelor
+  Influencer
+  Playlist Curator
+  Talking Head
+  Mastermind
+  Villain
+  Self Starter
+  Bridge Builder
+  Connector
+  Human Centipede
+  Crowdfunder
+  Agitator
+  Data Detective
+  Singer-songwriter
+  DIY Artist
+  Millionaire
+  Quarterback
+  Millennial
+  Short Seller
+  Artist
+  Power Moderator
+  Connector-Collaborator
+  Vaporwave Artist
+  Culturist
+  Mediator
+  Visionairy
+  Deal Maker
+  Creative
+  DJ/Producer
+  ex-Goldman Sachs VP
+  Robinhood Investor
+  Fitness Influencer
+  Technologist
+  Founder/CEO
+  Dreamer
+  Amplifier
+  Meme Dealer
+  Generation Leader
+  Spiritual Amplifier
+  Social Media Impactor
+  Guitar Player
+  Lead Guitarist
+  Rhythm Guitarist
+  Backup Guitarist
+  Guest Guitarist
+  Lead Singer
+  Backup Singer
+  Harmonica Player
+  Violinist
+  Drummer
+  Chemist
+  Exotic Violinist
+  Rocket Designer
+  Rocket Builder
+  Skyscraper Architect
+  Know-it-all
+  Platinum Artist
+  Rapper
+
+jobdescbase
+  Working on the intersection of
+  Developing new particle layers for
+  Researching the fields of
+  Building mobile apps for
+  Doing watch developments for
+  Advancing the fields of
+  Building a particle accelerator to analyze fieldset patterns among
+  Constructed a bridge between major firms involved in
+  Developed blueprints for joining companies in the industries of
+  Writing a research paper for
+  Wrote a book about
+  Writing a book about
+  Making a movie about
+  Filming a movie about
+  Filmed a 300 fps stop animation video once using characters from major companies involved in
+  Consulting for major technology companies involved with
+  Developing technological playgrounds for the advancement of
+  Digital overlord for applications involving
+
+field
+  Crypto
+  Bitcoin
+  Ethereum
+  Bullshit
+  Dogecoin
+  Tech
+  Music
+  Millionaire Mindsets
+  Stonks
+  r/Wallstreetbets
+  Madison Avenue
+  Reddit
+  Spotify
+  Streaming
+  Cannabis
+  Digital
+  Motivation
+	Twitter
+  YouTube
+  Twitch
+  Tesla
+  Real Estate
+  Medical
+  Rocket Science
+  the Internet
+  Influencers
+  Microblogging
+  UGC
+  Multichannel Marketing
+  Advertainment
+  Customer Acquisition
+  Growth Hacking
+  Big Data
+  Clickbait
+  Retargeting
+  Micro-Influencers
+  Quick Wins
+  Spilling Tea
+  Fitness
+  Running
+  Peloton
+  TikTok
+  A&R
+  Zuckerberg
+  Bezos
+  Kanye
+  Non-Fungible Tokens
+  Billie Eilish
+  the Weeknd
+  Social Currency
+  Vaporwave
+  Midwestern Rap
+  Logan Paul
+  Celebrity Partnerships
+  Psychedelic Research
+  Plant Medicines
+  Hot Yoga
+  Silent Mediation
+  Energy Healing
+  Conscious Cosmic Connections
+  Synthwave
+  J-Pop
+  K-Pop
+  Real Talk
+  Finance
+  Culture
+  Group Therapy
+  IP Acquisitions
+  Podcasting
+  Dropping Gems
+  Silent Movies
+  Homeshopping
+  Doomscrolling
+  Click Farms
+  Wall Street
+  Politics
+  Dispo
+  Cat videos
+  Instagram filters
+  VSCO
+  Bumble
+  Extraterrestrial Research
+  Cosmos Discovery
+  Brain Fuel
+  Plant Foods
+  Disaster Management
+  Cardiology
+  Anesthesiology
+  Orthodontry
+  Psychiatry
+  Surgery
+  Dentistry
+  Space Travel
+  Lightray Calibration
+  Time Travel
+  High-Growth Investments
+  
+quote
+  Your limitation — it’s only your imagination
+  Push yourself, because no one else is going to do it for you
+  Sometimes later becomes never. Do it now
+  Great things never come from comfort zones
+  Dream it. Wish it. Do it.
+  Success doesn’t just find you. You have to go out and get it.
+  The harder you work for something, the greater you’ll feel when you achieve it.
+  Dream bigger. Do bigger.
+  Don’t stop when you’re tired. Stop when you’re done.
+  Wake up with determination. Go to bed with satisfaction.
+  Do something today that your future self will thank you for.
+  Little things make big days
+  It’s going to be hard, but hard does not mean impossible.
+  Don’t wait for opportunity. Create it.
+  Sometimes we’re tested not to show our weaknesses, but to discover our strengths.
+  The key to success is to focus on goals, not obstacles.
+  Dream it. Believe it. Build it.
+  All Gas No Brakes
+  Plagiarism saves time
+  The beatings will continue until morale improves
+  You Miss 100% of the Shots You Never Take
+  A rising tide lifts all boats
+  DM's are open 
+  Add my song to all relevant playlists
+  #1 Viral Chart Monaco
+  Top 10 Viral Charts Andorra
+  Top 10 Vaporwave artist on Canadian iTunes
+  Don’t tell people your plans. Show them your results.
+  We can do anything we want to if we stick to it long enough.
+  Stay foolish to stay sane.
+  When nothing goes right, go left.
+  Take the risk or lose the chance.
+  here is no saint without a past, no sinner without a future. 
+  Good things happen to those who hustle.
+  Prove them wrong.
+  Screw it, let’s do it.
+  Keep going. Be all in.
+  Diamond Hands 
+  It's nice to be important, but it's more important to be nice.
+  It's not the number of breaths we take, but the number of moments that take our breath away
+  Life is what happens to you while you're busy making other plans.
+  Live for the nights you'll never remember with the friends you'll never forget
+  You have to look through the rain to see the rainbow.
+  Shoot for the moon. Even if you miss, you'll land among the stars.
+  Live every day like it's your last.
+  Dream as if you'll live forever. Live as if you'll die today.
+  Life is not about waiting for the storm to pass. It's about learning to dance in the rain.
+  "Leave Quietly" is a vibe
+  
+
+action
+  Met
+  Saw
+  Lifted
+  Shared ideas with
+  Compared notes with
+  Approached
+  Had a spiritual connection with
+  Yelled at
+  Pitched ideas to
+  Got the attention of
+  Played cards with
+  Floated around in space with
+  Had debates with
+  Played chess with
+  
+celebrity
+  Elon Musk
+  Elvis Presley
+  Steve Jobs
+  Donald Trump
+  John F. Kennedy
+  Barack Obama
+  Angelina Jolie
+  Oprah Winfrey
+  Abraham Lincoln
+  Rob Schneider
+  George Clooney
+  Johnny Depp
+  Will Smith
+  Bill Clinton
+  Britney Spears
+  Tom Brady
+  The Weeknd
+  Billie Eilish
+  Zuck
+  Drake
+  Bezos
+  Kim & Kanye
+  the Jonas Brothers
+  Harry Styles
+  LeBron
+  Jimmie Fallon
+  Leo DiCaprio
+  Tom Cruise
+  Ryan Reynolds
+  Snoop Dogg
+  Mike Tyson
+  Bill Gates
+  Logan Paul
+  MrBeast
+  David Dobrik
+  Pewdiepie
+  the Rock
+  Kevin Hart
+  Kylie Jenner
+  a Kardashian
+  Will Smith
+  Lady Gaga
+  Samuel L. Jackson
+  Pitbull
+  the drummer of Maroon 5
+  the bass player of Coldplay
+  Vanilla Ice
+  Timothée Chalamet
+  
+  
+location
+  in Whole Foods
+  in Walmart
+  in Starbucks
+  at Coachella
+  at Home Depot
+  at Costco
+  in a McDonald's
+  in Downtown LA
+  in the NYC subway
+  at SoHo House
+  in Central Park
+  at IKEA
+  in Amsterdam
+  at Comic Con
+  in Paris
+  in London
+  at the baggage claim at LAX
+  at the Economy class check-in at JFK
+  near the White House
+  at the Ritz
+  in Las Vegas
+
+movement
+  An Introduction to
+  The Rise of
+  The Fall of
+  The End of
+  The Audacity of
+  Postmodern
+  A Beginner's Guide to 
+  Insider Secrets Explained: 
+  A Digital Guide to
+  Advanced
+  
+moti1
+  Making
+  Manifesting
+  Creating
+  Inspiring
+  Forging
+  Manufacturing
+  Building
+  Constructing
+  Producing
+  Assembling
+  Molding
+  Conceptualizing
+  Imagining
+  Developing
+
+moti2
+  meaningful
+  significant
+  relevant
+  material
+  important
+  deep
+  purposeful
+  monumental
+  profound
+  major
+  
+moti3
+  connections
+  relationships
+  contacts
+  kindred spirits
+  networks
+  partnerships
+  bonds
+  
+
+  
+moti4
+  impact
+  influence
+  significance
+  results
+  meaning
+  power
+  people insane
+  frustration
+  irritation
+  anger
+  bitterness
+  resentment
+  infuriation
+  motivation
+
+pub
+  in Forbes
+  in Billboard
+  in I Love Cats Magazine
+  in I Love Dogs Magazine
+  in Harvard Business Review
+  in Wired
+  in the Lone Pine Gazette
+  on Pitchfork
+  on TMZ
+  on the For You Page
+  on Wikipedia
+  on Reddit
+  on Zillow
+  on MSN

@@ -1,0 +1,1 @@
+Mock user agents obtained from: https://codesandbox.io/s/lx3rzx16x9?file=/src/user-agents/

@@ -1,0 +1,6 @@
+[submodule "dev_ssl_proxy"]
+	path = dev_ssl_proxy
+	url = https://github.com/zenOSmosis/docker-dev-ssl-proxy.git
+[submodule "avatar_server"]
+	path = avatar_server
+	url = https://github.com/jzombie/node-avatar-builder.git

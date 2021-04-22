@@ -1,0 +1,33 @@
+###
+# speaker.app production Docker Compose.
+###
+
+version: "3.8"
+
+# IMPORTANT! This Docker Compose configuration must also be included with docker-compose.yml
+
+volumes:
+  letsencrypt-cache:
+
+services:
+  letsencrypt:
+    image: linuxserver/swag
+    container_name: letsencrypt
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - zen-rtc-service-network
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${LETSENCRYPT_TZ}
+      URL: ${LETSENCRYPT_URL}
+      VALIDATION: ${LETSENCRYPT_VALIDATION}
+      STAGING: 0 # false issues a valid cert; true is subject to increased rate limits
+    volumes:
+      - letsencrypt-cache:/config # Named volume (see volumes: ...)
+      - ./letsencrypt/config/site-confs:/config/nginx/site-confs:ro # Relative mount point
+    ports:
+      - 443:443
+      - 80:80

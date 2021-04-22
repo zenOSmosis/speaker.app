@@ -1,0 +1,85 @@
+###
+# speaker.app development Docker Compose.
+###
+
+version: "3.8"
+
+networks:
+  # Establish base network to resolve container hostnames (esp. w/ Nginx)
+  # @see https://github.com/docker/compose/issues/3412#issuecomment-472323332
+  zen-rtc-service-network:
+
+services:
+  # IMPORTANT: Only use this service in development
+  #
+  # The corresponding production counterpart for serving production SSL
+  # certificate is located in docker.compose.prod.yml
+  dev_ssl_proxy:
+    build: ./dev_ssl_proxy
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - zen-rtc-service-network
+    volumes:
+      - ./dev_ssl_proxy:/app
+    logging:
+      driver: none # Disable spammy logs
+    ports:
+      - 8080:80
+      - 7443:443
+
+  mongo:
+    logging:
+      driver: none # Disable spammy logs
+
+  # Web-based, administrative interface deployed to manage MongoDB databases
+  # interactively.
+  mongo-express:
+    image: mongo-express
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      # ME_CONFIG_SITE_BASEURL: /mongo-express
+    networks:
+      - zen-rtc-service-network
+    ports:
+      - 8081:8081
+    expose:
+      - 8081
+
+  backend:
+    volumes:
+      - ./:/app
+    environment:
+      NODE_ENV: development
+      # PROTO_SKIP_FARMHASH: 1 # Required to be 1 for older CPUs or else Socket.io won't connect
+    command: ["npm", "run", "start:dev"]
+
+  frontend:
+    volumes:
+      - ./:/app
+    environment:
+      NODE_ENV: development
+      # Note: These are intentionally only supplied to the development; the production version uses them via the Dockerfile when building
+      REACT_APP_COTURN_HOSTNAME: ${COTURN_HOSTNAME}
+      REACT_APP_COTURN_USERNAME: ${COTURN_USERNAME}
+      REACT_APP_COTURN_PASSWORD: ${COTURN_PASSWORD}
+    command: ["npm", "run", "start"]
+
+  # NOTE (jh): I didn't mount a volume here intentionally and it may need some
+  # work to get it to work w/ a volume
+  avatar_server:
+    environment:
+      NODE_ENV: development
+
+  # tts_server:
+  #  volumes:
+  #    - ./tts_server:/app
+  #  environment:
+  #    NODE_ENV: development
+  #  command: ["nodemon", "src/index.js"]

@@ -1,0 +1,16 @@
+import SetupModal, {
+  PROFILE_TAB,
+  NETWORK_TAB,
+  PRIVATE_NETWORK_TAB,
+  CREATE_NETWORK_TAB,
+  SETTINGS_TAB,
+} from "./SetupModal";
+
+export default SetupModal;
+export {
+  PROFILE_TAB,
+  NETWORK_TAB,
+  PRIVATE_NETWORK_TAB,
+  CREATE_NETWORK_TAB,
+  SETTINGS_TAB,
+};

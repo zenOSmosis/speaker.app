@@ -1,0 +1,22 @@
+{
+  "name": "shared",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --verbose"
+  },
+  "author": "",
+  "license": "ISC",
+  "__NOTE:devDependencies": "These are intentionally only used during development as the shared directory gets copied into the backend, frontend, etc. during build time",
+  "devDependencies": {
+    "@babel/preset-env": "^7.12.16",
+    "eth-crypto": "^1.9.0",
+    "flat": "^5.0.2",
+    "jest": "^26.6.3",
+    "jest-environment-jsdom": "^25.5.0",
+    "sdp-transform": "^2.14.1",
+    "spark-md5": "^3.0.1",
+    "uuid": "^8.3.2"
+  }
+}

@@ -1,0 +1,69 @@
+## Version 2019/08/01 - Changelog: https://github.com/linuxserver/docker-letsencrypt/commits/master/root/defaults/default
+
+server {
+	listen 80 default_server;
+
+	server_name _;
+
+	return 301 https://$host$request_uri;
+}
+
+# main server block
+server {
+	listen 443 ssl http2 default_server;
+
+	server_name _;
+
+	# auth_basic "API Login";
+	# auth_basic_user_file "/config/nginx/site-confs/.htpasswd";
+
+	gzip on;
+	gzip_disable "msie6";
+
+	gzip_vary on;
+	gzip_proxied any;
+	gzip_comp_level 6;
+	gzip_buffers 16 8k;
+	gzip_http_version 1.1;
+	gzip_min_length 0;
+	gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype;
+
+	gunzip on;
+
+	include /config/nginx/ssl.conf;
+
+	client_max_body_size 0;
+
+	# See: https://web.dev/origin-agent-cluster
+	add_header Origin-Agent-Cluster ?1;
+
+	# Opt-out of Google's FLoC network
+	# See: https://paramdeo.com//blog/opting-your-website-out-of-googles-floc-network
+	add_header Permissions-Policy interest-cohort=();
+
+	location / {
+		proxy_pass http://backend:3001;
+
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Real-Port $remote_port;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	}
+
+	location /socket.io {
+		proxy_pass http://backend:3001/socket.io;
+
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection "upgrade";
+
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Real-Port $remote_port;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	}
+}
+
+proxy_cache_path cache/ keys_zone=auth_cache:10m;

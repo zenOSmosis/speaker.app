@@ -1,0 +1,95 @@
+###
+# speaker.app common Docker Compose.
+#
+# The specific environments should extend from this configuration.
+###
+
+version: "3.8"
+
+networks:
+  # Establish base network to resolve container hostnames (esp. w/ Nginx)
+  # @see https://github.com/docker/compose/issues/3412#issuecomment-472323332
+  zen-rtc-service-network:
+
+services:
+  # Utilized primarily for scaling of Socket.io
+  redis:
+    image: redis
+    restart: unless-stopped
+    networks:
+      - zen-rtc-service-network
+    expose:
+      - 6379
+
+  mongo:
+    image: mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_APP_DB_NAME: ${MONGO_APP_DB_NAME}
+      MONGO_APP_USERNAME: ${MONGO_APP_USERNAME}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
+    volumes:
+      - ./scripts/mongo.init:/docker-entrypoint-initdb.d
+      # TODO: Persistent volume for storage
+    networks:
+      - zen-rtc-service-network
+    expose:
+      - 27017
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - mongo
+    environment:
+      NODE_ENV: production
+      FRONTEND_PROXY_URL: http://frontend:3000
+      EXPRESS_PORT: 3001
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MONGO_HOSTNAME: mongo
+      MONGO_PORT: 27017
+      MONGO_APP_DB_NAME: ${MONGO_APP_DB_NAME}
+      MONGO_APP_USERNAME: ${MONGO_APP_USERNAME}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
+      UNSPLASH_ACCESS_KEY: ${UNSPLASH_ACCESS_KEY}
+    networks:
+      - zen-rtc-service-network
+    expose:
+      - 3001
+
+  frontend:
+    build: ./frontend.web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      #
+      # TODO: Move to development?
+      CI: "true" # Prevent repetitive Docker restart (@see https://github.com/facebook/create-react-app/issues/8688)
+    networks:
+      - zen-rtc-service-network
+    expose:
+      - 5000
+
+  avatar_server:
+    build: ./avatar_server
+    networks:
+      - zen-rtc-service-network
+    expose:
+      - 3000
+
+  # TURN / STUN
+  # coturn:
+  #  image: zenosmosis/docker-coturn
+  #  environment:
+  #    USERNAME: ${COTURN_USERNAME}
+  #    PASSWORD: ${COTURN_PASSWORD}
+  #    REALM: ${COTURN_REALM}
+  #  ports:
+  #    - 3478:3478
+  #    - 3478:3478/udp
+  #    - 65435-65535:65435-65535/udp
+  #  network_mode: host # Expose directly on the host

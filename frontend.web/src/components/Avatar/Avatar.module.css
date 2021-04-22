@@ -1,0 +1,5 @@
+.avatar {
+  border-radius: 100%;
+  border: 2px #ccc solid;
+  vertical-align: middle;
+}

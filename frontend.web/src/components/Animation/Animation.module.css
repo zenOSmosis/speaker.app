@@ -1,0 +1,14 @@
+.animation {
+  position: relative;
+
+  visibility: hidden;
+}
+
+.animation:not(.inline) {
+  width: 100%;
+  height: 100%;
+}
+
+.animation.inline {
+  display: inline-block;
+}
