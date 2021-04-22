@@ -1,4 +1,4 @@
-import PhantomBase from "../../../PhantomBase";
+import PhantomBase from "phantom-base";
 
 import { EVT_DATA_RECEIVED } from "./constants";
 

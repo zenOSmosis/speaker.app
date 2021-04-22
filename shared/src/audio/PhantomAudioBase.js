@@ -2,7 +2,7 @@ import PhantomBase, {
   EVT_READY,
   EVT_UPDATED,
   EVT_DESTROYED,
-} from "../PhantomBase";
+} from "phantom-base";
 import fetchAudioContext from "./fetchAudioContext";
 
 export { EVT_READY, EVT_UPDATED, EVT_DESTROYED };
@@ -20,7 +20,7 @@ export default class PhantomAudioBase extends PhantomBase {
 
     // Initialize audio context
     (() => {
-      fetchAudioContext().then(async (audioContext) => {
+      fetchAudioContext().then(async audioContext => {
         this._audioContext = audioContext;
 
         await this.init();

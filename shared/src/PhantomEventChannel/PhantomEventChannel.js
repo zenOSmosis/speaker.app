@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_DESTROYED } from "../PhantomBase";
+import PhantomBase, { EVT_DESTROYED } from "phantom-base";
 
 const _instances = {};
 
@@ -64,7 +64,7 @@ export default class PhantomEventChannel extends PhantomBase {
         } else {
           // TODO: Make configurable
           if (_retryAttempt < 3) {
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // TODO: Make configurable
+            await new Promise(resolve => setTimeout(resolve, 1000)); // TODO: Make configurable
 
             return _fetchEventChannel();
           } else {
@@ -97,7 +97,7 @@ export default class PhantomEventChannel extends PhantomBase {
     // ChannelClass,
 
     // TODO: Override Sample implementation
-    onQuery = (query) =>
+    onQuery = query =>
       console.warn("TODO: Implement onQuery for query:", {
         query,
       }),

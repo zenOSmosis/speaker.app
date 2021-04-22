@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_DESTROYED } from "@shared/PhantomBase";
+import PhantomBase, { EVT_DESTROYED } from "phantom-base";
 
 export const ROLE_MAIN_APP = "main-app";
 export const ROLE_TRANSCODER_APP = "transcoder-app";
@@ -42,7 +42,7 @@ export default class SplitAppMessageBus extends PhantomBase {
     // TODO: Extend SplitAppMessageBus w/ this?
     if (this._role === ROLE_MAIN_APP) {
       (() => {
-        const _handleMessageEvent = (evt) => {
+        const _handleMessageEvent = evt => {
           const data = evt.data || {};
 
           switch (data.eventName) {
@@ -86,7 +86,7 @@ export default class SplitAppMessageBus extends PhantomBase {
     // TODO: Extend SplitAppMessageBus w/ this?
     if (this._role === ROLE_TRANSCODER_APP) {
       (() => {
-        const _handleMessageEvent = (evt) => {
+        const _handleMessageEvent = evt => {
           const data = evt.data || {};
 
           switch (data.eventName) {

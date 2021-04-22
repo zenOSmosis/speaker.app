@@ -1,4 +1,4 @@
-import PhantomBase from "../shared/PhantomBase";
+import PhantomBase from "../shared/phantom-base";
 import ChromeZenRTCPeer, {
   EVT_CONNECTED,
   EVT_DISCONNECTED,
@@ -54,9 +54,7 @@ export default class ChromeZenRTCPeerMonitor extends PhantomBase {
 
     // Iterate through each monitor, adding the peer to the monitor, as well as
     // any proxy events to pass through to the monitor
-    Object.values(_monitorInstances).forEach((monitor) =>
-      monitor.addPeer(peer)
-    );
+    Object.values(_monitorInstances).forEach(monitor => monitor.addPeer(peer));
   }
 
   constructor() {
@@ -125,7 +123,7 @@ export default class ChromeZenRTCPeerMonitor extends PhantomBase {
 
       peer.on(EVT_DISCONNECTED, _handlePeerDisconnect);
 
-      const _handleReceiveSyncEvent = (evtData) => {
+      const _handleReceiveSyncEvent = evtData => {
         this.emit(EVT_PEER_MONITOR_SYNC_EVT_RECEIVED, [peer, evtData]);
       };
 
@@ -140,7 +138,7 @@ export default class ChromeZenRTCPeerMonitor extends PhantomBase {
     })();
 
     const _handleIncomingCleanup = (() => {
-      const _handleAddIncomingMediaStreamTrack = (evtData) => {
+      const _handleAddIncomingMediaStreamTrack = evtData => {
         this.peerDidAddIncomingMediaStreamTrack(peer, evtData);
       };
       peer.on(
@@ -148,7 +146,7 @@ export default class ChromeZenRTCPeerMonitor extends PhantomBase {
         _handleAddIncomingMediaStreamTrack
       );
 
-      const _handleRemoveIncomingMediaStreamTrack = (evtData) => {
+      const _handleRemoveIncomingMediaStreamTrack = evtData => {
         this.peerDidRemoveIncomingMediaStreamTrack(peer, evtData);
       };
       peer.on(
@@ -169,7 +167,7 @@ export default class ChromeZenRTCPeerMonitor extends PhantomBase {
     })();
 
     const _handleOutgoingCleanup = (() => {
-      const _handleAddOutgoingMediaStreamTrack = (evtData) => {
+      const _handleAddOutgoingMediaStreamTrack = evtData => {
         this.peerDidAddOutgoingMediaStreamTrack(peer, evtData);
       };
       peer.on(
@@ -177,7 +175,7 @@ export default class ChromeZenRTCPeerMonitor extends PhantomBase {
         _handleAddOutgoingMediaStreamTrack
       );
 
-      const _handleRemoveOutgoingMediaStreamTrack = (evtData) => {
+      const _handleRemoveOutgoingMediaStreamTrack = evtData => {
         this.peerDidRemoveOutgoingMediaStreamTrack(peer, evtData);
       };
       peer.on(
@@ -198,7 +196,7 @@ export default class ChromeZenRTCPeerMonitor extends PhantomBase {
     })();
 
     const _handleDataCleanup = (() => {
-      const _handleReceivedData = (data) => {
+      const _handleReceivedData = data => {
         this.emit(EVT_PEER_DATA_RECEIVED, [peer, data]);
       };
 

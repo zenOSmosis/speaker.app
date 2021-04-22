@@ -1,4 +1,4 @@
-import PhantomBase from "../../PhantomBase";
+import PhantomBase from "phantom-base";
 
 import MediaStreamTrackAudioLevelMonitor, {
   EVT_AVERAGE_AUDIO_LEVEL_CHANGED,
@@ -68,7 +68,7 @@ export default class MediaStreamTrackAudioLevelMonitorProxy extends PhantomBase 
         const proxies = _proxyCounts[mediaStreamTrack.id];
 
         if (proxies) {
-          Object.values(proxies).forEach((proxy) => proxy && proxy.destroy());
+          Object.values(proxies).forEach(proxy => proxy && proxy.destroy());
         }
       });
 
@@ -97,8 +97,8 @@ export default class MediaStreamTrackAudioLevelMonitorProxy extends PhantomBase 
     // Keyed with event names
     const proxyHandlers = {};
 
-    proxyEvents.forEach((proxyEvent) => {
-      proxyHandlers[proxyEvent] = (data) => proxy.emit(proxyEvent, data);
+    proxyEvents.forEach(proxyEvent => {
+      proxyHandlers[proxyEvent] = data => proxy.emit(proxyEvent, data);
 
       monitor.on(proxyEvent, proxyHandlers[proxyEvent]);
     });
@@ -107,7 +107,7 @@ export default class MediaStreamTrackAudioLevelMonitorProxy extends PhantomBase 
     //
     // If no remaining proxies, destroy the audio level monitor
     proxy.once(EVT_DESTROYED, async () => {
-      proxyEvents.forEach((proxyEvent) =>
+      proxyEvents.forEach(proxyEvent =>
         monitor.off(proxyEvent, proxyHandlers[proxyEvent])
       );
 

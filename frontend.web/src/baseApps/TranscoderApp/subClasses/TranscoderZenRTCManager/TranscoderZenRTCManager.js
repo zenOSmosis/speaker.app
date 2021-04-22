@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_DESTROYED } from "@shared/PhantomBase";
+import PhantomBase, { EVT_DESTROYED } from "phantom-base";
 import TranscoderZenRTCPeer, {
   EVT_UPDATED,
   // EVT_CONNECTING,
@@ -76,7 +76,7 @@ export default class TranscoderZenRTCManager extends PhantomBase {
 
     // Handle all incoming WebIPC messages
     (() => {
-      const _handleReceiveIPCMessage = (data) => {
+      const _handleReceiveIPCMessage = data => {
         const { socketIoIdFrom, senderDeviceAddress } = data;
 
         const zenRTCPeer = this._getOrCreateTranscoderZenRTCInstance(
@@ -128,13 +128,13 @@ export default class TranscoderZenRTCManager extends PhantomBase {
     (() => {
       const otherPeers = transcoderZenRTCPeer.getOtherThreadInstances();
 
-      otherPeers.forEach((otherPeer) => {
+      otherPeers.forEach(otherPeer => {
         const mediaIO = otherPeer.getMediaIO();
 
         // TODO: Remove
         console.log({ mediaIO });
 
-        mediaIO.incoming.forEach((outgoing) =>
+        mediaIO.incoming.forEach(outgoing =>
           transcoderZenRTCPeer.addOutgoingMediaStreamTrack(
             outgoing.mediaStreamTrack,
             outgoing.mediaStream
@@ -221,7 +221,7 @@ export default class TranscoderZenRTCManager extends PhantomBase {
           socketIoIdFrom: this._socket.id,
         });
 
-        transcoderZenRTCPeer.on(EVT_ZENRTC_SIGNAL, (data) =>
+        transcoderZenRTCPeer.on(EVT_ZENRTC_SIGNAL, data =>
           ipcMessageBroker.sendMessage(data)
         );
 
@@ -243,7 +243,7 @@ export default class TranscoderZenRTCManager extends PhantomBase {
       (() => {
         const readOnlySyncObject = transcoderZenRTCPeer.getReadOnlySyncObject();
 
-        readOnlySyncObject.on(EVT_UPDATED, (data) =>
+        readOnlySyncObject.on(EVT_UPDATED, data =>
           this._peerReadOnlySyncStateHasUpdated(
             transcoderZenRTCPeer,
             initiatorSocketIoId,
@@ -284,7 +284,7 @@ export default class TranscoderZenRTCManager extends PhantomBase {
         // Sync new tracks with new peer
         transcoderZenRTCPeer.on(
           EVT_INCOMING_MEDIA_STREAM_TRACK_ADDED,
-          async (data) => {
+          async data => {
             const otherPeers = transcoderZenRTCPeer.getOtherThreadInstances();
 
             // TODO: Remove
@@ -294,7 +294,7 @@ export default class TranscoderZenRTCManager extends PhantomBase {
             });
 
             await Promise.all(
-              otherPeers.map((peer) =>
+              otherPeers.map(peer =>
                 peer.addOutgoingMediaStreamTrack(
                   data.mediaStreamTrack,
                   data.mediaStream
@@ -310,7 +310,7 @@ export default class TranscoderZenRTCManager extends PhantomBase {
         // Sync removed tracks with new peer
         transcoderZenRTCPeer.on(
           EVT_INCOMING_MEDIA_STREAM_TRACK_REMOVED,
-          async (data) => {
+          async data => {
             const otherPeers = transcoderZenRTCPeer.getOtherThreadInstances();
 
             console.log("incoming stream track removed", {
@@ -319,7 +319,7 @@ export default class TranscoderZenRTCManager extends PhantomBase {
             });
 
             await Promise.all(
-              otherPeers.map((peer) =>
+              otherPeers.map(peer =>
                 peer.removeOutgoingMediaStreamTrack(
                   data.mediaStreamTrack,
                   data.mediaStream
@@ -413,7 +413,7 @@ export default class TranscoderZenRTCManager extends PhantomBase {
       chatMessages: uniqBy(
         [
           ...(prevSharedWritableState.chatMessages || []),
-          ...(updatedState.chatMessages || []).filter((message) =>
+          ...(updatedState.chatMessages || []).filter(message =>
             Boolean(message)
           ),
         ],
@@ -453,7 +453,7 @@ export default class TranscoderZenRTCManager extends PhantomBase {
         const kinds = mediaStream
           .getTracks()
           .map(({ kind }) => kind)
-          .filter((kind) => kind.length > 0);
+          .filter(kind => kind.length > 0);
 
         peers[socketIoId].media[mediaStream.id] = kinds.length
           ? {
@@ -487,7 +487,7 @@ export default class TranscoderZenRTCManager extends PhantomBase {
   async destroy() {
     // Destroy all associated zenRTC peers
     await Promise.all(
-      Object.values(this._transcoderZenRTCInstances).map((zenRTCPeer) =>
+      Object.values(this._transcoderZenRTCInstances).map(zenRTCPeer =>
         zenRTCPeer.destroy()
       )
     );

@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_DESTROYED } from "../PhantomBase";
+import PhantomBase, { EVT_DESTROYED } from "phantom-base";
 import { SOCKET_EVT_IPC_MESSAGE } from "../socketEvents";
 
 export { EVT_DESTROYED };

@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_UPDATED, EVT_DESTROYED } from "../PhantomBase";
+import PhantomBase, { EVT_UPDATED, EVT_DESTROYED } from "phantom-base";
 import WebRTCPeer from "webrtc-peer";
 import SDPAdapter from "./utils/sdp-adapter";
 
@@ -152,7 +152,7 @@ export default class ZenRTCPeer extends PhantomBase {
     const peerSocketIoId = peer.getSocketIoId();
 
     const otherPeers = ZenRTCPeer.getInstances().filter(
-      (testPeer) => testPeer.getSocketIoId() !== peerSocketIoId
+      testPeer => testPeer.getSocketIoId() !== peerSocketIoId
     );
 
     return otherPeers;
@@ -363,7 +363,7 @@ export default class ZenRTCPeer extends PhantomBase {
     this.emitSyncEvent(SYNC_EVT_KICK);
 
     // Pause for message to be delivered
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     this.destroy();
   }
@@ -430,7 +430,7 @@ export default class ZenRTCPeer extends PhantomBase {
     if (this._isConnected) {
       return;
     } else {
-      await new Promise((resolve) => this.once(EVT_CONNECTED, resolve));
+      await new Promise(resolve => this.once(EVT_CONNECTED, resolve));
     }
   }
 
@@ -572,7 +572,7 @@ export default class ZenRTCPeer extends PhantomBase {
           iceServers: ICE_SERVERS,
         },
 
-        sdpTransform: (sdp) => {
+        sdpTransform: sdp => {
           // Offer, to other peer
           sdp = this._handleSdpOfferTransform(sdp);
 
@@ -605,7 +605,7 @@ export default class ZenRTCPeer extends PhantomBase {
       // TODO: Build out
       // TODO: Send up ipcMessageBroker
       /** @see https://github.com/feross/simple-peer#error-codes */
-      this._simplePeer.on("error", async (err) => {
+      this._simplePeer.on("error", async err => {
         // TODO: Debug error and determine if we need to try to reconnect
         console.warn("Caught WebRTCPeer error", err);
 
@@ -617,7 +617,7 @@ export default class ZenRTCPeer extends PhantomBase {
       });
 
       // Handle outgoing WebRTC signaling
-      this._simplePeer.on("signal", (data) => this.sendZenRTCSignal(data));
+      this._simplePeer.on("signal", data => this.sendZenRTCSignal(data));
 
       // Handle WebRTC connect
       this._simplePeer.on("connect", () => {
@@ -657,7 +657,7 @@ export default class ZenRTCPeer extends PhantomBase {
         }, 500);
       });
 
-      this._simplePeer.on("data", (data) => {
+      this._simplePeer.on("data", data => {
         this.emit(EVT_DATA_RECEIVED, data);
       });
 
@@ -831,14 +831,14 @@ export default class ZenRTCPeer extends PhantomBase {
   // TODO: Remove?
   getMediaIO() {
     return {
-      incoming: this.getIncomingMediaStreamTracks().map((mediaStreamTrack) => ({
+      incoming: this.getIncomingMediaStreamTracks().map(mediaStreamTrack => ({
         mediaStreamTrack,
         mediaStream: getTrackMediaStream(
           mediaStreamTrack,
           this._incomingMediaStreams
         ),
       })),
-      outgoing: this.getOutgoingMediaStreamTracks().map((mediaStreamTrack) => ({
+      outgoing: this.getOutgoingMediaStreamTracks().map(mediaStreamTrack => ({
         mediaStreamTrack,
         mediaStream: getTrackMediaStream(
           mediaStreamTrack,
@@ -1181,7 +1181,7 @@ export default class ZenRTCPeer extends PhantomBase {
         this.emitSyncEvent(SYNC_EVT_BYE);
 
         // Give message some time to get delivered
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         // Check again because the peer may have been destroyed during the async period
         if (this._simplePeer) {

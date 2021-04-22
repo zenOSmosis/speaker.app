@@ -1,4 +1,4 @@
-import { EVT_DESTROYED } from "@shared/PhantomBase";
+import { EVT_DESTROYED } from "phantom-base";
 import ZenRTCPeer, {
   EVT_UPDATED,
   EVT_CONNECTING,
@@ -63,9 +63,9 @@ export default class WebZenRTCPeer extends ZenRTCPeer {
         socket,
       });
 
-      this.on(EVT_ZENRTC_SIGNAL, (data) => ipcMessageBroker.sendMessage(data));
+      this.on(EVT_ZENRTC_SIGNAL, data => ipcMessageBroker.sendMessage(data));
 
-      ipcMessageBroker.on(EVT_MESSAGE_RECEIVED, (data) => {
+      ipcMessageBroker.on(EVT_MESSAGE_RECEIVED, data => {
         this.receiveZenRTCSignal(data);
       });
 
@@ -95,7 +95,7 @@ export default class WebZenRTCPeer extends ZenRTCPeer {
 
   async disconnect() {
     // TODO: Move handling into beforeDisconnect handler?
-    const shouldDisconnect = await new Promise((resolve) =>
+    const shouldDisconnect = await new Promise(resolve =>
       window.confirm("Are you sure you wish to disconnect?")
         ? resolve(true)
         : resolve(false)

@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_DESTROYED } from "../../PhantomBase";
+import PhantomBase, { EVT_DESTROYED } from "phantom-base";
 import fetchAudioContext from "../fetchAudioContext";
 
 export { EVT_DESTROYED };

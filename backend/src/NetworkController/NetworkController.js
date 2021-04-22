@@ -1,5 +1,5 @@
 import os from "os";
-import PhantomBase, { EVT_READY } from "@shared/PhantomBase";
+import PhantomBase, { EVT_READY } from "phantom-base";
 import mongoose from "mongoose";
 
 // const { ObjectId } = mongoose;
@@ -292,9 +292,7 @@ export default class NetworkController extends PhantomBase {
       controllerNodeHostname: os.hostname(),
     });
 
-    await Promise.all(
-      networks.map((network) => this.deactivateNetwork(network))
-    );
+    await Promise.all(networks.map(network => this.deactivateNetwork(network)));
   }
 
   async deactivateNetwork(network) {

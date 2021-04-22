@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_UPDATED, EVT_DESTROYED } from "../PhantomBase";
+import PhantomBase, { EVT_UPDATED, EVT_DESTROYED } from "phantom-base";
 import { isPlainObject } from "lodash";
 import SparkMD5 from "spark-md5";
 import flatten, { unflatten } from "flat";
