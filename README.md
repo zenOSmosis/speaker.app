@@ -1,3 +1,4 @@
+[![MIT License](https://img.shields.io/github/license/zenosmosis/speaker.app)](https://raw.githubusercontent.com/zenOSmosis/speaker.app/master/LICENSE.txt)
 [![ci][ci-image]][ci-url]
 
 [ci-image]: https://github.com/zenosmosis/speaker.app/actions/workflows/ci.yml/badge.svg
