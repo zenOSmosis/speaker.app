@@ -23,7 +23,7 @@
     "mongoose": "^5.12.5",
     "net": "^1.0.2",
     "node-fetch": "^2.6.1",
-    "phantom-base": "github:jzombie/phantom-base",
+    "phantom-base": "github:zenosmosis/phantom-base",
     "socket.io": "^3.1.2",
     "socket.io-redis": "^6.0.1",
     "spark-md5": "^3.0.1",
