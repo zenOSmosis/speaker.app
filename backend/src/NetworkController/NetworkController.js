@@ -194,7 +194,7 @@ export default class NetworkController extends PhantomBase {
     // TODO: What is this used for?  Should it be used?
     // await this._networkSchema.syncIndexes();
 
-    this.emit(EVT_READY);
+    await super._init();
   }
 
   /**

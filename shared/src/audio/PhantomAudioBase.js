@@ -23,21 +23,9 @@ export default class PhantomAudioBase extends PhantomBase {
       fetchAudioContext().then(async audioContext => {
         this._audioContext = audioContext;
 
-        await this.init();
-
-        this._isReady = true;
-
-        this.emit(EVT_READY);
+        await this._init();
       });
     })();
-  }
-
-  /**
-   * This should be overridden by whatever initialization is necessary.
-   */
-  async init() {
-    // NOTE (jh): I left this in PhantomAudioBase, vs. PhantomBase due to not
-    // running init() automatically in PhantomBase constructor.
   }
 
   /**

@@ -38,7 +38,7 @@ export default class MediaStreamAudioController extends PhantomAudioBase {
    * @return {MediaStreamAudioController | void}
    */
   static getControllerWithDeviceId(deviceId) {
-    return Object.values(_instances).find((audioController) => {
+    return Object.values(_instances).find(audioController => {
       const deviceIds = audioController.getDeviceIds();
 
       return deviceIds.includes(deviceId);
@@ -78,12 +78,12 @@ export default class MediaStreamAudioController extends PhantomAudioBase {
     // Handle cache registration / unregistration
     this.once(EVT_DESTROYED, () => {
       // Stop incoming audio tracks when destroyed
-      this._inputMediaStream.getAudioTracks().forEach((audioTrack) => {
+      this._inputMediaStream.getAudioTracks().forEach(audioTrack => {
         audioTrack.stop();
       });
 
       // Stop outgoing audio tracks when destroyed
-      this._outputMediaStream.getAudioTracks().forEach((audioTrack) => {
+      this._outputMediaStream.getAudioTracks().forEach(audioTrack => {
         audioTrack.stop();
       });
     });
@@ -94,7 +94,7 @@ export default class MediaStreamAudioController extends PhantomAudioBase {
 
       let endedLacking = inputAudioTracks.length;
 
-      inputAudioTracks.forEach((audioTrack) => {
+      inputAudioTracks.forEach(audioTrack => {
         audioTrack.addEventListener("ended", () => {
           --endedLacking;
 
@@ -109,18 +109,11 @@ export default class MediaStreamAudioController extends PhantomAudioBase {
   }
 
   /**
-   * @override
-   *
    * Automatically called via PhantomAudioBase once init.
+   *
+   * @return {Promise<void>}
    */
-  async init() {
-    // Prevent duplicate inits
-    if (this._isInitStarted) {
-      console.warn(`Init has already started for ${this.getClassName()}`);
-
-      return;
-    }
-
+  async _init() {
     this._isInitStarted = true;
 
     // Audio context should already be available as result of PhantomAudioBase
@@ -142,7 +135,7 @@ export default class MediaStreamAudioController extends PhantomAudioBase {
     this._inputDeviceIds = (() => {
       const inputAudioTracks = this._inputMediaStream.getAudioTracks();
 
-      return inputAudioTracks.map((audioTrack) => {
+      return inputAudioTracks.map(audioTrack => {
         const { deviceId } = audioTrack.getConstraints();
 
         return deviceId && deviceId.exact;
@@ -169,6 +162,8 @@ export default class MediaStreamAudioController extends PhantomAudioBase {
 
     // The gain level when unmuted
     this._unmutedGain = 1;
+
+    await super._init();
   }
 
   /**
