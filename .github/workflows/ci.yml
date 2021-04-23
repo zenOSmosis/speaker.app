@@ -14,5 +14,6 @@ jobs:
           - ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: npm install -g jest
       - run: bash ./test.sh
       - run: bash ./build.prod.sh
