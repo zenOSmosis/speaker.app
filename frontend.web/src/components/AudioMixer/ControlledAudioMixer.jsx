@@ -7,8 +7,8 @@ export default function ControlledAudioMixer() {
 
   return (
     <AudioMixer
-      channels={audioControllers.map((audioController) => ({
-        channelName: audioController.getUuid(),
+      channels={audioControllers.map(audioController => ({
+        channelName: audioController.getUUID(),
         isActive: !audioController.getIsMuted(),
         volumeLevel: audioController.getGain() * 100,
         mediaStream: audioController.getOutputMediaStream(),
