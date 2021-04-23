@@ -23,7 +23,7 @@ export const EVT_NETWORK_DESTROYED = "network-destroyed";
 
 let _instance = null;
 
-const NETWORK_MODAL_NAME = "Network";
+const NETWORK_MODEL_NAME = "Network";
 
 // TODO: On thread startup deactivate all existing networks with this
 // controller node hostname?
@@ -220,7 +220,7 @@ export default class NetworkController extends PhantomBase {
     maxVideoResolution = null,
   }) {
     // TODO: Convert to class method
-    const Network = mongoose.model(NETWORK_MODAL_NAME, this._networkSchema);
+    const Network = mongoose.model(NETWORK_MODEL_NAME, this._networkSchema);
 
     const network = new Network({
       name,
@@ -323,7 +323,7 @@ export default class NetworkController extends PhantomBase {
   // TODO: Only fetch networks available to the given client
   async fetchNetworks(query = { isPublic: true, transcoderIsConnected: true }) {
     // TODO: Convert to class method
-    const Network = mongoose.model(NETWORK_MODAL_NAME, this._networkSchema);
+    const Network = mongoose.model(NETWORK_MODEL_NAME, this._networkSchema);
 
     // TODO: Exclude private fields (unless specified in options)
     const networks = await Network.find(query);
@@ -349,7 +349,7 @@ export default class NetworkController extends PhantomBase {
    */
   async _fetchNetwork({ realmId, channelId, ...rest }) {
     // TODO: Convert to class method
-    const Network = mongoose.model(NETWORK_MODAL_NAME, this._networkSchema);
+    const Network = mongoose.model(NETWORK_MODEL_NAME, this._networkSchema);
 
     const network = await Network.findOne({ realmId, channelId, ...rest });
 
