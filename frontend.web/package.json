@@ -38,7 +38,7 @@
     "spark-md5": "^3.0.1",
     "url-parse": "^1.5.1",
     "uuid": "^8.3.1",
-    "webrtc-peer": "github:jzombie/webrtc-peer"
+    "webrtc-peer": "github:zenosmosis/webrtc-peer"
   },
   "scripts": {
     "start": "REACT_APP_GIT_HASH=$(git rev-parse --short=5 HEAD) react-app-rewired start",
