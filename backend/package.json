@@ -20,7 +20,7 @@
     "farmhash": "^3.1.0",
     "http-proxy": "^1.18.1",
     "module-alias": "^2.2.2",
-    "mongoose": "^5.11.15",
+    "mongoose": "^5.12.5",
     "net": "^1.0.2",
     "node-fetch": "^2.6.1",
     "phantom-base": "github:jzombie/phantom-base",
