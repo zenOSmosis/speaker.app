@@ -1,6 +1,7 @@
 import os from "os";
 import PhantomBase, { EVT_READY } from "phantom-base";
 import mongoose from "mongoose";
+import sleep from "@shared/sleep";
 
 // const { ObjectId } = mongoose;
 
@@ -322,14 +323,29 @@ export default class NetworkController extends PhantomBase {
   // TODO: Document
   // TODO: Only fetch networks available to the given client
   async fetchNetworks(query = { isPublic: true, transcoderIsConnected: true }) {
-    // TODO: Convert to class method
-    const Network = mongoose.model(NETWORK_MODEL_NAME, this._networkSchema);
+    try {
+      // TODO: Convert to class method
+      const Network = mongoose.model(NETWORK_MODEL_NAME, this._networkSchema);
 
-    // TODO: Exclude private fields (unless specified in options)
-    const networks = await Network.find(query);
+      // TODO: Exclude private fields (unless specified in options)
+      const networks = await Network.find(query);
 
-    // TODO: Return plain object (unless specified in options)
-    return networks;
+      // TODO: Return plain object (unless specified in options)
+      return networks;
+    } catch (err) {
+      // Fix race condition where this method might be called before the schema
+      // is registered
+      //
+      // TODO: Don't use this method before ready
+      if (err.message.includes("Schema hasn't been registered")) {
+        await sleep(1000);
+
+        // Try again after sleep
+        return this.fetchNetworks(query);
+      } else {
+        throw err;
+      }
+    }
   }
 
   /**
