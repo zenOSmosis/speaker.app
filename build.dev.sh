@@ -36,11 +36,6 @@ echo "*** Starting development build ***" \
   # && npm install \
   # && cd .. \
   
-  echo "*** Installing npm modules in tts_server ***" \
-  && cd tts_server \
-  && $NPM_INSTALL_CMD \
-  && cd ..
-
 echo "*** Building development Docker Compose ***"
 docker-compose \
   -f docker-compose.yml \
