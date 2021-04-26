@@ -8,7 +8,7 @@
 
 [Speaker.app](https://speaker.app) is a [batteries-included](#whats-in-the-box), quasi-decentralized, alternative free speech audio platform that is compatible on any device that supports a modern web browser.
 
-Rather than a centralized server providing proxying of streams from each participant to other participants (i.e. an MCU / SFU), a single participant can choose to host a network (or "room") where others can connect to, either publicly or privately.  The network hosting participant's web browser acts as the "server" for the other participants to connect to on the given network, and all proxying is done, including message storage and relaying, from that browser.
+Rather than a centralized server providing proxying of streams from each participant to other participants (i.e. an MCU / SFU), a single participant can choose to host a network (or "room") where others can connect to, either publicly or privately.  The network hosting participant's web browser acts as the "server" for the other participants to connect to on the given network, and all proxying is done, including message storage and relaying, through that browser.
 
 Public networks are visible in a "network discovery" view, which serves as the default homepage for the application.
 
