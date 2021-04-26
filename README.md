@@ -108,6 +108,7 @@ These experiments are mostly dormant and commented-out, but have made for some i
 
 **All environments require**
 
+- Bash (Unix shell) _If running the included Bash build scripts_
 - Docker
 - Docker Compose
 
