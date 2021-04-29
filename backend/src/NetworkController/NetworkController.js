@@ -267,7 +267,7 @@ export default class NetworkController extends PhantomBase {
 
   /**
    * @param {Object} network
-   * @param {Object} backgroundImage
+   * @param {Object | string} backgroundImage
    */
   async setBackgroundImage(network, backgroundImage) {
     try {

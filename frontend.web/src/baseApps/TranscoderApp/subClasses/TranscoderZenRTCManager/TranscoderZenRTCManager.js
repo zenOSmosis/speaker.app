@@ -362,13 +362,23 @@ export default class TranscoderZenRTCManager extends PhantomBase {
     // decorator to turn it back into the original structure
     // updatedState = SyncObject.readDecorator(updatedState);
 
-    const prevState = virtualParticipant.getState();
+    // const prevState = virtualParticipant.getState();
+
+    const syncUpdate = {
+      // TODO: Don't re-send on every pass
+      networkData: {
+        realmId: this._realmId,
+        channelId: this._channelId,
+        networkName: this._networkName,
+        networkDescription: this._networkDescription,
+        hostDeviceAddress: this._hostDeviceAddress,
+      },
+    };
 
     // The background image
-    const backgroundImage =
-      updatedState.backgroundImage || prevState.backgroundImage;
-
     if (updatedState.backgroundImage) {
+      syncUpdate.backgroundImage = updatedState.backgroundImage;
+
       // Log to database so it can be visible on searched networks
       //
       // NOTE: Intentionally not awaiting fetch to resolve
@@ -381,11 +391,19 @@ export default class TranscoderZenRTCManager extends PhantomBase {
 
     // const prevSharedWritableState = this._sharedWritableSyncObject.getState();
 
+    if (Object.keys(syncUpdate).length) {
+      this._sharedWritableSyncObject.setState(syncUpdate);
+    }
+
+    return;
+
+    // TODO: Remove following
+
     // TODO: Reimplement
     this._sharedWritableSyncObject.setState({
       // ...prevSharedWritableState,
 
-      backgroundImage,
+      // backgroundImage,
 
       // Peers are delineated by their socketIoId
       /*

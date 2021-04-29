@@ -44,7 +44,7 @@ export default function BackgroundSelector() {
   const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = useCallback(
-    (searchQuery) => {
+    searchQuery => {
       // FIXME: Another approach could be canceling of current query
       if (isSearching) {
         return;
@@ -58,7 +58,7 @@ export default function BackgroundSelector() {
           query: searchQuery,
           queryEngine: "unsplash",
         })
-          .then((resp) => {
+          .then(resp => {
             // TODO: Remove
             console.log(resp);
 
@@ -79,7 +79,7 @@ export default function BackgroundSelector() {
   );
 
   const handleSubmit = useCallback(
-    (evt) => {
+    evt => {
       evt.preventDefault();
 
       handleSearch(searchQuery);
@@ -99,7 +99,7 @@ export default function BackgroundSelector() {
             <input
               type="text"
               placeholder="Search"
-              onChange={(evt) =>
+              onChange={evt =>
                 setState({
                   searchQuery: evt.target.value,
                 })
@@ -111,7 +111,7 @@ export default function BackgroundSelector() {
       </Header>
       <Content>
         <Center canOverflow={true}>
-          {results.map((result) => {
+          {results.map(result => {
             const isSelected =
               backgroundImage && backgroundImage.id === result.id;
 
@@ -212,7 +212,9 @@ function useMainView({ backgroundImage }) {
               // TODO: Only set URL
               onClick={() => {
                 writableSyncObject &&
-                  writableSyncObject.setState({ backgroundImage });
+                  writableSyncObject.setState({
+                    backgroundImage: JSON.stringify(backgroundImage),
+                  });
 
                 setMainView(null);
               }}
