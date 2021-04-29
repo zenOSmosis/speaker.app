@@ -15,7 +15,10 @@ export default function useSyncObject(syncObject) {
    */
   useEffect(() => {
     if (syncObject) {
-      const _handleUpdate = () => _setState(syncObject.getState());
+      const _handleUpdate = () => {
+        // IMPORTANT: If the object is not iterated, it won't update the state
+        _setState({ ...syncObject.getState() });
+      };
 
       syncObject.on(EVT_UPDATED, _handleUpdate);
 
