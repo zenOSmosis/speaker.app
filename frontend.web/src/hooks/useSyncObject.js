@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { EVT_UPDATED } from "@shared/SyncObject";
+import { EVT_UPDATED } from "sync-object";
 
 /**
  * A hook which wraps a SyncObject with useState-like handling.
@@ -34,7 +34,7 @@ export default function useSyncObject(syncObject) {
    * The hook state is updated via the SyncObject's normal update handler.
    */
   const setState = useCallback(
-    (updatedState) => {
+    updatedState => {
       syncObject.setState(updatedState);
     },
     [syncObject]

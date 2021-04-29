@@ -28,13 +28,10 @@ export const SYNC_EVT_TRACK_REMOVED = "mst-";
 // TODO: Document
 export const SYNC_EVT_DEBUG = "debug";
 
-/**
- * Emits when local peer has a state update.
- */
-export const SYNC_EVT_SYNC_OBJECT_UPDATE = "s3";
-
 // TODO: Document
-export const SYNC_EVT_SYNC_OBJECT_READ_ONLY_UPDATE_HASH = "s4";
+export const SYNC_EVT_SYNC_OBJECT_PARTIAL_SYNC = "s0";
+export const SYNC_EVT_SYNC_OBJECT_FULL_SYNC = "s1";
+export const SYNC_EVT_SYNC_OBJECT_UPDATE_HASH = "s2";
 
 // TODO: Document
 export const SYNC_EVT_DATA_CHANNEL_MESSAGE = "d";

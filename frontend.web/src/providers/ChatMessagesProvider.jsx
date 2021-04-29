@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import SyncObject, { EVT_UPDATED } from "@shared/SyncObject";
+import SyncObject, { EVT_UPDATED } from "sync-object";
 import UIMessage from "@local/UIMessage";
 
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
@@ -55,13 +55,15 @@ export default function ChatMessagesProvider({ children }) {
   }, [deviceAddress, chatMessages]);
 
   useEffect(() => {
+    // TODO: Reimplement
+    /*
     if (isConnected && readOnlySyncObject) {
-      const _handleUpdate = (updatedState) => {
+      const _handleUpdate = updatedState => {
         updatedState = SyncObject.readDecorator(updatedState);
 
         if (updatedState.chatMessages) {
           _setChatMessages(
-            readOnlySyncObject.getState().chatMessages.map((message) => ({
+            readOnlySyncObject.getState().chatMessages.map(message => ({
               ...message,
               sender: getParticipantWithDeviceAddress(message.senderAddress),
             }))
@@ -80,10 +82,11 @@ export default function ChatMessagesProvider({ children }) {
       // Clear chat messages on disconnect
       _setChatMessages([]);
     }
+    */
   }, [isConnected, readOnlySyncObject, getParticipantWithDeviceAddress]);
 
   const sendMessage = useCallback(
-    (body) => {
+    body => {
       if (!writableSyncObject) {
         throw new Error(
           "writableSyncObject is not available. Maybe you are not connected to a network."

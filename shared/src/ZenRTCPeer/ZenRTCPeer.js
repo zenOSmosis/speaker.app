@@ -828,23 +828,33 @@ export default class ZenRTCPeer extends PhantomBase {
   }
 
   // TODO: Document
-  // TODO: Remove?
   getMediaIO() {
-    return {
-      incoming: this.getIncomingMediaStreamTracks().map(mediaStreamTrack => ({
+    const incoming = {};
+    const outgoing = {};
+
+    this.getIncomingMediaStreamTracks().forEach(mediaStreamTrack => {
+      incoming[mediaStreamTrack.id] = {
         mediaStreamTrack,
         mediaStream: getTrackMediaStream(
           mediaStreamTrack,
           this._incomingMediaStreams
         ),
-      })),
-      outgoing: this.getOutgoingMediaStreamTracks().map(mediaStreamTrack => ({
+      };
+    });
+
+    this.getOutgoingMediaStreamTracks().forEach(mediaStreamTrack => {
+      outgoing[mediaStreamTrack.id] = {
         mediaStreamTrack,
         mediaStream: getTrackMediaStream(
           mediaStreamTrack,
-          this._outgoingMediaStreams
+          this._incomingMediaStreams
         ),
-      })),
+      };
+    });
+
+    return {
+      incoming,
+      outgoing,
     };
   }
 

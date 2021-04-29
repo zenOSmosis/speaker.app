@@ -13,7 +13,7 @@ import TranscoderZenRTCPeer, {
   EVT_ZENRTC_SIGNAL,
 } from "@baseApps/TranscoderApp/subClasses/TranscoderZenRTCPeer";
 
-import SyncObject, { KEY_DELETE } from "@shared/SyncObject";
+import SyncObject from "sync-object";
 
 import { fetch } from "@shared/SocketAPIClient";
 import { SOCKET_API_ROUTE_SET_NETWORK_BACKGROUND_IMAGE } from "@shared/socketAPIRoutes";
@@ -24,7 +24,7 @@ import TranscoderIPCMessageBroker, {
 
 import { TranscoderVirtualParticipant } from "@shared/VirtualParticipant";
 
-import { uniqBy } from "lodash";
+// import { uniqBy } from "lodash";
 
 export { EVT_UPDATED, EVT_DESTROYED };
 
@@ -68,10 +68,9 @@ export default class TranscoderZenRTCManager extends PhantomBase {
     this._sharedWritableSyncObject = new SyncObject({
       backgroundImage: null,
 
-      // TODO: Rename to participants
       peers: {},
 
-      chatMessages: [],
+      // chatMessages: [],
     });
 
     // Handle all incoming WebIPC messages
@@ -134,7 +133,7 @@ export default class TranscoderZenRTCManager extends PhantomBase {
         // TODO: Remove
         console.log({ mediaIO });
 
-        mediaIO.incoming.forEach(outgoing =>
+        Object.values(mediaIO.incoming).forEach(outgoing =>
           transcoderZenRTCPeer.addOutgoingMediaStreamTrack(
             outgoing.mediaStreamTrack,
             outgoing.mediaStream
@@ -160,6 +159,9 @@ export default class TranscoderZenRTCManager extends PhantomBase {
     readOnlySyncObject,
     updatedState
   ) {
+    // TODO: Remove
+    console.warn("_peerReadOnlySyncStateHasUpdated");
+
     this._syncPeerData(initiatorSocketIoId, updatedState);
   }
 
@@ -353,11 +355,12 @@ export default class TranscoderZenRTCManager extends PhantomBase {
       vp: virtualParticipant && virtualParticipant.getState(),
     });
 
-    virtualParticipant.setState(updatedState);
+    // TODO: Re-implement (causing infinite loop)
+    // virtualParticipant.setState(updatedState);
 
     // updatedState can be raw (flattened), so we need to apply the read
     // decorator to turn it back into the original structure
-    updatedState = SyncObject.readDecorator(updatedState);
+    // updatedState = SyncObject.readDecorator(updatedState);
 
     const prevState = virtualParticipant.getState();
 
@@ -376,40 +379,47 @@ export default class TranscoderZenRTCManager extends PhantomBase {
       // TODO: Cache in local storage
     }
 
-    const prevSharedWritableState = this._sharedWritableSyncObject.getState();
+    // const prevSharedWritableState = this._sharedWritableSyncObject.getState();
 
+    // TODO: Reimplement
     this._sharedWritableSyncObject.setState({
-      ...prevSharedWritableState,
+      // ...prevSharedWritableState,
 
       backgroundImage,
 
-      // TODO: Rename to participants
+      // Peers are delineated by their socketIoId
+      /*
       peers: {
         ...prevSharedWritableState.peers,
+
         // TODO: Branch using deviceAddress
         [socketIoId]: {
           ...prevSharedWritableState.peers[socketIoId],
 
           // The received data is only relevant to this peer
           // ...updatedState,
-          ...{ ...virtualParticipant.getState(), socketIoIds: [] },
+          //
+          // TODO: Remove array
+          ...{ ...virtualParticipant.getState(), 
+            // socketIoIds: []
+          },
 
           // Prevent possible media overwrites (these are written via
           // internal calls to this._syncLinkedMediaState())
-          /*
-          media: {
-            ...prevState.peers[socketIoId].media,
-          },
-          */
+          // media: {
+          //  ...prevState.peers[socketIoId].media,
+          // },
 
           // Don't resync here (merged in common chatMessages)
-          chatMessages: undefined,
-        },
-      },
+          // chatMessages: undefined,
+        // },
+      // },
+      */
 
       // TODO: Sync network details
 
       // Chat messages from all of the peers
+      /*
       chatMessages: uniqBy(
         [
           ...(prevSharedWritableState.chatMessages || []),
@@ -419,6 +429,7 @@ export default class TranscoderZenRTCManager extends PhantomBase {
         ],
         "id"
       ),
+      */
 
       // TODO: Set somewhere else and don't update on each run
       networkData: {
@@ -431,9 +442,11 @@ export default class TranscoderZenRTCManager extends PhantomBase {
     });
 
     // TODO: Remove
+    /*
     console.log({
       chatMessages: this._sharedWritableSyncObject.getState().chatMessages,
     });
+    */
   }
 
   // TODO: Merge handling of this and the previous method
@@ -446,9 +459,11 @@ export default class TranscoderZenRTCManager extends PhantomBase {
       const socketIoId = peer.getSocketIoId();
 
       peers[socketIoId] = {
-        media: {},
+        // media: {},
       };
 
+      // TODO: Use object here
+      /*
       for (const mediaStream of peer.getIncomingMediaStreams()) {
         const kinds = mediaStream
           .getTracks()
@@ -461,13 +476,14 @@ export default class TranscoderZenRTCManager extends PhantomBase {
             }
           : KEY_DELETE;
       }
+      */
     }
 
-    const removedSocketIoId =
-      removedTrancoderZenRTCPeer && removedTrancoderZenRTCPeer.getSocketIoId();
+    if (removedTrancoderZenRTCPeer) {
+      const removedSocketIoId = removedTrancoderZenRTCPeer.getSocketIoId();
 
-    if (removedSocketIoId) {
-      peers[removedSocketIoId] = KEY_DELETE;
+      // Remove peer from remote
+      peers[removedSocketIoId] = null;
     }
 
     this._sharedWritableSyncObject.setState({

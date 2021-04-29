@@ -1,4 +1,4 @@
-import SyncObject, { EVT_UPDATED, EVT_DESTROYED } from "@shared/SyncObject";
+import SyncObject, { EVT_UPDATED, EVT_DESTROYED } from "sync-object";
 import { v4 as uuidv4 } from "uuid";
 import dayjs from "dayjs";
 

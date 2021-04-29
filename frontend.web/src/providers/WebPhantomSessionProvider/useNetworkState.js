@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import SyncObject, { EVT_UPDATED } from "@shared/SyncObject";
+import SyncObject, { EVT_UPDATED } from "sync-object";
 
 import { debounce } from "lodash";
 
@@ -19,13 +19,8 @@ export default function useNetworkState(zenRTCPeer) {
       const peerSocketIoId = zenRTCPeer.getSocketIoId();
 
       const _handleUpdated = debounce(
-        (updated) => {
-          // TODO: Remove
-          console.debug({
-            state: readOnlySyncObject.getState(),
-          });
-
-          updated = SyncObject.readDecorator(updated) || {};
+        updated => {
+          // updated = SyncObject.readDecorator(updated) || {};
 
           if (updated.networkData) {
             setNetworkData(updated.networkData);
@@ -40,6 +35,11 @@ export default function useNetworkState(zenRTCPeer) {
 
           const { peers } = readOnlySyncObject.getState();
 
+          // TODO: Remove
+          console.log({
+            peers,
+          });
+
           if (peers) {
             const mediaStreams = [
               ...zenRTCPeer.getIncomingMediaStreams(),
@@ -48,13 +48,9 @@ export default function useNetworkState(zenRTCPeer) {
 
             // TODO: Utilize w/ VirtualParticipants
             const participants = Object.keys(peers)
-              .filter((peer) => Boolean(peer))
-              .map((socketIoId) => {
+              .filter(socketIoId => Boolean(peers[socketIoId]))
+              .map(socketIoId => {
                 const peer = peers[socketIoId];
-
-                if (!peer) {
-                  return null;
-                }
 
                 const isLocal = socketIoId === peerSocketIoId;
 
@@ -82,7 +78,7 @@ export default function useNetworkState(zenRTCPeer) {
 
                     /** @type {MediaStreamTrack[]} */
                     mediaStreamTracks: peerMediaStreams
-                      .map((mediaStream) => mediaStream.getTracks())
+                      .map(mediaStream => mediaStream.getTracks())
                       .flat(),
                   },
                 };
@@ -97,11 +93,11 @@ export default function useNetworkState(zenRTCPeer) {
         }
       );
 
-      zenRTCPeer.on(EVT_UPDATED, _handleUpdated);
+      // zenRTCPeer.on(EVT_UPDATED, _handleUpdated);
       readOnlySyncObject.on(EVT_UPDATED, _handleUpdated);
 
       return function unmount() {
-        zenRTCPeer.off(EVT_UPDATED, _handleUpdated);
+        // zenRTCPeer.off(EVT_UPDATED, _handleUpdated);
         readOnlySyncObject.off(EVT_UPDATED, _handleUpdated);
       };
     } else {
@@ -111,7 +107,7 @@ export default function useNetworkState(zenRTCPeer) {
   }, [zenRTCPeer]);
 
   const getParticipantWithDeviceAddress = useCallback(
-    (deviceAddress) => {
+    deviceAddress => {
       for (const p of participants) {
         if (p.deviceAddress === deviceAddress) {
           return p;
