@@ -14,9 +14,6 @@ export const VERTICAL_ORIENTATION = "vertical";
 export default function PanelParticipantsScroller({ orientation }) {
   const { participants } = useWebPhantomSessionContext();
 
-  // TODO: Remove
-  console.log({ participants });
-
   const [viewableOrientation, setViewableOrientation] = useState(null);
 
   const { openProfile } = useAppLayoutContext();
@@ -50,7 +47,6 @@ export default function PanelParticipantsScroller({ orientation }) {
           <Participant
             key={participant.socketIoId}
             participant={participant}
-            orientation={orientation}
             onClick={openProfile}
           />
         ))}
@@ -58,7 +54,7 @@ export default function PanelParticipantsScroller({ orientation }) {
   );
 }
 
-function Participant({ participant, orientation, onClick }) {
+function Participant({ participant, onClick }) {
   const audioMediaStreamTrack = useMemo(
     () => participant.mediaStreamTracks.find(track => track.kind === "audio"),
     [participant]
