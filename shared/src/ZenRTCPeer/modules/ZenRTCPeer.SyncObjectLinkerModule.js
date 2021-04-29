@@ -16,13 +16,13 @@ import SyncObject, {
   EVT_READ_ONLY_SYNC_UPDATE_HASH,
 } from "sync-object";
 
-import { debounce } from "lodash";
+// import { debounce } from "lodash";
 
 /**
  * The number of milliseconds the writable sync should wait for a hash
  * verification from the read-only peer.
  */
-const WRITE_RESYNC_THRESHOLD = 10000;
+// const WRITE_RESYNC_THRESHOLD = 10000;
 
 /**
  * The number of milliseconds the writable sync should debounce when doing
@@ -32,7 +32,7 @@ const WRITE_RESYNC_THRESHOLD = 10000;
  * Note that most syncs after the initial sync will skip this debounce
  * entirely, as the updates will be partial state updates, instead of full.
  */
-const FULL_STATE_DEBOUNCE_TIMEOUT = 1000;
+// const FULL_STATE_DEBOUNCE_TIMEOUT = 1000;
 
 /**
  * Provides P2P access for SyncObject modules, using two SyncObjects, each
@@ -74,9 +74,11 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
     (() => {
       this._bidirectionalSyncObject.on(EVT_WRITABLE_PARTIAL_SYNC, state => {
         // TODO: Remove
+        /*
         console.log({
           EVT_WRITABLE_PARTIAL_SYNC: state,
         });
+        */
 
         this._zenRTCPeer.emitSyncEvent(
           SYNC_EVT_SYNC_OBJECT_PARTIAL_SYNC,
@@ -96,7 +98,7 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
       this._bidirectionalSyncObject.on(EVT_READ_ONLY_SYNC_UPDATE_HASH, hash => {
         // TODO: Remove
         console.log({
-          EVT_READ_ONLY_SYNC_UPDATE_HASH: state,
+          EVT_READ_ONLY_SYNC_UPDATE_HASH: hash,
         });
 
         this._zenRTCPeer.emitSyncEvent(SYNC_EVT_SYNC_OBJECT_UPDATE_HASH, hash);
@@ -110,7 +112,7 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
       // let _debouncedFullStateEmit = null;
 
       // const writeableSyncObject = this.getWritableSyncObject();
-      const readOnlySyncObject = this.getReadOnlySyncObject();
+      // const readOnlySyncObject = this.getReadOnlySyncObject();
 
       // Called when there is a sync event from the other peer
       //
@@ -127,17 +129,49 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
         switch (eventName) {
           case SYNC_EVT_SYNC_OBJECT_PARTIAL_SYNC:
             const updatedState = eventData;
-            readOnlySyncObject.setState(updatedState);
+
+            // TODO: Remove
+            console.log({
+              SYNC_EVT_SYNC_OBJECT_PARTIAL_SYNC,
+              updatedState,
+            });
+
+            this._bidirectionalSyncObject.receiveReadOnlyState(updatedState);
             break;
 
           case SYNC_EVT_SYNC_OBJECT_FULL_SYNC:
             const fullState = eventData;
-            readOnlySyncObject.setState(fullState, false);
+
+            // TODO: Remove
+
+            console.log({
+              SYNC_EVT_SYNC_OBJECT_FULL_SYNC,
+              fullState,
+            });
+
+            this._bidirectionalSyncObject.receiveReadOnlyState(
+              fullState,
+              false
+            );
             break;
 
           case SYNC_EVT_SYNC_OBJECT_UPDATE_HASH:
+            // TODO: Remove
+            console.log({
+              SYNC_EVT_SYNC_OBJECT_UPDATE_HASH: eventData,
+            });
+
             const hash = eventData;
-            this._bidirectionalSyncObject.verifyReadOnlySyncUpdateHash(hash);
+
+            if (
+              this._bidirectionalSyncObject.verifyReadOnlySyncUpdateHash(hash)
+            ) {
+              // TODO: Remove
+              console.log("in sync");
+            } else {
+              // TODO: Remove
+              console.warn("not in sync");
+            }
             break;
 
           default:

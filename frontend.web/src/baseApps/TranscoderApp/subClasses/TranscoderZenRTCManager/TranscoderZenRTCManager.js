@@ -337,23 +337,19 @@ export default class TranscoderZenRTCManager extends PhantomBase {
       vp: virtualParticipant && virtualParticipant.getState(),
     });
 
-    // TODO: Re-implement (causing infinite loop)
-    // virtualParticipant.setState(updatedState);
-
-    // updatedState can be raw (flattened), so we need to apply the read
-    // decorator to turn it back into the original structure
-    // updatedState = SyncObject.readDecorator(updatedState);
-
-    // const prevState = virtualParticipant.getState();
-
+    // All peers will receive this
     const syncUpdate = {
-      // TODO: Don't re-send on every pass
+      // TODO: Re-implement
       networkData: {
         realmId: this._realmId,
         channelId: this._channelId,
         networkName: this._networkName,
         networkDescription: this._networkDescription,
         hostDeviceAddress: this._hostDeviceAddress,
+      },
+
+      peers: {
+        [socketIoId]: updatedState,
       },
     };
 
@@ -373,6 +369,13 @@ export default class TranscoderZenRTCManager extends PhantomBase {
 
     // const prevSharedWritableState = this._sharedWritableSyncObject.getState();
 
+    // TODO: Remove
+    /*
+    console.log({
+      syncUpdate,
+    });
+    */
+
     if (Object.keys(syncUpdate).length) {
       this._sharedWritableSyncObject.setState(syncUpdate);
     }
@@ -381,7 +384,6 @@ export default class TranscoderZenRTCManager extends PhantomBase {
 
     // TODO: Remove following
 
-    // TODO: Reimplement
     this._sharedWritableSyncObject.setState({
       // ...prevSharedWritableState,
 

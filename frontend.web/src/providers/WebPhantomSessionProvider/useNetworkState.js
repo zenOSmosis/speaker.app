@@ -28,6 +28,12 @@ export default function useNetworkState(zenRTCPeer) {
 
         const { peers } = readOnlySyncObject.getState();
 
+        // TODO: Remove
+        console.log({
+          peers,
+          updated,
+        });
+
         if (peers) {
           const mediaStreams = [
             ...zenRTCPeer.getIncomingMediaStreams(),
@@ -99,6 +105,11 @@ export default function useNetworkState(zenRTCPeer) {
     },
     [participants]
   );
+
+  // TODO: Remove
+  console.log({
+    participants,
+  });
 
   return {
     participants,
