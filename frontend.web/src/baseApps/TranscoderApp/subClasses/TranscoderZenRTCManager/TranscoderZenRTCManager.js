@@ -153,19 +153,6 @@ export default class TranscoderZenRTCManager extends PhantomBase {
   }
 
   // TODO: Document
-  _peerReadOnlySyncStateHasUpdated(
-    transcoderZenRTCPeer,
-    initiatorSocketIoId,
-    readOnlySyncObject,
-    updatedState
-  ) {
-    // TODO: Remove
-    console.warn("_peerReadOnlySyncStateHasUpdated");
-
-    this._syncPeerData(initiatorSocketIoId, updatedState);
-  }
-
-  // TODO: Document
   _peerHasDisconnected(transcoderZenRTCPeer) {
     this.emit(EVT_PEER_DISCONNECTED, transcoderZenRTCPeer);
   }
@@ -245,13 +232,8 @@ export default class TranscoderZenRTCManager extends PhantomBase {
       (() => {
         const readOnlySyncObject = transcoderZenRTCPeer.getReadOnlySyncObject();
 
-        readOnlySyncObject.on(EVT_UPDATED, data =>
-          this._peerReadOnlySyncStateHasUpdated(
-            transcoderZenRTCPeer,
-            initiatorSocketIoId,
-            readOnlySyncObject,
-            data
-          )
+        readOnlySyncObject.on(EVT_UPDATED, updatedState =>
+          this._syncPeerData(initiatorSocketIoId, updatedState)
         );
       })();
 
