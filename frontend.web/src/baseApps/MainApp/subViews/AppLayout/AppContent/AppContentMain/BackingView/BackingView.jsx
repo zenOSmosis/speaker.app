@@ -12,11 +12,12 @@ export default function BackingView() {
 
   const [readOnlySyncObjectState] = useSyncObject(readOnlySyncObject);
 
+  const backgroundJSON =
+    readOnlySyncObjectState && readOnlySyncObjectState.backgroundImage;
+
   const backgroundUrl = useMemo(() => {
     const backgroundImage =
-      readOnlySyncObject &&
-      typeof readOnlySyncObjectState.backgroundImage === "string" &&
-      JSON.parse(readOnlySyncObjectState.backgroundImage);
+      typeof backgroundJSON === "string" && JSON.parse(backgroundJSON);
 
     if (
       backgroundImage &&
@@ -25,7 +26,7 @@ export default function BackingView() {
     ) {
       return backgroundImage.urls.regular;
     }
-  }, [readOnlySyncObjectState]);
+  }, [backgroundJSON]);
 
   return (
     <Cover style={{ backgroundColor: "rgba(255,255,255,.2)" }}>
