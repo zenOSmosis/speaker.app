@@ -241,6 +241,14 @@ export default class TranscoderZenRTCManager extends PhantomBase {
       transcoderZenRTCPeer.on(EVT_CONNECTED, () => {
         this._peerHasConnected(transcoderZenRTCPeer);
 
+        // TODO: Keep?  Initial sync?
+        /*
+        this._syncPeerData(
+          initiatorSocketIoId,
+          transcoderZenRTCPeer.getReadOnlySyncObject().getState()
+        );
+        */
+
         this._syncLinkedMediaState();
       });
 
@@ -376,7 +384,10 @@ export default class TranscoderZenRTCManager extends PhantomBase {
     });
     */
 
-    if (Object.keys(syncUpdate).length) {
+    if (Object.keys(updatedState).length) {
+      // TODO: Remove
+      // debugger;
+
       this._sharedWritableSyncObject.setState(syncUpdate);
     }
 
@@ -487,6 +498,9 @@ export default class TranscoderZenRTCManager extends PhantomBase {
       // Remove peer from remote
       peers[removedSocketIoId] = null;
     }
+
+    // TODO: Remove
+    // debugger;
 
     this._sharedWritableSyncObject.setState({
       peers,
