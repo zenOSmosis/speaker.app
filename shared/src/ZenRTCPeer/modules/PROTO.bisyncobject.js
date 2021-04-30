@@ -179,9 +179,9 @@ class BidirectionalSyncObject extends PhantomCore {
 
       return true;
     } else {
-      this.log.warn("not in sync; performing full sync");
-
-      this.forceFullSync();
+      this.forceFullSync(() => {
+        this.log.warn("not in sync; performing full sync");
+      });
 
       return false;
     }
@@ -190,12 +190,21 @@ class BidirectionalSyncObject extends PhantomCore {
   /**
    * Force full sync operation.
    *
+   * NOTE: This function is debounced by this._options.fullStateDebounceTimeout
+   * and an optional cb parameter is supplied for additional code to run after
+   * the function executes.
+   *
+   * @param {function} cb?
    * @return {void}
    */
-  forceFullSync() {
+  forceFullSync(cb) {
     clearTimeout(this._writeSyncVerificationTimeout);
 
     this.emit(EVT_WRITABLE_FULL_SYNC, this._writableSyncObject.getState());
+
+    if (typeof cb === "function") {
+      cb();
+    }
   }
 
   /**
