@@ -18,24 +18,6 @@ import BidirectionalSyncObject, {
   EVT_READ_ONLY_SYNC_UPDATE_HASH,
 } from "./PROTO.bisyncobject";
 
-// import { debounce } from "lodash";
-
-/**
- * The number of milliseconds the writable sync should wait for a hash
- * verification from the read-only peer.
- */
-// const WRITE_RESYNC_THRESHOLD = 10000;
-
-/**
- * The number of milliseconds the writable sync should debounce when doing
- * rapid syncs in succession, in order to avoid sending full state multiple
- * times.
- *
- * Note that most syncs after the initial sync will skip this debounce
- * entirely, as the updates will be partial state updates, instead of full.
- */
-// const FULL_STATE_DEBOUNCE_TIMEOUT = 1000;
-
 /**
  * Provides P2P access for SyncObject modules, using two SyncObjects, each
  * representative of outgoing (writable) and incoming (readOnly) scenarios.
@@ -63,6 +45,9 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
   ) {
     super(zenRTCPeer);
 
+    // TODO: Remove
+    // this.setLogLevel("debug");
+
     this._bidirectionalSyncObject = new BidirectionalSyncObject(
       writableSyncObject,
       readOnlySyncObject
@@ -76,8 +61,7 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
     // Handle outgoing data (our writable to their readOnly)
     (() => {
       this._bidirectionalSyncObject.on(EVT_WRITABLE_PARTIAL_SYNC, state => {
-        // TODO: Remove
-        console.log({
+        this.log.debug({
           EVT_WRITABLE_PARTIAL_SYNC: state,
         });
 
@@ -88,8 +72,7 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
       });
 
       this._bidirectionalSyncObject.on(EVT_WRITABLE_FULL_SYNC, state => {
-        // TODO: Remove
-        console.log({
+        this.log.debug({
           EVT_WRITABLE_FULL_SYNC: state,
         });
 
@@ -97,8 +80,7 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
       });
 
       this._bidirectionalSyncObject.on(EVT_READ_ONLY_SYNC_UPDATE_HASH, hash => {
-        // TODO: Remove
-        console.log({
+        this.log.debug({
           EVT_READ_ONLY_SYNC_UPDATE_HASH: hash,
         });
 
@@ -108,30 +90,17 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
 
     // Handle incoming data (their writable to our readOnly)
     (() => {
-      // TODO: Remove?
-      // let _debouncedFullStateEmit = null;
-
-      // const writeableSyncObject = this.getWritableSyncObject();
-      // const readOnlySyncObject = this.getReadOnlySyncObject();
-
       // Called when there is a sync event from the other peer
       //
       // NOTE (jh): This is called for any sync event and we must refine it to
       // what we're interested in (below)
       const _handleSyncEventReceived = ({ eventName, eventData }) => {
-        // TODO: Remove
-        console.log({
-          eventName,
-          eventData,
-        });
-
         // Refine to what we're interested in
         switch (eventName) {
           case SYNC_EVT_SYNC_OBJECT_PARTIAL_SYNC:
             const updatedState = eventData;
 
-            // TODO: Remove
-            console.log({
+            this.log.debug({
               SYNC_EVT_SYNC_OBJECT_PARTIAL_SYNC,
               updatedState,
             });
@@ -142,9 +111,7 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
           case SYNC_EVT_SYNC_OBJECT_FULL_SYNC:
             const fullState = eventData;
 
-            // TODO: Remove
-
-            console.log({
+            this.log.debug({
               SYNC_EVT_SYNC_OBJECT_FULL_SYNC,
               fullState,
             });
@@ -156,19 +123,14 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
             break;
 
           case SYNC_EVT_SYNC_OBJECT_UPDATE_HASH:
-            // TODO: Remove
-            console.log({
+            this.log.debug({
               SYNC_EVT_SYNC_OBJECT_UPDATE_HASH: eventData,
             });
 
             const hash = eventData;
 
-            if (
-              this._bidirectionalSyncObject.verifyReadOnlySyncUpdateHash(hash)
-            ) {
-              // TODO: Remove
-              console.log("in sync");
-            }
+            // Automatically handles full state sync if out of sync
+            this._bidirectionalSyncObject.verifyReadOnlySyncUpdateHash(hash);
             break;
 
           default:

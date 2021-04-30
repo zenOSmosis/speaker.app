@@ -189,6 +189,8 @@ export default class TranscoderZenRTCManager extends PhantomCore {
         initiatorSocketIoId
       );
 
+      const virtualParticipant = readOnlySyncObject;
+
       const transcoderZenRTCPeer = new TranscoderZenRTCPeer({
         socketIoId: initiatorSocketIoId,
         // NOTE: The writable is shared between all of the participants and
@@ -232,24 +234,18 @@ export default class TranscoderZenRTCManager extends PhantomCore {
       // Note the written object is sometimes augmented by internal calls to
       // this._syncLinkedMediaState()
       (() => {
-        const readOnlySyncObject = transcoderZenRTCPeer.getReadOnlySyncObject();
-
-        readOnlySyncObject.on(EVT_UPDATED, updatedState =>
-          this._syncPeerData(initiatorSocketIoId, updatedState)
+        virtualParticipant.on(EVT_UPDATED, updatedState =>
+          this._syncPeerData(
+            virtualParticipant,
+            initiatorSocketIoId,
+            updatedState
+          )
         );
       })();
 
       // Handle connect / disconnect peer bindings
       transcoderZenRTCPeer.on(EVT_CONNECTED, () => {
         this._peerHasConnected(transcoderZenRTCPeer);
-
-        // TODO: Keep?  Initial sync?
-        /*
-        this._syncPeerData(
-          initiatorSocketIoId,
-          transcoderZenRTCPeer.getReadOnlySyncObject().getState()
-        );
-        */
 
         // this._syncLinkedMediaState();
       });
@@ -259,7 +255,7 @@ export default class TranscoderZenRTCManager extends PhantomCore {
       );
 
       transcoderZenRTCPeer.on(EVT_DISCONNECTED, () => {
-        // this._syncLinkedMediaState(transcoderZenRTCPeer);
+        this._removeVirtualParticpant(virtualParticipant, initiatorSocketIoId);
 
         this._peerHasDisconnected(transcoderZenRTCPeer);
       });
@@ -333,13 +329,27 @@ export default class TranscoderZenRTCManager extends PhantomCore {
     }
   }
 
-  // TODO: Merge handling of this and the following method
-  _syncPeerData(socketIoId, updatedState) {
-    return;
+  _removeVirtualParticpant(virtualParticipant, socketIoId) {
+    this.log.debug("Removing virtual participant", virtualParticipant);
 
-    const virtualParticipant = TranscoderVirtualParticipant.getInstanceWithSocketIoId(
-      socketIoId
-    );
+    this._sharedWritableSyncObject.setState({
+      peers: {
+        [socketIoId]: null,
+      },
+    });
+  }
+
+  /**
+   * Called when a participant is updated, syncing its data to the rest of the
+   * participants.
+   *
+   * @param {SyncObject} virtualParticipant
+   * @param {string} socketIoId
+   * @param {Object} updatedState
+   * @return void
+   */
+  _syncPeerData(virtualParticipant, socketIoId, updatedState) {
+    this.log.debug("Syncing virtual participant", virtualParticipant);
 
     // TODO: Remove
     /*

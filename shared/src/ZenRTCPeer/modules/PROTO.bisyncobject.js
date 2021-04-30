@@ -1,3 +1,5 @@
+// TODO: Move to sync-object repo once finished prototyping
+
 const PhantomCore = require("phantom-core");
 const { EVT_DESTROYED } = PhantomCore;
 const SyncObject = require("sync-object");
@@ -44,7 +46,7 @@ class BidirectionalSyncObject extends PhantomCore {
   constructor(
     writableSyncObject = null,
     readOnlySyncObject = null,
-    options = {}
+    options = { logLevel: "debug" /* TODO: Remove */ }
   ) {
     const DEFAULT_OPTIONS = {
       writeResyncThreshold: DEFAULT_WRITE_RESYNC_THRESHOLD,
@@ -59,7 +61,7 @@ class BidirectionalSyncObject extends PhantomCore {
       }
     }
 
-    super();
+    super(options);
 
     this._options = { ...DEFAULT_OPTIONS, options };
 
@@ -173,8 +175,12 @@ class BidirectionalSyncObject extends PhantomCore {
     if (this._writableSyncObject.getHash() === readOnlySyncUpdateHash) {
       clearTimeout(this._writeSyncVerificationTimeout);
 
+      this.log.debug("in sync");
+
       return true;
     } else {
+      this.log.warn("not in sync; performing full sync");
+
       this.forceFullSync();
 
       return false;
@@ -188,9 +194,6 @@ class BidirectionalSyncObject extends PhantomCore {
    */
   forceFullSync() {
     clearTimeout(this._writeSyncVerificationTimeout);
-
-    // TODO: Remove
-    console.warn("performing full state sync", this.getUUID());
 
     this.emit(EVT_WRITABLE_FULL_SYNC, this._writableSyncObject.getState());
   }

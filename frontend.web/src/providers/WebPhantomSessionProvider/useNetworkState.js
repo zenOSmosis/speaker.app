@@ -106,11 +106,6 @@ export default function useNetworkState(zenRTCPeer) {
     [participants]
   );
 
-  // TODO: Remove
-  console.log({
-    participants,
-  });
-
   return {
     participants,
     networkData,
