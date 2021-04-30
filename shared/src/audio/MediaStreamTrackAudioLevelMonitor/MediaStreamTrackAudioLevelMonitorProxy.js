@@ -1,4 +1,4 @@
-import PhantomBase from "phantom-base";
+import PhantomCore from "phantom-core";
 
 import MediaStreamTrackAudioLevelMonitor, {
   EVT_AVERAGE_AUDIO_LEVEL_CHANGED,
@@ -40,7 +40,7 @@ const _proxyCounts = {};
  * monitored MediaStreamTracks so their events can be utilized in more than one
  * place without reading the track multiple times.
  */
-export default class MediaStreamTrackAudioLevelMonitorProxy extends PhantomBase {
+export default class MediaStreamTrackAudioLevelMonitorProxy extends PhantomCore {
   /**
    * Adds a proxy instance to the audio level monitor.
    *

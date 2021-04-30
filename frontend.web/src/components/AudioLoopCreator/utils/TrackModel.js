@@ -3,10 +3,10 @@ import { v4 as uuidv4 } from "uuid";
 
 export const EVT_UPDATED = "updated";
 
-// TODO: Extend PhantomBase?
+// TODO: Extend PhantomCore?
 export default class TrackModel extends EventEmitter {
   // TODO: Rename?
-  static _beatHandler = (beatIdx) => console.warn("No beat handler installed");
+  static _beatHandler = beatIdx => console.warn("No beat handler installed");
 
   static setBeatHandler(beatHandler) {
     TrackModel._beatHandler = beatHandler;
