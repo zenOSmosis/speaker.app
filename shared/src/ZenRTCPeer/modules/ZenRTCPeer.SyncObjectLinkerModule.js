@@ -9,12 +9,12 @@ import {
   SYNC_EVT_SYNC_OBJECT_FULL_SYNC,
   SYNC_EVT_SYNC_OBJECT_UPDATE_HASH,
 } from "../../syncEvents";
-import SyncObject, {
-  BidirectionalSyncObject,
+import SyncObject from "sync-object";
+import BidirectionalSyncObject, {
   EVT_WRITABLE_PARTIAL_SYNC,
   EVT_WRITABLE_FULL_SYNC,
   EVT_READ_ONLY_SYNC_UPDATE_HASH,
-} from "sync-object";
+} from "./PROTO.bisyncobject";
 
 // import { debounce } from "lodash";
 
@@ -50,7 +50,9 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
    *
    * @param {ZenRTCPeer} zenRTCPeer
    * @param {SyncObject} writableSyncObject? [optional; default = null]
+   * Represents "our" state.
    * @param {SyncObject} readOnlySyncObject? [optional; default = null]
+   * Represents "their" state.
    */
   constructor(
     zenRTCPeer,
@@ -64,21 +66,18 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
       readOnlySyncObject
     );
 
-    // TODO: Remove
+    // Perform full sync once connected
     zenRTCPeer.once(EVT_CONNECTED, () => {
       this._bidirectionalSyncObject.forceFullSync();
     });
 
-    // TODO: Document
-    // Emit outgoing data
+    // Handle outgoing data (our writable to their readOnly)
     (() => {
       this._bidirectionalSyncObject.on(EVT_WRITABLE_PARTIAL_SYNC, state => {
         // TODO: Remove
-        /*
         console.log({
           EVT_WRITABLE_PARTIAL_SYNC: state,
         });
-        */
 
         this._zenRTCPeer.emitSyncEvent(
           SYNC_EVT_SYNC_OBJECT_PARTIAL_SYNC,
@@ -105,8 +104,7 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
       });
     })();
 
-    // TODO: Document
-    // Receive incoming data
+    // Handle incoming data (their writable to our readOnly)
     (() => {
       // TODO: Remove?
       // let _debouncedFullStateEmit = null;
@@ -168,9 +166,6 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
             ) {
               // TODO: Remove
               console.log("in sync");
-            } else {
-              // TODO: Remove
-              console.warn("not in sync");
             }
             break;
 
