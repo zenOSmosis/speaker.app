@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_DESTROYED } from "phantom-base";
+import PhantomCore, { EVT_DESTROYED } from "phantom-core";
 import TranscoderZenRTCPeer, {
   EVT_UPDATED,
   // EVT_CONNECTING,
@@ -43,7 +43,7 @@ let _instance = null;
  *
  * TODO: Extend w/ session handling
  */
-export default class TranscoderZenRTCManager extends PhantomBase {
+export default class TranscoderZenRTCManager extends PhantomCore {
   constructor({ realmId, channelId, hostDeviceAddress, socket }) {
     super();
 

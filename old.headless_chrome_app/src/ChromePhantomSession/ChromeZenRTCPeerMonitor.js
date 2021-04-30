@@ -1,4 +1,4 @@
-import PhantomBase from "../shared/phantom-base";
+import PhantomCore from "../shared/phantom-core";
 import ChromeZenRTCPeer, {
   EVT_CONNECTED,
   EVT_DISCONNECTED,
@@ -41,7 +41,7 @@ export const EVT_PEER_MONITOR_SYNC_EVT_RECEIVED = `peer-monitor-${EVT_SYNC_EVT_R
  * See the ChromePhantomSession which extends this with track routing between
  * peers.
  */
-export default class ChromeZenRTCPeerMonitor extends PhantomBase {
+export default class ChromeZenRTCPeerMonitor extends PhantomCore {
   /**
    * Registers peer instance with all monitors.
    *

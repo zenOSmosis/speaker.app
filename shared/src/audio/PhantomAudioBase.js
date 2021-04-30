@@ -1,16 +1,16 @@
-import PhantomBase, {
+import PhantomCore, {
   EVT_READY,
   EVT_UPDATED,
   EVT_DESTROYED,
-} from "phantom-base";
+} from "phantom-core";
 import fetchAudioContext from "./fetchAudioContext";
 
 export { EVT_READY, EVT_UPDATED, EVT_DESTROYED };
 
 /**
- * Base class for handling PhantomBase with centralized AudioContext.
+ * Base class for handling PhantomCore with centralized AudioContext.
  */
-export default class PhantomAudioBase extends PhantomBase {
+export default class PhantomAudioBase extends PhantomCore {
   constructor() {
     super({
       isReady: false,

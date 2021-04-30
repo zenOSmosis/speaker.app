@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_UPDATED, EVT_DESTROYED } from "phantom-base";
+import PhantomCore, { EVT_UPDATED, EVT_DESTROYED } from "phantom-core";
 import { isPlainObject } from "lodash";
 import SparkMD5 from "spark-md5";
 import flatten, { unflatten } from "flat";
@@ -19,7 +19,7 @@ export const KEY_DELETE = "[_[[DELETE]]_]";
  *
  * TODO: Extend w/ ability to run in WebWorker: https://medium.com/@danilog1905/how-to-use-web-workers-with-react-create-app-and-not-ejecting-in-the-attempt-3718d2a1166b
  */
-export default class SyncObject extends PhantomBase {
+export default class SyncObject extends PhantomCore {
   // TODO: Document
   static writeDecorator(writeState) {
     return flatten(writeState);

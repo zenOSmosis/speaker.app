@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_DESTROYED } from "phantom-base";
+import PhantomCore, { EVT_DESTROYED } from "phantom-core";
 import { SOCKET_EVT_IPC_MESSAGE } from "../socketEvents";
 
 export { EVT_DESTROYED };
@@ -20,7 +20,7 @@ export const TYPE_WEB_RTC_SIGNAL = "web-rtc-signal";
 
 // TODO: Document
 // Given the set of parameters passed to the constructor, implementation must figure out how to handle the routing
-export default class IPCMessageBroker extends PhantomBase {
+export default class IPCMessageBroker extends PhantomCore {
   constructor({
     socketIoIdFrom,
     socketIoIdTo = null,

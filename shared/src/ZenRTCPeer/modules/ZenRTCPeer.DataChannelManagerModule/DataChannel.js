@@ -1,4 +1,4 @@
-import PhantomBase from "phantom-base";
+import PhantomCore from "phantom-core";
 
 import { EVT_DATA_RECEIVED } from "./constants";
 
@@ -8,7 +8,7 @@ import { EVT_DATA_RECEIVED } from "./constants";
  * then switch to WebRTC data channels under the hood without changing the API.
  * @see https://github.com/feross/simple-peer/pull/694
  */
-export default class DataChannel extends PhantomBase {
+export default class DataChannel extends PhantomCore {
   // static doesChannelExistForOtherManager(dataChannel, dataChannelManager) {}
 
   constructor(dataChannelManagerModule, channelName) {

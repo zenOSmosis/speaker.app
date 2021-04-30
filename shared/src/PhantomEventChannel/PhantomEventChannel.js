@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_DESTROYED } from "phantom-base";
+import PhantomCore, { EVT_DESTROYED } from "phantom-core";
 
 const _instances = {};
 
@@ -9,7 +9,7 @@ const _instances = {};
  * TODO: Document how client -> server works here (each end can be a server,
  * but only one end can be a server at a time, per instance).
  */
-export default class PhantomEventChannel extends PhantomBase {
+export default class PhantomEventChannel extends PhantomCore {
   // TODO: Document
   //
   // Performs sending of query to remote peer(s)
