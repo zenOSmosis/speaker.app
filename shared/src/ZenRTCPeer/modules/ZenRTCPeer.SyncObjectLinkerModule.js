@@ -10,6 +10,8 @@ import {
   SYNC_EVT_SYNC_OBJECT_UPDATE_HASH,
 } from "../../syncEvents";
 import SyncObject from "sync-object";
+
+// TODO: Import from SyncObject once finished prototyping
 import BidirectionalSyncObject, {
   EVT_WRITABLE_PARTIAL_SYNC,
   EVT_WRITABLE_FULL_SYNC,

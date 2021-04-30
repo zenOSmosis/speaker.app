@@ -15,8 +15,8 @@ import TranscoderZenRTCPeer, {
 
 import SyncObject from "sync-object";
 
-import { fetch } from "@shared/SocketAPIClient";
-import { SOCKET_API_ROUTE_SET_NETWORK_BACKGROUND_IMAGE } from "@shared/socketAPIRoutes";
+// import { fetch } from "@shared/SocketAPIClient";
+// import { SOCKET_API_ROUTE_SET_NETWORK_BACKGROUND_IMAGE } from "@shared/socketAPIRoutes";
 
 import TranscoderIPCMessageBroker, {
   TYPE_WEB_IPC_MESSAGE,
