@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_UPDATED, EVT_DESTROYED } from "phantom-base";
+import PhantomCore, { EVT_UPDATED, EVT_DESTROYED } from "phantom-core";
 import WebRTCPeer from "webrtc-peer";
 import SDPAdapter from "./utils/sdp-adapter";
 
@@ -115,7 +115,7 @@ const ICE_SERVERS = (() => {
  * TODO: Provide additional layer to separate WebRTCPeer directly from this
  * class so we can use it with other connection mechanisms.
  */
-export default class ZenRTCPeer extends PhantomBase {
+export default class ZenRTCPeer extends PhantomCore {
   /**
    * Retrieves whether or not WebRTC is supported.
    *

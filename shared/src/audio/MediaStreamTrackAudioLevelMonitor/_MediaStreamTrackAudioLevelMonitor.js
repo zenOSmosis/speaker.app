@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_DESTROYED } from "phantom-base";
+import PhantomCore, { EVT_DESTROYED } from "phantom-core";
 import fetchAudioContext from "../fetchAudioContext";
 
 export { EVT_DESTROYED };
@@ -20,7 +20,7 @@ const MUTED_AUDIO_LEVEL = -1;
 
 // TODO: Use MediaRecorder for audio processing
 
-export default class MediaStreamTrackAudioLevelMonitor extends PhantomBase {
+export default class MediaStreamTrackAudioLevelMonitor extends PhantomCore {
   /**
    * @param {MediaStreamTrack} mediaStreamTrack The track from which to monitor
    * the audio levels. Must be of audio type.

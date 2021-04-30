@@ -1,5 +1,5 @@
 import os from "os";
-import PhantomBase, { EVT_READY } from "phantom-base";
+import PhantomCore, { EVT_READY } from "phantom-core";
 import mongoose from "mongoose";
 import sleep from "@shared/sleep";
 
@@ -30,7 +30,7 @@ const NETWORK_MODEL_NAME = "Network";
 // controller node hostname?
 
 // Singleton
-export default class NetworkController extends PhantomBase {
+export default class NetworkController extends PhantomCore {
   /**
    * @return {NetworkController}
    */

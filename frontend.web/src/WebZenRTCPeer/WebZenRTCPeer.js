@@ -1,4 +1,4 @@
-import { EVT_DESTROYED } from "phantom-base";
+import { EVT_DESTROYED } from "phantom-core";
 import ZenRTCPeer, {
   EVT_UPDATED,
   EVT_CONNECTING,

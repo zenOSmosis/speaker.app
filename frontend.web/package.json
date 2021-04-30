@@ -19,7 +19,7 @@
     "jsnes": "^1.1.0",
     "lodash": "^4.17.20",
     "normalize.css": "^8.0.1",
-    "phantom-base": "github:zenosmosis/phantom-base",
+    "phantom-core": "github:zenosmosis/phantom-core",
     "preload-it": "^1.4.0",
     "qrcode": "^1.4.4",
     "react": "^16.13.1",

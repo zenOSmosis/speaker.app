@@ -1,8 +1,8 @@
-import PhantomBase, { EVT_DESTROYED } from "phantom-base";
+import PhantomCore, { EVT_DESTROYED } from "phantom-core";
 
 export { EVT_DESTROYED };
 
-export default class ZenRTCPeerBaseModule extends PhantomBase {
+export default class ZenRTCPeerBaseModule extends PhantomCore {
   constructor(zenRTCPeer) {
     super();
 

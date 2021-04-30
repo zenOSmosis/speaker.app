@@ -1,4 +1,4 @@
-import PhantomBase, { EVT_DESTROYED } from "phantom-base";
+import PhantomCore, { EVT_DESTROYED } from "phantom-core";
 
 export const ROLE_MAIN_APP = "main-app";
 export const ROLE_TRANSCODER_APP = "transcoder-app";
@@ -20,7 +20,7 @@ let _instance = null;
  * It is currently only designed for communication with a single transcoder
  * app thread from the main app.
  */
-export default class SplitAppMessageBus extends PhantomBase {
+export default class SplitAppMessageBus extends PhantomCore {
   constructor(role) {
     // Act as singleton
     if (_instance) {
