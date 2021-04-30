@@ -1021,12 +1021,12 @@ export default class ZenRTCPeer extends PhantomCore {
    * Note, this uses UDP and the transmission is not guaranteed.
    *
    * @param {any} data
+   * @return {boolean} Whether or not the call to send the data succeeded (does
+   * not indicate successful receipt of data on other peer).
    */
   async send(data) {
     if (this._isDestroyed) {
-      console.warn("Cannot send data to destroyed peer");
-
-      return;
+      return false;
     }
 
     // Await connection before trying to send data (buffer until connect)
@@ -1050,6 +1050,8 @@ export default class ZenRTCPeer extends PhantomCore {
 
       try {
         this._simplePeer.send(data);
+
+        return true;
       } catch (err) {
         console.warn("Caught", err);
       }
@@ -1062,6 +1064,8 @@ export default class ZenRTCPeer extends PhantomCore {
       // Retry data send
       this.send(data);
     }
+
+    return false;
   }
 
   /**
