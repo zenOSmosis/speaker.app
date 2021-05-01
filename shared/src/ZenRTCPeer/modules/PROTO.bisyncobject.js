@@ -84,6 +84,8 @@ class BidirectionalSyncObject extends PhantomCore {
 
     this._writeSyncVerificationTimeout = null;
 
+    this._unverifiedRemoteSyncHashes = [];
+
     this.forceFullSync = debounce(
       this.forceFullSync,
       this._options.fullStateDebounceTimeout,
@@ -177,18 +179,41 @@ class BidirectionalSyncObject extends PhantomCore {
    * @return {boolean}
    */
   verifyReadOnlySyncUpdateHash(readOnlySyncUpdateHash) {
-    if (this._writableSyncObject.getHash() === readOnlySyncUpdateHash) {
-      clearTimeout(this._writeSyncVerificationTimeout);
+    if (this._unverifiedRemoteSyncHashes.includes(readOnlySyncUpdateHash)) {
+      const lenUnverifiedHashes = this._unverifiedRemoteSyncHashes.length;
 
-      this.log.debug("in sync");
+      const currHashIndex = this._unverifiedRemoteSyncHashes.indexOf(
+        readOnlySyncUpdateHash
+      );
 
-      return true;
+      if (currHashIndex !== lenUnverifiedHashes - 1) {
+        // This is not the last hash sent, so don't do anything other than
+        // return false because we're not in sync
+        this.log.debug("subsequent update is in progress");
+
+        return false;
+      } else {
+        if (this._writableSyncObject.getHash() === readOnlySyncUpdateHash) {
+          clearTimeout(this._writeSyncVerificationTimeout);
+
+          // Reset unverified hashes
+          this._unverifiedRemoteSyncHashes = [];
+
+          this.log.debug("in sync");
+
+          return true;
+        } else {
+          this.forceFullSync(() => {
+            this.log.warn("not in sync; performing full sync");
+          });
+
+          return false;
+        }
+      }
     } else {
       this.forceFullSync(() => {
-        this.log.warn("not in sync; performing full sync");
+        this.log.warn("unknown readOnlySyncUpdateHash; performing full sync");
       });
-
-      return false;
     }
   }
 
@@ -203,6 +228,8 @@ class BidirectionalSyncObject extends PhantomCore {
    * @return {void}
    */
   forceFullSync(cb) {
+    this._unverifiedRemoteSyncHashes.push(this._writableSyncObject.getHash());
+
     clearTimeout(this._writeSyncVerificationTimeout);
 
     this.emit(EVT_WRITABLE_FULL_SYNC, this._writableSyncObject.getState());
@@ -225,6 +252,8 @@ class BidirectionalSyncObject extends PhantomCore {
    * @return void
    */
   _writableDidPartiallyUpdate(updatedState) {
+    this._unverifiedRemoteSyncHashes.push(this._writableSyncObject.getHash());
+
     clearTimeout(this._writeSyncVerificationTimeout);
 
     // Perform sync
