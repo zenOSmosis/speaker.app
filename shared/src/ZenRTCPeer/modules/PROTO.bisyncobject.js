@@ -197,7 +197,7 @@ class BidirectionalSyncObject extends PhantomCore {
       );
 
       // Don't proceed
-      return;
+      return false;
     }
 
     // Handle case where _initialFullSyncVerificationHash has been set but the
@@ -214,16 +214,18 @@ class BidirectionalSyncObject extends PhantomCore {
       );
 
       // Don't proceed
-      return;
+      return false;
     } else if (
       readOnlySyncUpdateHash === this._initialFullSyncVerificationHash
     ) {
       this._hasInitialFullSync = true;
     }
 
+    // If the received readOnlySyncUpdateHash matches a known, but unverified hash
     if (this._unverifiedRemoteSyncHashes.includes(readOnlySyncUpdateHash)) {
       const lenUnverifiedHashes = this._unverifiedRemoteSyncHashes.length;
 
+      // If the readOnlySyncUpdateHash does not equal the last unverified hash
       if (
         this._unverifiedRemoteSyncHashes[lenUnverifiedHashes - 1] !==
         readOnlySyncUpdateHash
@@ -251,6 +253,12 @@ class BidirectionalSyncObject extends PhantomCore {
 
           return true;
         } else {
+          // TODO: Perform partial sync instead to make up for the diff
+          // Inside of this._unverifiedRemoteSyncHashes, keep state for each
+          // entry, and use a temporary SyncObject to create a diffed state,
+          // then run that as a partial update
+
+          // TODO: Remove after partial sync implemented here
           this.forceFullSync(() => {
             this.log.warn("Not in sync; performing full sync");
           });
@@ -262,6 +270,8 @@ class BidirectionalSyncObject extends PhantomCore {
       this.forceFullSync(() => {
         this.log.warn("Unknown readOnlySyncUpdateHash; performing full sync");
       });
+
+      return false;
     }
   }
 
