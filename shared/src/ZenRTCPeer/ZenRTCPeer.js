@@ -376,7 +376,8 @@ export default class ZenRTCPeer extends PhantomCore {
   }
 
   /**=
-   * @param {number} timeout? [optional]
+   * @param {number} timeout? [optional; default = 10000] The number of
+   * milliseconds to allow the ping request to continue before giving up.
    * @return {Promise<number>} A float value representing the latency, in
    * milliseconds.
    */
