@@ -84,6 +84,10 @@ class BidirectionalSyncObject extends PhantomCore {
 
     this._writeSyncVerificationTimeout = null;
 
+    // NOTE: This array is not guaranteed to be unique as state can roll back
+    // to a previous state before hash verification occurs. An example of a
+    // state rolling back is when a user mutes and unmutes without any other
+    // state changing.
     this._unverifiedRemoteSyncHashes = [];
 
     this.forceFullSync = debounce(
@@ -182,13 +186,19 @@ class BidirectionalSyncObject extends PhantomCore {
     if (this._unverifiedRemoteSyncHashes.includes(readOnlySyncUpdateHash)) {
       const lenUnverifiedHashes = this._unverifiedRemoteSyncHashes.length;
 
-      const currHashIndex = this._unverifiedRemoteSyncHashes.indexOf(
+      if (
+        this._unverifiedRemoteSyncHashes[lenUnverifiedHashes - 1] !==
         readOnlySyncUpdateHash
-      );
+      ) {
+        // Remove the current hash from the unverified hashes
+        this._unverifiedRemoteSyncHashes = this._unverifiedRemoteSyncHashes.filter(
+          hash => hash !== readOnlySyncUpdateHash
+        );
 
-      if (currHashIndex !== lenUnverifiedHashes - 1) {
-        // This is not the last hash sent, so don't do anything other than
-        // return false because we're not in sync
+        // NOTE: The concurrent, subsequent update should trigger this method
+        // to run again once the verification hash has been received, or else,
+        // the writeResyncThreshold timeout will trigger a full state sync
+
         this.log.debug("subsequent update is in progress");
 
         return false;
@@ -228,15 +238,29 @@ class BidirectionalSyncObject extends PhantomCore {
    * @return {void}
    */
   forceFullSync(cb) {
-    this._unverifiedRemoteSyncHashes.push(this._writableSyncObject.getHash());
-
     clearTimeout(this._writeSyncVerificationTimeout);
 
-    this.emit(EVT_WRITABLE_FULL_SYNC, this._writableSyncObject.getState());
+    const fullState = this._writableSyncObject.getState();
+    const fullStateHash = this._writableSyncObject.getHash();
+
+    // Add current writable hash to unverified hashes
+    this._unverifiedRemoteSyncHashes.push(fullStateHash);
+
+    this.emit(EVT_WRITABLE_FULL_SYNC, fullState);
 
     if (typeof cb === "function") {
       cb();
+    } else {
+      this.log.warn("Performing full sync");
     }
+
+    this._writeSyncVerificationTimeout = setTimeout(() => {
+      this.forceFullSync(() =>
+        this.log.warn(
+          "Full sync verification check did not occur in a timely manner; re-performing full sync"
+        )
+      );
+    }, this._options.writeResyncThreshold);
   }
 
   /**
@@ -252,15 +276,22 @@ class BidirectionalSyncObject extends PhantomCore {
    * @return void
    */
   _writableDidPartiallyUpdate(updatedState) {
-    this._unverifiedRemoteSyncHashes.push(this._writableSyncObject.getHash());
-
     clearTimeout(this._writeSyncVerificationTimeout);
+
+    const fullStateHash = this._writableSyncObject.getHash();
+
+    // Add current writable hash to unverified hashes
+    this._unverifiedRemoteSyncHashes.push(fullStateHash);
 
     // Perform sync
     this.emit(EVT_WRITABLE_PARTIAL_SYNC, updatedState);
 
     this._writeSyncVerificationTimeout = setTimeout(() => {
-      this.forceFullSync();
+      this.forceFullSync(() =>
+        this.log.warn(
+          "Hash verification check did not occur in a timely manner; performing full sync"
+        )
+      );
     }, this._options.writeResyncThreshold);
   }
 }
