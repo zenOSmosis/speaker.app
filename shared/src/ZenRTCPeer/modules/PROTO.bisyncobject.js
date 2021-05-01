@@ -1,9 +1,14 @@
 // TODO: Move to sync-object repo once finished prototyping
 
+import PhantomCore, { EVT_DESTROYED } from "phantom-core";
+import SyncObject, { EVT_UPDATED } from "sync-object";
+
+/*
 const PhantomCore = require("phantom-core");
 const { EVT_DESTROYED } = PhantomCore;
 const SyncObject = require("sync-object");
 const { EVT_UPDATED } = SyncObject;
+*/
 
 const EVT_WRITABLE_PARTIAL_SYNC = "writable-sync-updated";
 const EVT_WRITABLE_FULL_SYNC = "writable-full-sync";
@@ -231,8 +236,18 @@ class BidirectionalSyncObject extends PhantomCore {
   }
 }
 
+/*
 module.exports = BidirectionalSyncObject;
 module.exports.EVT_DESTROYED = EVT_DESTROYED;
 module.exports.EVT_WRITABLE_PARTIAL_SYNC = EVT_WRITABLE_PARTIAL_SYNC;
 module.exports.EVT_WRITABLE_FULL_SYNC = EVT_WRITABLE_FULL_SYNC;
 module.exports.EVT_READ_ONLY_SYNC_UPDATE_HASH = EVT_READ_ONLY_SYNC_UPDATE_HASH;
+*/
+
+export default BidirectionalSyncObject;
+export {
+  EVT_DESTROYED,
+  EVT_WRITABLE_FULL_SYNC,
+  EVT_WRITABLE_PARTIAL_SYNC,
+  EVT_READ_ONLY_SYNC_UPDATE_HASH,
+};
