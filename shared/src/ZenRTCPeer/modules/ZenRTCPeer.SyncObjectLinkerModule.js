@@ -149,6 +149,15 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
   }
 
   /**
+   * @return {Promise<void>}
+   */
+  async destroy() {
+    this._bidirectionalSyncObject.destroy();
+
+    super.destroy();
+  }
+
+  /**
    * @return {SyncObject}
    */
   getReadOnlySyncObject() {
