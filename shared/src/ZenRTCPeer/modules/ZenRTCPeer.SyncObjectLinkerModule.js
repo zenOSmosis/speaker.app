@@ -9,14 +9,12 @@ import {
   SYNC_EVT_SYNC_OBJECT_FULL_SYNC,
   SYNC_EVT_SYNC_OBJECT_UPDATE_HASH,
 } from "../../syncEvents";
-import SyncObject from "sync-object";
-
-// TODO: Import from SyncObject once finished prototyping
-import BidirectionalSyncObject, {
+import SyncObject, {
+  BidirectionalSyncObject,
   EVT_WRITABLE_PARTIAL_SYNC,
   EVT_WRITABLE_FULL_SYNC,
   EVT_READ_ONLY_SYNC_UPDATE_HASH,
-} from "./PROTO.bisyncobject";
+} from "sync-object";
 
 /**
  * Provides P2P access for SyncObject modules, using two SyncObjects, each
