@@ -457,63 +457,20 @@ export default class TranscoderZenRTCManager extends PhantomCore {
    * @return {void}
    */
   _syncLinkedMediaState() {
-    // const { peers } = this._sharedWritableSyncObject.getState() || {};
     const peers = {};
 
-    for (const peer of TranscoderZenRTCPeer.getInstances()) {
-      const socketIoId = peer.getSocketIoId();
+    for (const zenRTCPeer of TranscoderZenRTCPeer.getInstances()) {
+      const socketIoId = zenRTCPeer.getSocketIoId();
 
       /**
        * @type {string} CSV representation of incoming media stream ids
        */
-      const media = peer
+      const media = zenRTCPeer
         .getIncomingMediaStreams()
         .map(({ id }) => id)
         .join(",");
 
-      // const media = (peers[socketIoId] && peers[socketIoId].media) || {};
-
-      // Initiate existing media streams as null in case of removed stream
-      /*
-      Object.keys(media).forEach(mediaStreamId => {
-        media[mediaStreamId] = null;
-      });
-      */
-
-      /*
-      Object.values(peer.getMediaIO().incoming).forEach(
-        ({ mediaStreamTrack, mediaStream }) => {
-          if (!media[mediaStream.id]) {
-            // Temporary array
-            media[mediaStream.id] = [];
-          }
-
-          media[mediaStream.id].push(mediaStreamTrack.kind);
-        }
-      );
-      */
-
-      // De-dupe media types and convert to CSV
-      /*
-      Object.keys(media).forEach(mediaStreamId => {
-        //
-        // Convert temporary array to de-duped CSV.
-        // 
-        //  @type {string} CSV representation of track kinds for the current
-        //  MediaStream
-        // 
-        let kinds = [...new Set(media[mediaStreamId])].join(",");
-
-        if (!kinds.length) {
-          kinds = null;
-        }
-
-        media[mediaStreamId] = kinds;
-      });
-      */
-
       peers[socketIoId] = {
-        // ...peers[socketIoId],
         media,
       };
     }
