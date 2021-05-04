@@ -12,9 +12,7 @@ export default function useNetworkState(zenRTCPeer) {
 
       const peerSocketIoId = zenRTCPeer.getSocketIoId();
 
-      const _handleUpdated = updated => {
-        // updated = SyncObject.readDecorator(updated) || {};
-
+      const _handleUpdated = (updated = {}) => {
         if (updated.networkData) {
           setNetworkData(updated.networkData);
         }
@@ -27,12 +25,6 @@ export default function useNetworkState(zenRTCPeer) {
         }
 
         const { peers } = readOnlySyncObject.getState();
-
-        // TODO: Remove
-        console.log({
-          peers,
-          updated,
-        });
 
         if (peers) {
           const mediaStreams = [
@@ -83,11 +75,14 @@ export default function useNetworkState(zenRTCPeer) {
         }
       };
 
-      // zenRTCPeer.on(EVT_UPDATED, _handleUpdated);
+      // IMPORTANT: zenRTCPeer EVT_UPDATED is also listened to here because
+      // stream mappings may come in slower over the peer due to WebRTC
+      // negotiations
+      zenRTCPeer.on(EVT_UPDATED, _handleUpdated);
       readOnlySyncObject.on(EVT_UPDATED, _handleUpdated);
 
       return function unmount() {
-        // zenRTCPeer.off(EVT_UPDATED, _handleUpdated);
+        zenRTCPeer.off(EVT_UPDATED, _handleUpdated);
         readOnlySyncObject.off(EVT_UPDATED, _handleUpdated);
       };
     } else {
