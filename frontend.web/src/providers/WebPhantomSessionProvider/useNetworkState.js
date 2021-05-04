@@ -48,10 +48,11 @@ export default function useNetworkState(zenRTCPeer) {
 
               const isLocal = socketIoId === peerSocketIoId;
 
-              // Parse media stream ids into media streams
-              const peerMediaStreamIds = Object.keys(
-                (peer && peer.media) || {}
-              );
+              /**
+               * @type {string[]} Split CSV representation of MediaStream IDs
+               * into array
+               */
+              const peerMediaStreamIds = peer && peer.media.split(",");
 
               const peerMediaStreams = mediaStreams.filter(({ id }) =>
                 peerMediaStreamIds.includes(id)

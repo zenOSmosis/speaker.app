@@ -490,7 +490,7 @@ export default class ZenRTCPeer extends PhantomCore {
    * Utilized for peer identification and should match the Socket.io id
    * provided in the signaling (ipcMessageBroker).
    *
-   * TODO: Remove?
+   * TODO: Rename to getSignalingId?
    *
    * @return {string}
    */
@@ -826,37 +826,6 @@ export default class ZenRTCPeer extends PhantomCore {
    */
   getOutgoingMediaStreamTracks() {
     return getMediaStreamListTracks(this._outgoingMediaStreams);
-  }
-
-  // TODO: Document
-  getMediaIO() {
-    const incoming = {};
-    const outgoing = {};
-
-    this.getIncomingMediaStreamTracks().forEach(mediaStreamTrack => {
-      incoming[mediaStreamTrack.id] = {
-        mediaStreamTrack,
-        mediaStream: getTrackMediaStream(
-          mediaStreamTrack,
-          this._incomingMediaStreams
-        ),
-      };
-    });
-
-    this.getOutgoingMediaStreamTracks().forEach(mediaStreamTrack => {
-      outgoing[mediaStreamTrack.id] = {
-        mediaStreamTrack,
-        mediaStream: getTrackMediaStream(
-          mediaStreamTrack,
-          this._incomingMediaStreams
-        ),
-      };
-    });
-
-    return {
-      incoming,
-      outgoing,
-    };
   }
 
   /**

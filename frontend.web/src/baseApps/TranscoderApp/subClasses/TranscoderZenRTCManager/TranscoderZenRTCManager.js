@@ -129,17 +129,18 @@ export default class TranscoderZenRTCManager extends PhantomCore {
       const otherPeers = transcoderZenRTCPeer.getOtherThreadInstances();
 
       otherPeers.forEach(otherPeer => {
-        const mediaIO = otherPeer.getMediaIO();
-
-        // TODO: Remove
-        console.log({ mediaIO });
-
-        Object.values(mediaIO.incoming).forEach(outgoing =>
-          transcoderZenRTCPeer.addOutgoingMediaStreamTrack(
-            outgoing.mediaStreamTrack,
-            outgoing.mediaStream
-          )
-        );
+        otherPeer
+          .getIncomingMediaStreams()
+          .forEach(mediaStream =>
+            mediaStream
+              .getTracks()
+              .forEach(mediaStreamTrack =>
+                transcoderZenRTCPeer.addOutgoingMediaStreamTrack(
+                  mediaStreamTrack,
+                  mediaStream
+                )
+              )
+          );
       });
     })();
   }
@@ -332,16 +333,6 @@ export default class TranscoderZenRTCManager extends PhantomCore {
     }
   }
 
-  _syncRemovedVirtualParticipant(virtualParticipant, socketIoId) {
-    this.log.debug("Removing virtual participant", virtualParticipant);
-
-    this._sharedWritableSyncObject.setState({
-      peers: {
-        [socketIoId]: null,
-      },
-    });
-  }
-
   /**
    * Sync peer data (except for streaming media information) / chosen
    * background with other peers.
@@ -466,19 +457,30 @@ export default class TranscoderZenRTCManager extends PhantomCore {
    * @return {void}
    */
   _syncLinkedMediaState() {
-    const { peers } = this._sharedWritableSyncObject.getState() || {};
+    // const { peers } = this._sharedWritableSyncObject.getState() || {};
+    const peers = {};
 
     for (const peer of TranscoderZenRTCPeer.getInstances()) {
       const socketIoId = peer.getSocketIoId();
 
-      const media = {};
+      /**
+       * @type {string} CSV representation of incoming media stream ids
+       */
+      const media = peer
+        .getIncomingMediaStreams()
+        .map(({ id }) => id)
+        .join(",");
+
       // const media = (peers[socketIoId] && peers[socketIoId].media) || {};
 
       // Initiate existing media streams as null in case of removed stream
+      /*
       Object.keys(media).forEach(mediaStreamId => {
         media[mediaStreamId] = null;
       });
+      */
 
+      /*
       Object.values(peer.getMediaIO().incoming).forEach(
         ({ mediaStreamTrack, mediaStream }) => {
           if (!media[mediaStream.id]) {
@@ -489,15 +491,17 @@ export default class TranscoderZenRTCManager extends PhantomCore {
           media[mediaStream.id].push(mediaStreamTrack.kind);
         }
       );
+      */
 
       // De-dupe media types and convert to CSV
+      /*
       Object.keys(media).forEach(mediaStreamId => {
-        /**
-         * Convert temporary array to de-duped CSV.
-         *
-         * @type {string} CSV representation of track kinds for the current
-         * MediaStream
-         */
+        //
+        // Convert temporary array to de-duped CSV.
+        // 
+        //  @type {string} CSV representation of track kinds for the current
+        //  MediaStream
+        // 
         let kinds = [...new Set(media[mediaStreamId])].join(",");
 
         if (!kinds.length) {
@@ -506,15 +510,27 @@ export default class TranscoderZenRTCManager extends PhantomCore {
 
         media[mediaStreamId] = kinds;
       });
+      */
 
       peers[socketIoId] = {
-        ...peers[socketIoId],
+        // ...peers[socketIoId],
         media,
       };
     }
 
     this._sharedWritableSyncObject.setState({
       peers,
+    });
+  }
+
+  // TODO: Document
+  _syncRemovedVirtualParticipant(virtualParticipant, socketIoId) {
+    this.log.debug("Removing virtual participant", virtualParticipant);
+
+    this._sharedWritableSyncObject.setState({
+      peers: {
+        [socketIoId]: null,
+      },
     });
   }
 
