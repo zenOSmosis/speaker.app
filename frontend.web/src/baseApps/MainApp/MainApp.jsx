@@ -204,7 +204,7 @@ function useTieIns() {
   //
   // TODO: Move somewhere else?
   useEffect(() => {
-    WebZenRTCPeer.beforeConnect = async (zenRTCPeer) => {
+    WebZenRTCPeer.beforeConnect = async zenRTCPeer => {
       try {
         if (!hasUIMicPermission) {
           return null;
@@ -257,7 +257,7 @@ function useTieIns() {
   // Handle screensharing tie-in
   useEffect(() => {
     if (zenRTCPeer) {
-      screenCaptureMediaStreams.forEach((mediaStream) =>
+      screenCaptureMediaStreams.forEach(mediaStream =>
         zenRTCPeer.publishMediaStream(mediaStream)
       );
     } else {
@@ -374,21 +374,21 @@ function useTieIns() {
 
       const lastAddedMessage = addedMessages[addedMessages.length - 1];
 
-      if (lastAddedMessage.sender) {
-        showNotification({
-          image: lastAddedMessage.sender.avatarURL,
-          title: `${lastAddedMessage.sender.name} wrote:`,
-          body: lastAddedMessage.body,
+      // if (lastAddedMessage.sender) {
+      showNotification({
+        // image: lastAddedMessage.sender.avatarURL,
+        // title: `${lastAddedMessage.sender.name} wrote:`,
+        body: lastAddedMessage.body,
 
-          // TODO: Show messages when clicked
-          onClick: () => {
-            setIsSidebarOpen(true);
+        // TODO: Show messages when clicked
+        onClick: () => {
+          setIsSidebarOpen(true);
 
-            // TODO: Remove this hardcoding and obtain from a variable
-            onSelectedIdxChange(5);
-          },
-        });
-      }
+          // TODO: Remove this hardcoding and obtain from a variable
+          onSelectedIdxChange(5);
+        },
+      });
+      // }
     }
   }, [addedMessages, showNotification]);
 }

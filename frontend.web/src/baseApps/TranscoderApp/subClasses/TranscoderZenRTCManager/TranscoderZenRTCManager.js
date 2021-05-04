@@ -73,7 +73,7 @@ export default class TranscoderZenRTCManager extends PhantomCore {
 
       networkData: {},
 
-      // chatMessages: [],
+      chatMessages: {},
     });
 
     // Handle all incoming WebIPC messages
@@ -386,25 +386,16 @@ export default class TranscoderZenRTCManager extends PhantomCore {
         backgroundImage: updatedState.backgroundImage,
       });
 
-      // TODO: Cache in local storage
+      // TODO: Cache backgroundImage property in local storage
+    }
+
+    if (updatedState.chatMessages) {
+      syncUpdate.chatMessages = updatedState.chatMessages;
     }
 
     if (Object.keys(updatedState).length) {
       this._sharedWritableSyncObject.setState(syncUpdate);
     }
-
-    // TODO: Re-implement chat message sharing
-    /*
-    chatMessages: uniqBy(
-        [
-          ...(prevSharedWritableState.chatMessages || []),
-          ...(updatedState.chatMessages || []).filter(message =>
-            Boolean(message)
-          ),
-        ],
-        "id"
-      ),
-    */
   }
 
   /**

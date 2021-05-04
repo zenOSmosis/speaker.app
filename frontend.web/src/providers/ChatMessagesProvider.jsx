@@ -56,17 +56,13 @@ export default function ChatMessagesProvider({ children }) {
 
   useEffect(() => {
     // TODO: Reimplement
-    /*
     if (isConnected && readOnlySyncObject) {
-      const _handleUpdate = updatedState => {
-        updatedState = SyncObject.readDecorator(updatedState);
+      const _handleUpdate = (updatedState = {}) => {
+        const fullState = readOnlySyncObject.getState();
 
         if (updatedState.chatMessages) {
           _setChatMessages(
-            readOnlySyncObject.getState().chatMessages.map(message => ({
-              ...message,
-              sender: getParticipantWithDeviceAddress(message.senderAddress),
-            }))
+            Object.values(readOnlySyncObject.getState().chatMessages)
           );
         }
       };
@@ -82,7 +78,6 @@ export default function ChatMessagesProvider({ children }) {
       // Clear chat messages on disconnect
       _setChatMessages([]);
     }
-    */
   }, [isConnected, readOnlySyncObject, getParticipantWithDeviceAddress]);
 
   const sendMessage = useCallback(
@@ -98,12 +93,10 @@ export default function ChatMessagesProvider({ children }) {
         body,
       });
 
-      // Our own chat messages
-      const chatMessages = writableSyncObject.getState().chatMessages || [];
-      chatMessages.push(uiMessage.getState());
-
       writableSyncObject.setState({
-        chatMessages,
+        chatMessages: {
+          [uiMessage.getId()]: uiMessage.getState(),
+        },
       });
     },
     [writableSyncObject, deviceAddress]
