@@ -71,6 +71,8 @@ export default class TranscoderZenRTCManager extends PhantomCore {
 
       peers: {},
 
+      networkData: {},
+
       // chatMessages: [],
     });
 
@@ -111,6 +113,17 @@ export default class TranscoderZenRTCManager extends PhantomCore {
   setNetworkData({ networkName, networkDescription }) {
     this._networkName = networkName;
     this._networkDescription = networkDescription;
+
+    // Sync network data to all peers
+    this._sharedWritableSyncObject.setState({
+      networkData: {
+        realmId: this._realmId,
+        channelId: this._channelId,
+        networkName: this._networkName,
+        networkDescription: this._networkDescription,
+        hostDeviceAddress: this._hostDeviceAddress,
+      },
+    });
 
     this.emit(EVT_UPDATED);
   }
@@ -380,49 +393,9 @@ export default class TranscoderZenRTCManager extends PhantomCore {
       this._sharedWritableSyncObject.setState(syncUpdate);
     }
 
-    return;
-
-    // TODO: Remove following
-
-    this._sharedWritableSyncObject.setState({
-      // ...prevSharedWritableState,
-
-      // backgroundImage,
-
-      // Peers are delineated by their socketIoId
-      /*
-      peers: {
-        ...prevSharedWritableState.peers,
-
-        // TODO: Branch using deviceAddress
-        [socketIoId]: {
-          ...prevSharedWritableState.peers[socketIoId],
-
-          // The received data is only relevant to this peer
-          // ...updatedState,
-          //
-          // TODO: Remove array
-          ...{ ...virtualParticipant.getState(), 
-            // socketIoIds: []
-          },
-
-          // Prevent possible media overwrites (these are written via
-          // internal calls to this._syncLinkedMediaState())
-          // media: {
-          //  ...prevState.peers[socketIoId].media,
-          // },
-
-          // Don't resync here (merged in common chatMessages)
-          // chatMessages: undefined,
-        // },
-      // },
-      */
-
-      // TODO: Sync network details
-
-      // Chat messages from all of the peers
-      /*
-      chatMessages: uniqBy(
+    // TODO: Re-implement chat message sharing
+    /*
+    chatMessages: uniqBy(
         [
           ...(prevSharedWritableState.chatMessages || []),
           ...(updatedState.chatMessages || []).filter(message =>
@@ -431,23 +404,6 @@ export default class TranscoderZenRTCManager extends PhantomCore {
         ],
         "id"
       ),
-      */
-
-      // TODO: Set somewhere else and don't update on each run
-      networkData: {
-        realmId: this._realmId,
-        channelId: this._channelId,
-        networkName: this._networkName,
-        networkDescription: this._networkDescription,
-        hostDeviceAddress: this._hostDeviceAddress,
-      },
-    });
-
-    // TODO: Remove
-    /*
-    console.log({
-      chatMessages: this._sharedWritableSyncObject.getState().chatMessages,
-    });
     */
   }
 
@@ -480,12 +436,20 @@ export default class TranscoderZenRTCManager extends PhantomCore {
     });
   }
 
-  // TODO: Document
+  /**
+   * Sync removed participant with other peers.
+   *
+   * @param {SyncObject} virtualParticipant
+   * @param {string} socketIoId
+   * @return {void}
+   */
   _syncRemovedVirtualParticipant(virtualParticipant, socketIoId) {
     this.log.debug("Removing virtual participant", virtualParticipant);
 
     this._sharedWritableSyncObject.setState({
       peers: {
+        // IMPORTANT: At this time, SyncObject does not support setting
+        // undefined and syncing over the wire, so null is used instead
         [socketIoId]: null,
       },
     });
@@ -500,6 +464,9 @@ export default class TranscoderZenRTCManager extends PhantomCore {
     return Object.values(this._transcoderZenRTCInstances);
   }
 
+  /**
+   * @return {Promise{void>}}
+   */
   async destroy() {
     // Destroy all associated zenRTC peers
     await Promise.all(
@@ -512,6 +479,6 @@ export default class TranscoderZenRTCManager extends PhantomCore {
       await this._sharedWritableSyncObject.destroy();
     }
 
-    super.destroy();
+    await super.destroy();
   }
 }
