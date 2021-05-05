@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# TODO: Remove
+git branch
+exit
+
 # Immediately exit when error
 set -e
 
