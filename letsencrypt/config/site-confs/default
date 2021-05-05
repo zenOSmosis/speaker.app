@@ -37,10 +37,6 @@ server {
 	# See: https://web.dev/origin-agent-cluster
 	add_header Origin-Agent-Cluster ?1;
 
-	# Opt-out of Google's FLoC network
-	# See: https://paramdeo.com//blog/opting-your-website-out-of-googles-floc-network
-	add_header Permissions-Policy interest-cohort=();
-
 	location / {
 		proxy_pass http://backend:3001;
 
