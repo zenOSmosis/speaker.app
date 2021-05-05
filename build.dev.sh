@@ -18,7 +18,7 @@ echo "*** Installing and updating git modules ***"
 git submodule init
 git submodule update
 
-echo "*** Starting development build ***" \
+echo "*** Starting development modules install ***" \
   && echo "*** Installing npm modules in backend ***" \
   && cd backend \
   && $NPM_INSTALL_CMD \
@@ -36,13 +36,12 @@ echo "*** Starting development build ***" \
   # && npm install \
   # && cd .. \
 
-  if [ "${BUILD_ENV}" != "test" ] ; then \
-    echo "*** Building development Docker Compose ***"
-    docker-compose \
-      -f docker-compose.yml \
-      -f docker-compose.dev.yml \
-      build \
-      --build-arg BUILD_ENV="development" \
-  ; fi
+# TODO: Implement ability to not run Docker Compose
+echo "*** Building development Docker Compose ***"
+docker-compose \
+  -f docker-compose.yml \
+  -f docker-compose.dev.yml \
+  build \
+  --build-arg BUILD_ENV="development"
 
 echo "*** Development build complete ***"
