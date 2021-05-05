@@ -1,11 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import SyncObject, { EVT_UPDATED } from "@shared/SyncObject";
-
-import { debounce } from "lodash";
-
-// Amount of time (in milliseconds) from when network update has been received
-// to when we should render it
-const UPDATE_DEBOUNCE_TIME = 500;
+import { EVT_UPDATED } from "sync-object";
 
 // TODO: Document structure
 export default function useNetworkState(zenRTCPeer) {
@@ -18,85 +12,81 @@ export default function useNetworkState(zenRTCPeer) {
 
       const peerSocketIoId = zenRTCPeer.getSocketIoId();
 
-      const _handleUpdated = debounce(
-        (updated) => {
-          // TODO: Remove
-          console.debug({
-            state: readOnlySyncObject.getState(),
-          });
-
-          updated = SyncObject.readDecorator(updated) || {};
-
-          if (updated.networkData) {
-            setNetworkData(updated.networkData);
-          }
-
-          // IMPORTANT: If there are no object values passed, don't short-
-          // circuit here.  This check for updated length fixes an issue where
-          // virtual participants would not unregister after disconnect.
-          if (Object.values(updated).length && !updated.peers) {
-            return;
-          }
-
-          const { peers } = readOnlySyncObject.getState();
-
-          if (peers) {
-            const mediaStreams = [
-              ...zenRTCPeer.getIncomingMediaStreams(),
-              ...zenRTCPeer.getOutgoingMediaStreams(),
-            ];
-
-            // TODO: Utilize w/ VirtualParticipants
-            const participants = Object.keys(peers)
-              .filter((peer) => Boolean(peer))
-              .map((socketIoId) => {
-                const peer = peers[socketIoId];
-
-                if (!peer) {
-                  return null;
-                }
-
-                const isLocal = socketIoId === peerSocketIoId;
-
-                // Parse media stream ids into media streams
-                const peerMediaStreamIds = Object.keys(
-                  (peer && peer.media) || {}
-                );
-
-                const peerMediaStreams = mediaStreams.filter(({ id }) =>
-                  peerMediaStreamIds.includes(id)
-                );
-
-                return {
-                  ...{
-                    /** @type {string} */
-                    socketIoId,
-
-                    /** @type {boolean} */
-                    isLocal,
-
-                    ...peer,
-
-                    /** @type {MediaStream[]} */
-                    mediaStreams: peerMediaStreams,
-
-                    /** @type {MediaStreamTrack[]} */
-                    mediaStreamTracks: peerMediaStreams
-                      .map((mediaStream) => mediaStream.getTracks())
-                      .flat(),
-                  },
-                };
-              });
-
-            _setParticipants(participants);
-          }
-        },
-        UPDATE_DEBOUNCE_TIME,
-        {
-          trailing: true,
+      const _handleUpdated = (updated = {}) => {
+        if (updated.networkData) {
+          setNetworkData(updated.networkData);
         }
-      );
 
+        // IMPORTANT: If there are no object values passed, don't short-
+        // circuit here.  This check for updated length fixes an issue where
+        // virtual participants would not unregister after disconnect.
+        if (Object.values(updated).length && !updated.peers) {
+          return;
+        }
+
+        const { peers } = readOnlySyncObject.getState();
+
+        if (peers) {
+          /**
+           * Media streams to / from all other participants.
+           *
+           * @type {MediaStream[]}
+           */
+          const allMediaStreams = [
+            ...zenRTCPeer.getIncomingMediaStreams(),
+            ...zenRTCPeer.getOutgoingMediaStreams(),
+          ];
+
+          // TODO: Utilize w/ VirtualParticipants
+          const participants = Object.keys(peers)
+            .filter(socketIoId => Boolean(peers[socketIoId]))
+            .map(socketIoId => {
+              const peer = peers[socketIoId];
+
+              const isLocal = socketIoId === peerSocketIoId;
+
+              /**
+               * @type {string[]} Array of MediaStream ids for the current
+               * participant.
+               */
+              const participantMediaStreamIds = peer && peer.media.split(",");
+
+              /**
+               * @type {MediaStream[]} Array of MediaStreams for the current
+               * participant.
+               */
+              const participantMediaStreams = allMediaStreams.filter(({ id }) =>
+                participantMediaStreamIds.includes(id)
+              );
+
+              return {
+                ...{
+                  /** @type {string} */
+                  socketIoId,
+
+                  /** @type {boolean} */
+                  isLocal,
+
+                  ...peer,
+
+                  /** @type {MediaStream[]} */
+                  mediaStreams: participantMediaStreams,
+
+                  /** @type {MediaStreamTrack[]} */
+                  mediaStreamTracks: participantMediaStreams
+                    .map(mediaStream => mediaStream.getTracks())
+                    .flat(),
+                },
+              };
+            });
+
+          _setParticipants(participants);
+        }
+      };
+
+      // IMPORTANT: zenRTCPeer EVT_UPDATED is also listened to here because
+      // stream mappings may come in slower over the peer due to WebRTC
+      // negotiations
       zenRTCPeer.on(EVT_UPDATED, _handleUpdated);
       readOnlySyncObject.on(EVT_UPDATED, _handleUpdated);
 
@@ -111,7 +101,7 @@ export default function useNetworkState(zenRTCPeer) {
   }, [zenRTCPeer]);
 
   const getParticipantWithDeviceAddress = useCallback(
-    (deviceAddress) => {
+    deviceAddress => {
       for (const p of participants) {
         if (p.deviceAddress === deviceAddress) {
           return p;

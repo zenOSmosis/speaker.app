@@ -204,7 +204,7 @@ function useTieIns() {
   //
   // TODO: Move somewhere else?
   useEffect(() => {
-    WebZenRTCPeer.beforeConnect = async (zenRTCPeer) => {
+    WebZenRTCPeer.beforeConnect = async zenRTCPeer => {
       try {
         if (!hasUIMicPermission) {
           return null;
@@ -257,7 +257,7 @@ function useTieIns() {
   // Handle screensharing tie-in
   useEffect(() => {
     if (zenRTCPeer) {
-      screenCaptureMediaStreams.forEach((mediaStream) =>
+      screenCaptureMediaStreams.forEach(mediaStream =>
         zenRTCPeer.publishMediaStream(mediaStream)
       );
     } else {
@@ -380,10 +380,12 @@ function useTieIns() {
           title: `${lastAddedMessage.sender.name} wrote:`,
           body: lastAddedMessage.body,
 
-          // TODO: Show messages when clicked
+          // Show messages when clicked
           onClick: () => {
             setIsSidebarOpen(true);
 
+            // Activate chat applet when notification is clicked
+            //
             // TODO: Remove this hardcoding and obtain from a variable
             onSelectedIdxChange(5);
           },

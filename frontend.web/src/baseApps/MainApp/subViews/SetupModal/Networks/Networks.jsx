@@ -56,7 +56,7 @@ export default function Networks() {
   // Allow escape key to close out Modal if connected and Network tab is
   // selected
   useKeyboardEvents({
-    onKeyDown: (keyCode) => isConnected && keyCode === 27 && closeModal(),
+    onKeyDown: keyCode => isConnected && keyCode === 27 && closeModal(),
   });
 
   return (
@@ -119,7 +119,7 @@ export default function Networks() {
             */}
 
                 <div>
-                  {networks.map((network) => {
+                  {networks.map(network => {
                     // TODO: Highlight active network, if currently connected to it
                     const isCurrentNetwork =
                       isConnected &&
@@ -168,8 +168,7 @@ export default function Networks() {
                           src={
                             network &&
                             network.backgroundImage &&
-                            network.backgroundImage.urls &&
-                            network.backgroundImage.urls.regular
+                            JSON.parse(network.backgroundImage).urls.regular
                           }
                           style={{
                             backgroundColor: "rgba(0,0,0,.5)",

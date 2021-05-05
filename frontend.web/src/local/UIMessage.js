@@ -1,4 +1,4 @@
-import SyncObject, { EVT_UPDATED, EVT_DESTROYED } from "@shared/SyncObject";
+import SyncObject, { EVT_UPDATED, EVT_DESTROYED } from "sync-object";
 import { v4 as uuidv4 } from "uuid";
 import dayjs from "dayjs";
 
@@ -52,18 +52,35 @@ export default class UIMessage extends SyncObject {
       // TODO: Use iso string
     });
 
-    const mergedInitialState = { ...DEFAULT_STATE, ...initialState };
+    super({ ...DEFAULT_STATE, ...initialState });
 
-    super(mergedInitialState);
-
-    const { id, senderAddress } = mergedInitialState;
+    const { id, senderAddress } = this.getState();
     this._messageId = id;
     this._senderAddress = senderAddress;
 
+    this._id = id;
+
     _instances[this._messageId] = this;
-    this.once(EVT_DESTROYED, () => delete _instances[this._messageId]);
   }
 
+  /**
+   * @return {Promise<void>}
+   */
+  async destroy() {
+    delete _instances[this._messageId];
+
+    await super.destroy();
+  }
+
+  /**
+   * @return {string} The message id which all participants in the network can
+   * reference the message.
+   */
+  getId() {
+    return this._id;
+  }
+
+  /*
   setState(updatedState, ...rest) {
     if (updatedState.isTyping) {
       // TODO: Handle auto timeout to unset this
@@ -71,4 +88,5 @@ export default class UIMessage extends SyncObject {
 
     super.setState(updatedState, ...rest);
   }
+  */
 }
