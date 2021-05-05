@@ -14,7 +14,6 @@ jobs:
           - ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          submodules: true
+      - run: git checkout HEAD^ # Fix: fatal: ref HEAD is not a symbolic ref (likely caused by forced commits)
       - run: bash ./test.sh
       - run: bash ./build.prod.sh
