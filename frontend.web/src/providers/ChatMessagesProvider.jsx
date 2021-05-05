@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import SyncObject, { EVT_UPDATED } from "sync-object";
+import { EVT_UPDATED } from "sync-object";
 import UIMessage from "@local/UIMessage";
 
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
@@ -55,15 +55,23 @@ export default function ChatMessagesProvider({ children }) {
   }, [deviceAddress, chatMessages]);
 
   useEffect(() => {
-    // TODO: Reimplement
     if (isConnected && readOnlySyncObject) {
       const _handleUpdate = (updatedState = {}) => {
-        const fullState = readOnlySyncObject.getState();
-
         if (updatedState.chatMessages) {
-          _setChatMessages(
-            Object.values(readOnlySyncObject.getState().chatMessages)
+          const fullState = readOnlySyncObject.getState();
+
+          const chatMessages = Object.values(fullState.chatMessages).map(
+            message => ({
+              ...message,
+              ...{
+                sender: getParticipantWithDeviceAddress(message.senderAddress),
+              },
+            })
           );
+
+          // IMPORTANT: Set UI chat messages to full state instead of updated
+          // state, or else it will only render the updated messages
+          _setChatMessages(chatMessages);
         }
       };
 

@@ -169,7 +169,6 @@ function useTieIns() {
     channelId,
     setIsMuted,
     getIsMuted,
-    getParticipantWithDeviceAddress,
   } = useWebPhantomSessionContext();
 
   const {
@@ -375,14 +374,10 @@ function useTieIns() {
 
       const lastAddedMessage = addedMessages[addedMessages.length - 1];
 
-      const sender = getParticipantWithDeviceAddress(
-        lastAddedMessage.senderAddress
-      );
-
-      if (sender) {
+      if (lastAddedMessage.sender) {
         showNotification({
-          image: sender.avatarURL,
-          title: `${sender.name} wrote:`,
+          image: lastAddedMessage.sender.avatarURL,
+          title: `${lastAddedMessage.sender.name} wrote:`,
           body: lastAddedMessage.body,
 
           // Show messages when clicked
@@ -397,5 +392,5 @@ function useTieIns() {
         });
       }
     }
-  }, [addedMessages, showNotification, getParticipantWithDeviceAddress]);
+  }, [addedMessages, showNotification]);
 }
