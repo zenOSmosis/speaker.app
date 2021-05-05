@@ -14,7 +14,7 @@ jobs:
           - ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-          with:
-            ref: ${{ github.event.pull_request.head.sha }} # Checkout pull request HEAD commit instead of merge commit
+        with:
+          ref: ${{ github.event.pull_request.head.sha }} # Checkout pull request HEAD commit instead of merge commit
       - run: bash ./test.sh
       - run: bash ./build.prod.sh
