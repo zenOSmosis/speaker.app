@@ -15,6 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: "main" # @see https://github.com/peter-evans/create-pull-request/issues/122#issuecomment-601337482
+          ref: "develop" # @see https://github.com/peter-evans/create-pull-request/issues/122#issuecomment-601337482
       - run: bash ./test.sh
       - run: bash ./build.prod.sh
