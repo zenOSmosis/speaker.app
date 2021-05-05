@@ -34,6 +34,7 @@ server {
 
 	client_max_body_size 0;
 
+	# Request performance isolation in iframes
 	# See: https://web.dev/origin-agent-cluster
 	add_header Origin-Agent-Cluster ?1;
 
