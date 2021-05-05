@@ -27,7 +27,12 @@ export default function useNetworkState(zenRTCPeer) {
         const { peers } = readOnlySyncObject.getState();
 
         if (peers) {
-          const mediaStreams = [
+          /**
+           * Media streams to / from all other participants.
+           *
+           * @type {MediaStream[]}
+           */
+          const allMediaStreams = [
             ...zenRTCPeer.getIncomingMediaStreams(),
             ...zenRTCPeer.getOutgoingMediaStreams(),
           ];
@@ -41,13 +46,17 @@ export default function useNetworkState(zenRTCPeer) {
               const isLocal = socketIoId === peerSocketIoId;
 
               /**
-               * @type {string[]} Split CSV representation of MediaStream IDs
-               * into array
+               * @type {string[]} Array of MediaStream ids for the current
+               * participant.
                */
-              const peerMediaStreamIds = peer && peer.media.split(",");
+              const participantMediaStreamIds = peer && peer.media.split(",");
 
-              const peerMediaStreams = mediaStreams.filter(({ id }) =>
-                peerMediaStreamIds.includes(id)
+              /**
+               * @type {MediaStream[]} Array of MediaStreams for the current
+               * participant.
+               */
+              const participantMediaStreams = allMediaStreams.filter(({ id }) =>
+                participantMediaStreamIds.includes(id)
               );
 
               return {
@@ -61,10 +70,10 @@ export default function useNetworkState(zenRTCPeer) {
                   ...peer,
 
                   /** @type {MediaStream[]} */
-                  mediaStreams: peerMediaStreams,
+                  mediaStreams: participantMediaStreams,
 
                   /** @type {MediaStreamTrack[]} */
-                  mediaStreamTracks: peerMediaStreams
+                  mediaStreamTracks: participantMediaStreams
                     .map(mediaStream => mediaStream.getTracks())
                     .flat(),
                 },
