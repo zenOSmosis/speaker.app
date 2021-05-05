@@ -3,6 +3,8 @@
 # Immediately exit when error
 set -e
 
+NODE_ENV=development
+
 # TODO: Use npm ci to speed up npm builds
 ./build.dev.sh
 
