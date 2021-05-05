@@ -16,6 +16,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: "main" # @see https://github.com/peter-evans/create-pull-request/issues/122#issuecomment-601337482
-      - run: npm install -g jest
       - run: bash ./test.sh
+          env:
+            NODE_ENV: development
       - run: bash ./build.prod.sh
