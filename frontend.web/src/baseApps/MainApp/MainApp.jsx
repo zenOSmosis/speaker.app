@@ -169,6 +169,7 @@ function useTieIns() {
     channelId,
     setIsMuted,
     getIsMuted,
+    getParticipantWithDeviceAddress,
   } = useWebPhantomSessionContext();
 
   const {
@@ -374,21 +375,27 @@ function useTieIns() {
 
       const lastAddedMessage = addedMessages[addedMessages.length - 1];
 
-      // if (lastAddedMessage.sender) {
-      showNotification({
-        // image: lastAddedMessage.sender.avatarURL,
-        // title: `${lastAddedMessage.sender.name} wrote:`,
-        body: lastAddedMessage.body,
+      const sender = getParticipantWithDeviceAddress(
+        lastAddedMessage.senderAddress
+      );
 
-        // TODO: Show messages when clicked
-        onClick: () => {
-          setIsSidebarOpen(true);
+      if (sender) {
+        showNotification({
+          image: sender.avatarURL,
+          title: `${sender.name} wrote:`,
+          body: lastAddedMessage.body,
 
-          // TODO: Remove this hardcoding and obtain from a variable
-          onSelectedIdxChange(5);
-        },
-      });
-      // }
+          // Show messages when clicked
+          onClick: () => {
+            setIsSidebarOpen(true);
+
+            // Activate chat applet when notification is clicked
+            //
+            // TODO: Remove this hardcoding and obtain from a variable
+            onSelectedIdxChange(5);
+          },
+        });
+      }
     }
-  }, [addedMessages, showNotification]);
+  }, [addedMessages, showNotification, getParticipantWithDeviceAddress]);
 }
