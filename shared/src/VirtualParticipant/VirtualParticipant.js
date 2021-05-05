@@ -1,4 +1,4 @@
-import SyncObject, { EVT_UPDATED, EVT_DESTROYED } from "../SyncObject";
+import SyncObject, { EVT_UPDATED, EVT_DESTROYED } from "sync-object";
 
 export { EVT_UPDATED, EVT_DESTROYED };
 

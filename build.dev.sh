@@ -18,7 +18,7 @@ echo "*** Installing and updating git modules ***"
 git submodule init
 git submodule update
 
-echo "*** Starting development build ***" \
+echo "*** Starting development modules install ***" \
   && echo "*** Installing npm modules in backend ***" \
   && cd backend \
   && $NPM_INSTALL_CMD \
@@ -35,7 +35,8 @@ echo "*** Starting development build ***" \
   # && cd avatar_server \
   # && npm install \
   # && cd .. \
-  
+
+# TODO: Implement ability to not run Docker Compose
 echo "*** Building development Docker Compose ***"
 docker-compose \
   -f docker-compose.yml \

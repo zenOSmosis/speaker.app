@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import SyncObject, { EVT_UPDATED } from "@shared/SyncObject";
+import { EVT_UPDATED } from "sync-object";
 import UIMessage from "@local/UIMessage";
 
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
@@ -56,16 +56,22 @@ export default function ChatMessagesProvider({ children }) {
 
   useEffect(() => {
     if (isConnected && readOnlySyncObject) {
-      const _handleUpdate = (updatedState) => {
-        updatedState = SyncObject.readDecorator(updatedState);
-
+      const _handleUpdate = (updatedState = {}) => {
         if (updatedState.chatMessages) {
-          _setChatMessages(
-            readOnlySyncObject.getState().chatMessages.map((message) => ({
+          const fullState = readOnlySyncObject.getState();
+
+          const chatMessages = Object.values(fullState.chatMessages).map(
+            message => ({
               ...message,
-              sender: getParticipantWithDeviceAddress(message.senderAddress),
-            }))
+              ...{
+                sender: getParticipantWithDeviceAddress(message.senderAddress),
+              },
+            })
           );
+
+          // IMPORTANT: Set UI chat messages to full state instead of updated
+          // state, or else it will only render the updated messages
+          _setChatMessages(chatMessages);
         }
       };
 
@@ -83,7 +89,7 @@ export default function ChatMessagesProvider({ children }) {
   }, [isConnected, readOnlySyncObject, getParticipantWithDeviceAddress]);
 
   const sendMessage = useCallback(
-    (body) => {
+    body => {
       if (!writableSyncObject) {
         throw new Error(
           "writableSyncObject is not available. Maybe you are not connected to a network."
@@ -95,12 +101,10 @@ export default function ChatMessagesProvider({ children }) {
         body,
       });
 
-      // Our own chat messages
-      const chatMessages = writableSyncObject.getState().chatMessages || [];
-      chatMessages.push(uiMessage.getState());
-
       writableSyncObject.setState({
-        chatMessages,
+        chatMessages: {
+          [uiMessage.getId()]: uiMessage.getState(),
+        },
       });
     },
     [writableSyncObject, deviceAddress]

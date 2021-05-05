@@ -58,7 +58,7 @@ export default function WebPhantomSessionProvider({ children }) {
   const [connectCount, setConnectCount] = useState(-1);
   useEffect(() => {
     if (isConnected) {
-      setConnectCount((connectCount) => connectCount + 1);
+      setConnectCount(connectCount => connectCount + 1);
     }
   }, [isConnected]);
 
@@ -198,12 +198,12 @@ export default function WebPhantomSessionProvider({ children }) {
   );
 
   const publishMediaStream = useCallback(
-    (mediaStream) => zenRTCPeer && zenRTCPeer.publishMediaStream(mediaStream),
+    mediaStream => zenRTCPeer && zenRTCPeer.publishMediaStream(mediaStream),
     [zenRTCPeer]
   );
 
   const unpublishMediaStream = useCallback(
-    (mediaStream) => zenRTCPeer && zenRTCPeer.unpublishMediaStream(mediaStream),
+    mediaStream => zenRTCPeer && zenRTCPeer.unpublishMediaStream(mediaStream),
     [zenRTCPeer]
   );
 
@@ -213,7 +213,7 @@ export default function WebPhantomSessionProvider({ children }) {
   );
 
   const getIsMediaStreamPublished = useCallback(
-    (mediaStream) =>
+    mediaStream =>
       getPublishedMediaStreams()
         .map(({ id }) => id)
         .includes(mediaStream && mediaStream.id),
