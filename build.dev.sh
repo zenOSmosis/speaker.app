@@ -12,7 +12,7 @@ set -e
 
 # TODO: Enable otional npm ci command for CI environments
 # @see https://coryrylan.com/blog/faster-npm-installs-with-npm-ci
-NPM_INSTALL_CMD="npm install"
+NPM_INSTALL_CMD="npm install --only=development"
 
 echo "*** Installing and updating git modules ***"
 git submodule init
