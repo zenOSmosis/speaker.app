@@ -17,9 +17,9 @@ fi
 GIT_HASH=$(git rev-parse --short=5 HEAD)
 GIT_BRANCH=$(git symbolic-ref --short HEAD)
 
-echo "Installing and updating git modules"
-git submodule init
-git submodule update
+# echo "Installing and updating git modules"
+# git submodule init
+# git submodule update
 
 echo "*** Linking shared modules with backend ***"
 cd backend/src \

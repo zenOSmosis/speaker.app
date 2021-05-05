@@ -15,6 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.pull_request.head.sha }} # Checkout pull request HEAD commit instead of merge commit
+          submodules: true
       - run: bash ./test.sh
       - run: bash ./build.prod.sh
