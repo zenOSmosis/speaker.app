@@ -35,12 +35,14 @@ echo "*** Starting development build ***" \
   # && cd avatar_server \
   # && npm install \
   # && cd .. \
-  
-echo "*** Building development Docker Compose ***"
-docker-compose \
-  -f docker-compose.yml \
-  -f docker-compose.dev.yml \
-  build \
-  --build-arg BUILD_ENV="development"
+
+  if [ "${BUILD_ENV}" != "test" ] ; then \
+    echo "*** Building development Docker Compose ***"
+    docker-compose \
+      -f docker-compose.yml \
+      -f docker-compose.dev.yml \
+      build \
+      --build-arg BUILD_ENV="development" \
+  ; fi
 
 echo "*** Development build complete ***"
