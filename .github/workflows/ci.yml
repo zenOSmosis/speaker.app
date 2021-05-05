@@ -15,9 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.ref }} # @see https://github.com/peter-evans/create-pull-request/issues/122#issuecomment-601337482
+          ref: ${{ github.head_ref }} # @see https://github.com/peter-evans/create-pull-request/issues/122#issuecomment-601337482
       - run: bash ./test.sh
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.ref }} # @see https://github.com/peter-evans/create-pull-request/issues/122#issuecomment-601337482
       - run: bash ./build.prod.sh
