@@ -86,7 +86,10 @@ export default class MediaStreamTrackAudioLevelMonitor extends PhantomCore {
     setTimeout(() => this._initAudioLevelPolling(), 50);
   }
 
-  destroy() {
+  /**
+   * @return {Promise<void>}
+   */
+  async destroy() {
     clearTimeout(this._silenceErrorDetectionTimeout);
 
     // Reset the levels
@@ -95,7 +98,7 @@ export default class MediaStreamTrackAudioLevelMonitor extends PhantomCore {
       log2Rms: 0,
     });
 
-    super.destroy();
+    await super.destroy();
   }
 
   /**
