@@ -1155,6 +1155,14 @@ export default class ZenRTCPeer extends PhantomCore {
    * @return {Promise<void>}
    */
   async destroy() {
+    // Prevent trying to re-run destroy method if already destroyed
+    //
+    // IMPORTANT: This is necessary because subsequent actions will try to run
+    // methods which will no longer be available after the class is destructed
+    if (this.getIsDestroyed()) {
+      return;
+    }
+
     // IMPORTANT: This should be set before any event emitters are emitted, so
     // that counts are updated properly
     delete _instances[this._socketIoId];
@@ -1207,6 +1215,6 @@ export default class ZenRTCPeer extends PhantomCore {
       }
     })();
 
-    super.destroy();
+    await super.destroy();
   }
 }
