@@ -1161,6 +1161,10 @@ export default class ZenRTCPeer extends PhantomCore {
 
     // Disconnect handler
     await (async () => {
+      if (this._isDestroyed) {
+        return;
+      }
+
       if (this._simplePeer) {
         this.emitSyncEvent(SYNC_EVT_BYE);
 
@@ -1176,28 +1180,39 @@ export default class ZenRTCPeer extends PhantomCore {
         }
       }
 
+      // NOTE: Because of previous await, this is utilized
+      if (this._isDestroyed) {
+        return;
+      }
+
       // Remove incoming media stream tracks
       const incomingMediaStreamTracks = this.getIncomingMediaStreamTracks();
-      for (const mediaStreamTrack of incomingMediaStreamTracks) {
-        this.emit(EVT_INCOMING_MEDIA_STREAM_TRACK_REMOVED, {
-          mediaStreamTrack,
-          mediaStream: getTrackMediaStream(
+
+      if (incomingMediaStreamTracks) {
+        for (const mediaStreamTrack of incomingMediaStreamTracks) {
+          this.emit(EVT_INCOMING_MEDIA_STREAM_TRACK_REMOVED, {
             mediaStreamTrack,
-            this._incomingMediaStreams
-          ),
-        });
+            mediaStream: getTrackMediaStream(
+              mediaStreamTrack,
+              this._incomingMediaStreams
+            ),
+          });
+        }
       }
 
       // Remove outgoing media stream tracks
       const outgoingMediaStreamTracks = this.getOutgoingMediaStreamTracks();
-      for (const mediaStreamTrack of outgoingMediaStreamTracks) {
-        this.emit(EVT_OUTGOING_MEDIA_STREAM_TRACK_REMOVED, {
-          mediaStreamTrack,
-          mediaStream: getTrackMediaStream(
+
+      if (outgoingMediaStreamTracks) {
+        for (const mediaStreamTrack of outgoingMediaStreamTracks) {
+          this.emit(EVT_OUTGOING_MEDIA_STREAM_TRACK_REMOVED, {
             mediaStreamTrack,
-            this._outgoingMediaStreams
-          ),
-        });
+            mediaStream: getTrackMediaStream(
+              mediaStreamTrack,
+              this._outgoingMediaStreams
+            ),
+          });
+        }
       }
 
       if (this._isConnected) {
@@ -1207,6 +1222,6 @@ export default class ZenRTCPeer extends PhantomCore {
       }
     })();
 
-    super.destroy();
+    await super.destroy();
   }
 }

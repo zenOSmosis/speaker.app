@@ -86,7 +86,10 @@ export default class MediaStreamTrackAudioLevelMonitor extends PhantomCore {
     setTimeout(() => this._initAudioLevelPolling(), 50);
   }
 
-  destroy() {
+  /**
+   * @return {Promise<void>}
+   */
+  async destroy() {
     clearTimeout(this._silenceErrorDetectionTimeout);
 
     // Reset the levels
@@ -95,7 +98,7 @@ export default class MediaStreamTrackAudioLevelMonitor extends PhantomCore {
       log2Rms: 0,
     });
 
-    super.destroy();
+    await super.destroy();
   }
 
   /**
@@ -120,6 +123,13 @@ export default class MediaStreamTrackAudioLevelMonitor extends PhantomCore {
     // the user has interacted with your app, after which the Promise returned
     // here is resolved.
     await audioContext.resume();
+
+    // This class may have a rapid lifecycle inside of a React component, so
+    // this subsequent check will ensure we're still running and prevent
+    // potential errors
+    if (this.getIsDestroyed()) {
+      return;
+    }
 
     this._isAudioContextStarted = true;
     // this.emit(EVT_AUDIO_CONTEXT_STARTED);
@@ -227,12 +237,13 @@ export default class MediaStreamTrackAudioLevelMonitor extends PhantomCore {
     // TODO: Can this utilize window.requestAnimationFrame reliably now that
     // we're using the event proxy?
     setTimeout(() => {
-      // Loop
-      this._handlePollTick({
-        pollingStartTime,
-        analyser,
-        samples,
-      });
+      if (!this.getIsDestroyed()) {
+        this._handlePollTick({
+          pollingStartTime,
+          analyser,
+          samples,
+        });
+      }
     }, 50);
   }
 
