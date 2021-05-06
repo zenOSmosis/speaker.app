@@ -1169,49 +1169,53 @@ export default class ZenRTCPeer extends PhantomCore {
 
     // Disconnect handler
     await (async () => {
-      if (this._simplePeer) {
-        this.emitSyncEvent(SYNC_EVT_BYE);
-
-        // Give message some time to get delivered
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        // Check again because the peer may have been destroyed during the async period
+      try {
         if (this._simplePeer) {
-          /** @see https://github.com/feross/simple-peer#peerdestroyerr */
-          this._simplePeer.destroy();
+          this.emitSyncEvent(SYNC_EVT_BYE);
 
-          this._simplePeer = null;
+          // Give message some time to get delivered
+          await new Promise(resolve => setTimeout(resolve, 100));
+
+          // Check again because the peer may have been destroyed during the async period
+          if (this._simplePeer) {
+            /** @see https://github.com/feross/simple-peer#peerdestroyerr */
+            this._simplePeer.destroy();
+
+            this._simplePeer = null;
+          }
         }
-      }
 
-      // Remove incoming media stream tracks
-      const incomingMediaStreamTracks = this.getIncomingMediaStreamTracks();
-      for (const mediaStreamTrack of incomingMediaStreamTracks) {
-        this.emit(EVT_INCOMING_MEDIA_STREAM_TRACK_REMOVED, {
-          mediaStreamTrack,
-          mediaStream: getTrackMediaStream(
+        // Remove incoming media stream tracks
+        const incomingMediaStreamTracks = this.getIncomingMediaStreamTracks();
+        for (const mediaStreamTrack of incomingMediaStreamTracks) {
+          this.emit(EVT_INCOMING_MEDIA_STREAM_TRACK_REMOVED, {
             mediaStreamTrack,
-            this._incomingMediaStreams
-          ),
-        });
-      }
+            mediaStream: getTrackMediaStream(
+              mediaStreamTrack,
+              this._incomingMediaStreams
+            ),
+          });
+        }
 
-      // Remove outgoing media stream tracks
-      const outgoingMediaStreamTracks = this.getOutgoingMediaStreamTracks();
-      for (const mediaStreamTrack of outgoingMediaStreamTracks) {
-        this.emit(EVT_OUTGOING_MEDIA_STREAM_TRACK_REMOVED, {
-          mediaStreamTrack,
-          mediaStream: getTrackMediaStream(
+        // Remove outgoing media stream tracks
+        const outgoingMediaStreamTracks = this.getOutgoingMediaStreamTracks();
+        for (const mediaStreamTrack of outgoingMediaStreamTracks) {
+          this.emit(EVT_OUTGOING_MEDIA_STREAM_TRACK_REMOVED, {
             mediaStreamTrack,
-            this._outgoingMediaStreams
-          ),
-        });
-      }
+            mediaStream: getTrackMediaStream(
+              mediaStreamTrack,
+              this._outgoingMediaStreams
+            ),
+          });
+        }
 
-      if (this._isConnected) {
-        this.emit(EVT_DISCONNECTED);
+        if (this._isConnected) {
+          this.emit(EVT_DISCONNECTED);
 
-        this._isConnected = false;
+          this._isConnected = false;
+        }
+      } catch (err) {
+        console.error(err);
       }
     })();
 
