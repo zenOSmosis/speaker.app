@@ -49,7 +49,8 @@ export default function useNetworkState(zenRTCPeer) {
                * @type {string[]} Array of MediaStream ids for the current
                * participant.
                */
-              const participantMediaStreamIds = peer && peer.media.split(",");
+              const participantMediaStreamIds =
+                (peer && peer.media && peer.media.split(",")) || [];
 
               /**
                * @type {MediaStream[]} Array of MediaStreams for the current
