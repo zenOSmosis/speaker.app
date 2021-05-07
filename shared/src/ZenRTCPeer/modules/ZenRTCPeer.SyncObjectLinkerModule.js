@@ -52,8 +52,8 @@ export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
     );
 
     // Perform full sync once connected
-    zenRTCPeer.once(EVT_CONNECTED, () => {
-      this._bidirectionalSyncObject.forceFullSync();
+    zenRTCPeer.on(EVT_CONNECTED, () => {
+      this._bidirectionalSyncObject.forceFullSync("Initial full sync");
     });
 
     // Handle outgoing data (our writable to their readOnly)
