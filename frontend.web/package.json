@@ -36,7 +36,7 @@
     "secure-ls": "^1.2.6",
     "socket.io-client": "^3.1.2",
     "spark-md5": "^3.0.1",
-    "sync-object": "github:zenosmosis/sync-object#feature/fix-incorrect-syncs",
+    "sync-object": "github:zenosmosis/sync-object",
     "url-parse": "^1.5.1",
     "uuid": "^8.3.1",
     "webrtc-peer": "github:zenosmosis/webrtc-peer"
