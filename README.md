@@ -8,7 +8,7 @@
 
 [Speaker.app](https://speaker.app) is a [batteries-included](#whats-in-the-box), quasi-decentralized, alternative free speech audio platform that is compatible on any device that supports a modern web browser.
 
-Rather than a centralized server providing proxying of streams from each participant to other participants (i.e. an MCU / SFU), a single participant can choose to host a network (or "room") where others can connect to, either publicly or privately.  The network hosting participant's web browser acts as the "server" for the other participants to connect to on the given network, and all proxying is done, including message storage and relaying, through that browser.
+Rather than a centralized server providing proxying of streams from each participant to other participants (i.e. an MCU / SFU), one can choose to host a network (or "room") where others can connect to, either publicly or privately.  The network hosting participant's web browser acts as the "server" for the other participants to connect to on the given network, and all proxying is done, including message storage and relaying, through that browser.
 
 Public networks are visible in a "network discovery" view, which serves as the default homepage for the application.
 
@@ -20,14 +20,13 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
 - [Speaker.app / zenRTC / Phantom Server](#speakerapp--zenrtc--phantom-server)
   - [Table of Contents](#table-of-contents)
   - [Browser Support](#browser-support)
+  - [What's in the Box](#whats-in-the-box)
   - [Architecture Overview](#architecture-overview)
     - [Conventional WebRTC Network Topologies](#conventional-webrtc-network-topologies)
     - [Speaker.app Peer-Based Network Topology](#speakerapp-peer-based-network-topology)
     - [Inspiration to Create this Project](#inspiration-to-create-this-project)
-    - [Included WebRTC Experiments](#included-webrtc-experiments)
   - [Getting Started](#getting-started)
     - [Dependencies](#dependencies)
-    - [What's in the Box](#whats-in-the-box)
     - [Building and Running](#building-and-running)
   - [Public Network Discovery / Private Networks](#public-network-discovery--private-networks)
   - [Testing](#testing)
@@ -54,6 +53,24 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
 Note, on every OS except iOS, Chrome is the recommended browser;  On iOS, Safari should be used.
 
 
+## What's in the Box
+
+**Frontend**:  Built with [create-react-app](https://github.com/facebook/create-react-app); state is managed with multiple Providers and accessible via useContext hooks.
+
+**Backend:** Node.js app, using [Socket.io](https://github.com/socketio/socket.io) and [Express](https://github.com/expressjs/express).  Cluster module is utilized to utilize multiple CPUs and a Redis store is utilize to scale Socket.io across the CPUs.
+
+**MongoDB**: Network details (name, host, number of participants) are stored in [MongoDB](https://github.com/mongodb/mongo).  When in development mode, [Mongo Express](https://github.com/mongo-express/mongo-express) is available at http://localhost:8081, and provides a web-based administrative interface.
+
+**Let's Encrypt**: Free SSL certificates are managed via the [linuxserver.io/docker-swag Docker](https://github.com/linuxserver/docker-swag) image.
+
+**dev-ssl-proxy**: In development, a [self-signed SSL proxy](https://github.com/zenOSmosis/docker-dev-ssl-proxy) is utilized in replacement of Let's Encrypt, to enable local development with SSL turned on (cam / mic / other HTML5-related APIs require SSL by default).
+
+**Coturn**: A [STUN / TURN server](https://github.com/zenOSmosis/docker-coturn) for WebRTC NAT traversal is included in the Docker Compose configuration, but is not enabled by default.
+
+**Included WebRTC Experiments**: Within the source code are some previous real-time, shared experience experiments  such as a drum looper, a sound sampler (play piano / electric guitar w/ keyboard), text-to-speech, TensorFlow-based skeletal tracker, and a game emulator.
+
+These experiments are mostly dormant and commented-out, but have made for some interesting demos in the past and may be re-enabled in the future.
+
 ## Architecture Overview
 
 ### Conventional WebRTC Network Topologies
@@ -79,7 +96,9 @@ Using a topology similar to the MCU / SFU example above, Speaker.app attempts to
 
 **Phantom Server** is a network host which runs in your web browser, and acts as the host, shared state manager, proxy, and transcoder for all connected participants within a WebRTC network.
 
-Speaker.app is able to provide a quasi-centralized MCU / SFU by enabling clients to run them in their own browsers, as a virtual machine.
+Every participant connects to the Phantom Server via a P2P connection and Phantom Server handles the stream negotiations / network programming with the other peers.
+
+Speaker.app is able to provide a quasi-decentralized MCU / SFU by enabling clients to run them in their own browsers, as a virtual machine.
 
 *At the time of writing the Chrome on the Apple M1 processor is by far the most efficient for doing browser-based streaming transcoding, compared to a variety of Intel processors which have been tested on, though development has mostly been done on Intel processors / Linux.  ARM is the future, it seems.
 
@@ -96,13 +115,11 @@ Running a headless Chrome instance on the server is very versatile, in being tha
 
 Wanting to continue pursuing the effort of a script-able WebRTC bridge using a web browser, and thinking of ways to potentially scale such a system, I made the decision to allow client-side devices to host these sessions, now no longer utilizing the headless Chrome instances as the main method of hosting sessions.
 
-### Included WebRTC Experiments
-
-Within the source code are some previous real-time, shared experience experiments  such as a drum looper, a sound sampler (play piano / electric guitar w/ keyboard), text-to-speech, TensorFlow-based skeletal tracker, and a game emulator.
-
-These experiments are mostly dormant and commented-out, but have made for some interesting demos in the past and may be re-enabled in the future.
-
 ## Getting Started
+
+**NOTE: If you wish to host your own network (or room) you DO NOT HAVE TO DO this, and can instead go [https://speaker.app/setup/network/create](https://speaker.app/setup/network/create) and create your own network!**
+
+**The following is ONLY if you wish to host the entire infrastructure yourself.**
 
 ### Dependencies
 
@@ -116,19 +133,6 @@ These experiments are mostly dormant and commented-out, but have made for some i
 
 - Node.js 12+
 
-### What's in the Box
-
-**Frontend**:  Built with [create-react-app](https://github.com/facebook/create-react-app); state is managed with multiple Providers and accessible via useContext hooks.
-
-**Backend:** Node.js app, using [Socket.io](https://github.com/socketio/socket.io) and [Express](https://github.com/expressjs/express).  Cluster module is utilized to utilize multiple CPUs and a Redis store is utilize to scale Socket.io across the CPUs.
-
-**MongoDB**: Network details (name, host, number of participants) are stored in [MongoDB](https://github.com/mongodb/mongo).  When in development mode, [Mongo Express](https://github.com/mongo-express/mongo-express) is available at http://localhost:8081, and provides a web-based administrative interface.
-
-**Let's Encrypt**: Free SSL certificates are managed via the [linuxserver.io/docker-swag Docker](https://github.com/linuxserver/docker-swag) image.
-
-**dev-ssl-proxy**: In development, a [self-signed SSL proxy](https://github.com/zenOSmosis/docker-dev-ssl-proxy) is utilized in replacement of Let's Encrypt, to enable local development with SSL turned on (cam / mic / other HTML5-related APIs require SSL by default).
-
-**Coturn**: A [STUN / TURN server](https://github.com/zenOSmosis/docker-coturn) for WebRTC NAT traversal is included in the Docker Compose configuration, but is not enabled by default.
 
 ### Building and Running
 
