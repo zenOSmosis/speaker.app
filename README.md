@@ -1,6 +1,8 @@
-[![GPL-3.0 License](https://img.shields.io/github/license/zenosmosis/speaker.app)](https://raw.githubusercontent.com/zenOSmosis/speaker.app/master/LICENSE.txt)
+[![GPL-3.0 License][license-image]][license-url]
 [![ci][ci-image]][ci-url]
 
+[license-image]: https://img.shields.io/github/license/zenosmosis/speaker.app
+[license-url]: https://raw.githubusercontent.com/zenOSmosis/speaker.app/master/LICENSE.txt
 [ci-image]: https://github.com/zenosmosis/speaker.app/actions/workflows/ci.yml/badge.svg
 [ci-url]: https://github.com/zenOSmosis/speaker.app/actions
 
