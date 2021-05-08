@@ -14,7 +14,7 @@ echo "Installing to frontend" \
   && cd ../frontend.web \
   && npm install ${PHANTOM_CORE_PACKAGE}
   
-# IMPORTANT: Shared directory installs in development folder only
+# IMPORTANT: Shared directory installs as development package only
 echo "Installing to shared" \
   && cd ../shared \
   && npm install -D ${PHANTOM_CORE_PACKAGE}
