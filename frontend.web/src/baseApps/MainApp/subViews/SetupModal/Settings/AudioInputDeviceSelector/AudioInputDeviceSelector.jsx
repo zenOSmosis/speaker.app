@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import ButtonTransparent from "@components/ButtonTransparent";
 import Center from "@components/Center";
-import Layout, { Content, Footer } from "@components/Layout";
+import Layout, { Header, Content, Footer } from "@components/Layout";
 import LabeledSwitch from "@components/labeled/LabeledSwitch";
+import Full from "@components/Full";
 
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 
@@ -10,6 +11,7 @@ import styles from "./AudioInputDeviceSelector.module.css";
 
 export default function AudioInputDeviceSelector() {
   const [mediaDevices, setMediaDevices] = useState([]);
+  const [mediaDevicesError, setMediaDevicesError] = useState(null);
 
   const {
     fetchMediaInputDevices,
@@ -24,63 +26,95 @@ export default function AudioInputDeviceSelector() {
   } = useInputMediaDevicesContext();
 
   useEffect(() => {
-    fetchMediaInputDevices().then((mediaDevices) =>
-      setMediaDevices(mediaDevices.filter(({ kind }) => kind === "audioinput"))
-    );
+    fetchMediaInputDevices()
+      .then(mediaDevices =>
+        setMediaDevices(
+          mediaDevices.filter(({ kind }) => kind === "audioinput")
+        )
+      )
+      .catch(err => {
+        console.error(err);
+
+        setMediaDevicesError(err);
+      });
   }, [fetchMediaInputDevices]);
 
   // TODO: After clicking on button, show view where echo cancellation / noise reduction can be used
 
+  if (mediaDevicesError) {
+    return (
+      <Center style={{ fontWeight: "bold" }}>
+        Cannot obtain media devices. Do you have permissions blocked to access
+        them?
+      </Center>
+    );
+  }
+
   return (
-    <Layout className={styles["audio-input-device-selector"]}>
-      <Content>
-        <Center canOverflow={true}>
-          {mediaDevices.map((device, idx) => (
-            <div key={idx} className={styles["button-wrap"]}>
-              <ButtonTransparent
-                style={{ width: "100%", height: "100%" }}
-                onClick={() => setDefaultAudioInputDevice(device)}
-              >
-                <div>Kind: {device.kind}</div>
+    <Full style={{ padding: 8 }}>
+      <Layout>
+        <Header style={{ textAlign: "left" }}>
+          <h1>Default Audio Input Device</h1>
+          <p>Choose default audio device when starting new calls.</p>
+          <p>
+            Default audio device selection may not persist accurately when
+            starting new sessions.
+          </p>
+        </Header>
+        <Content>
+          <Layout className={styles["audio-input-device-selector"]}>
+            <Content>
+              <Center canOverflow={true}>
+                {mediaDevices.map((device, idx) => (
+                  <div key={idx} className={styles["button-wrap"]}>
+                    <ButtonTransparent
+                      style={{ width: "100%", height: "100%" }}
+                      onClick={() => setDefaultAudioInputDevice(device)}
+                    >
+                      <div>Kind: {device.kind}</div>
 
-                <div>Label: {device.label}</div>
+                      <div>Label: {device.label}</div>
 
-                {!defaultAudioInputDevice && idx === 0 ? (
-                  <div className={styles["selected-triangle"]} />
-                ) : (
-                  defaultAudioInputDevice &&
-                  defaultAudioInputDevice.deviceId === device.deviceId && (
-                    <div className={styles["selected-triangle"]} />
-                  )
-                )}
-              </ButtonTransparent>
-            </div>
-          ))}
-        </Center>
-      </Content>
-      <Footer style={{ backgroundColor: "rgba(0,0,0,.2)", padding: 8 }}>
-        <div style={{ display: "inline-block" }}>
-          <div className="note" style={{ marginBottom: 8 }}>
-            Audio quality adjustments
-          </div>
-          <LabeledSwitch
-            masterLabel="Noise Suppression"
-            isOn={defaultIsAudioNoiseSuppression}
-            onChange={setDefaultIsAudioNoiseSuppression}
-          />
-          <LabeledSwitch
-            masterLabel="Echo Cancellation"
-            isOn={defaultIsAudioEchoCancellation}
-            onChange={setDefaultIsAudioEchoCancellation}
-          />
-          <LabeledSwitch
-            masterLabel="Auto Gain Control"
-            isOn={defaultIsAudioAutoGainControl}
-            onChange={setDefaultIsAudioAutoGainControl}
-          />
-        </div>
-      </Footer>
-    </Layout>
+                      {!defaultAudioInputDevice && idx === 0 ? (
+                        <div className={styles["selected-triangle"]} />
+                      ) : (
+                        defaultAudioInputDevice &&
+                        defaultAudioInputDevice.deviceId ===
+                          device.deviceId && (
+                          <div className={styles["selected-triangle"]} />
+                        )
+                      )}
+                    </ButtonTransparent>
+                  </div>
+                ))}
+              </Center>
+            </Content>
+            <Footer style={{ backgroundColor: "rgba(0,0,0,.2)", padding: 8 }}>
+              <div style={{ display: "inline-block" }}>
+                <div className="note" style={{ marginBottom: 8 }}>
+                  Audio quality adjustments
+                </div>
+                <LabeledSwitch
+                  masterLabel="Noise Suppression"
+                  isOn={defaultIsAudioNoiseSuppression}
+                  onChange={setDefaultIsAudioNoiseSuppression}
+                />
+                <LabeledSwitch
+                  masterLabel="Echo Cancellation"
+                  isOn={defaultIsAudioEchoCancellation}
+                  onChange={setDefaultIsAudioEchoCancellation}
+                />
+                <LabeledSwitch
+                  masterLabel="Auto Gain Control"
+                  isOn={defaultIsAudioAutoGainControl}
+                  onChange={setDefaultIsAudioAutoGainControl}
+                />
+              </div>
+            </Footer>
+          </Layout>
+        </Content>
+      </Layout>
+    </Full>
   );
 }
 
