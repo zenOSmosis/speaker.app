@@ -50,7 +50,7 @@ export default class TranscoderZenRTCManager extends PhantomCore {
     // TODO: Document why we want to destroy instead of retain it as a
     // singleton
     if (_instance) {
-      console.warn(`Destroying previous ${this.getClassName()} instance`);
+      this.log.warn(`Destroying previous ${this.getClassName()} instance`);
 
       _instance.destroy();
     }
@@ -295,7 +295,7 @@ export default class TranscoderZenRTCManager extends PhantomCore {
             const otherPeers = transcoderZenRTCPeer.getOtherThreadInstances();
 
             // TODO: Remove
-            console.log("incoming stream track added", {
+            this.log.debug("incoming stream track added", {
               data,
               otherPeers,
             });
@@ -320,7 +320,7 @@ export default class TranscoderZenRTCManager extends PhantomCore {
           async data => {
             const otherPeers = transcoderZenRTCPeer.getOtherThreadInstances();
 
-            console.log("incoming stream track removed", {
+            this.log.debug("incoming stream track removed", {
               data,
               otherPeers,
             });

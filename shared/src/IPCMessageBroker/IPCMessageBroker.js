@@ -53,7 +53,7 @@ export default class IPCMessageBroker extends PhantomCore {
    */
   async receiveMessage(message) {
     // TODO: use class logger
-    console.debug("receiveMessage", {
+    this.log.debug("receiveMessage", {
       message,
       from: this._socketIoIdFrom || (message && message.socketIoIdFrom),
     });

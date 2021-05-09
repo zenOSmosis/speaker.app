@@ -37,7 +37,7 @@ export default class BackendIPCMessageBroker extends IPCMessageBroker {
     }
 
     // TODO: Use class-level logger
-    console.log(
+    this.log.debug(
       `${this.constructor.name} proxying message from ${socketIoIdFrom} to ${socketIoIdTo}`
     );
 
