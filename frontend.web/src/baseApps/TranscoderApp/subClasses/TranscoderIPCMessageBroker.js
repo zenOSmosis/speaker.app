@@ -13,7 +13,7 @@ export default class TranscoderIPCMessageBroker extends IPCMessageBroker {
   }
 
   sendMessage(data) {
-    console.log("sending message", {
+    this.log.debug("sending message", {
       data,
       to: this._initiatorSocketIoId,
     });

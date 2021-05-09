@@ -56,7 +56,7 @@ export default class TranscoderZenRTCPeer extends ZenRTCPeer {
 
     // TODO: Move to TranscoderZenRTCManager
     if (TranscoderZenRTCPeer.getInstances().length > MAX_INSTANCES) {
-      console.warn("Too many instances");
+      this.log.warn("Too many instances");
 
       // TODO: Keep this like this?
       this.connect = () => null;

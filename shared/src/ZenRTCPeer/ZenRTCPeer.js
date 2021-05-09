@@ -206,7 +206,7 @@ export default class ZenRTCPeer extends PhantomCore {
 
     _instances[socketIoId] = this;
 
-    console.log(
+    this.log.debug(
       `Constructing new ${
         this.constructor.name
       } with socketIoId "${socketIoId}" as "${
@@ -241,21 +241,21 @@ export default class ZenRTCPeer extends PhantomCore {
     (() => {
       this.on(EVT_CONNECTED, () => {
         // TODO: Remove
-        console.debug(`${this.getClassName()} connected`);
+        this.log.debug(`${this.getClassName()} connected`);
 
         this._connectionStartTime = getUnixTime();
       });
 
       this.on(EVT_DISCONNECTED, () => {
         // TODO: Remove
-        console.debug(`${this.getClassName()} disconnected`);
+        this.log.debug(`${this.getClassName()} disconnected`);
 
         this._connectionStartTime = 0;
       });
     })();
 
     /** @see https://github.com/feross/simple-peer */
-    this._simplePeer = null;
+    this._webrtcPeer = null;
 
     // TODO: This is just an experiment with sending available CPU cores across the wire
     // Either make addCapability accept an optional value, or handle this differently
@@ -511,17 +511,19 @@ export default class ZenRTCPeer extends PhantomCore {
       // FIXME: This should probably throw, however on Firefox if clicking
       // connect button multiple times while mic prompt is active, it will
       // trigger this
-      console.warn(
+      this.log.warn(
         `Cannot start a new ${this.getClassName()} connection after the class instance has been destroyed`
       );
       return;
     }
 
-    if (this._simplePeer) {
-      console.warn(`${this.getClassName()} is already connected or connecting`);
+    if (this._webrtcPeer) {
+      this.log.warn(
+        `${this.getClassName()} is already connected or connecting`
+      );
       return;
     } else {
-      this._simplePeer = null;
+      this._webrtcPeer = null;
 
       this.emit(EVT_CONNECTING);
 
@@ -579,7 +581,7 @@ export default class ZenRTCPeer extends PhantomCore {
 
           // TODO: Remove
           /*
-          console.log({
+          this.log.debug({
             offer: sdpTransform.parse(sdp),
             socketIoId: this.getSocketIoId(),
           });
@@ -594,21 +596,21 @@ export default class ZenRTCPeer extends PhantomCore {
         objectMode: true,
       };
 
-      console.debug(
+      this.log.debug(
         `${this.getClassName()} is instantiating as ${
           this._isInitiator ? "initiator" : "guest"
         }`
       );
 
       /** @see https://github.com/feross/simple-peer */
-      this._simplePeer = new WebRTCPeer(simplePeerOptions);
+      this._webrtcPeer = new WebRTCPeer(simplePeerOptions);
 
       // TODO: Build out
       // TODO: Send up ipcMessageBroker
       /** @see https://github.com/feross/simple-peer#error-codes */
-      this._simplePeer.on("error", async err => {
+      this._webrtcPeer.on("error", async err => {
         // TODO: Debug error and determine if we need to try to reconnect
-        console.warn("Caught WebRTCPeer error", err);
+        this.log.warn("Caught WebRTCPeer error", err);
 
         /*
         if (this._isInitiator && this._shouldAutoReconnect) {
@@ -618,10 +620,10 @@ export default class ZenRTCPeer extends PhantomCore {
       });
 
       // Handle outgoing WebRTC signaling
-      this._simplePeer.on("signal", data => this.sendZenRTCSignal(data));
+      this._webrtcPeer.on("signal", data => this.sendZenRTCSignal(data));
 
       // Handle WebRTC connect
-      this._simplePeer.on("connect", () => {
+      this._webrtcPeer.on("connect", () => {
         this._isConnected = true;
         this._connectTime = getUnixTime();
 
@@ -629,7 +631,7 @@ export default class ZenRTCPeer extends PhantomCore {
       });
 
       // Handle WebRTC disconnect
-      this._simplePeer.on("close", async () => {
+      this._webrtcPeer.on("close", async () => {
         // IMPORTANT: _isConnected is set in destroy handler (do not set it
         // here)
 
@@ -639,18 +641,16 @@ export default class ZenRTCPeer extends PhantomCore {
           return this._reconnect();
         }
 
-        // TODO: Remove
-        console.log("DISCONNECT");
-        console.log("stack", new Error().stack);
+        this.log.debug("webrtc-peer disconnected");
 
         this.destroy();
       });
 
       // TODO: Remove; For automated reconnection testing
-      // setTimeout(() => this._simplePeer && this._simplePeer.destroy(), 5000);
+      // setTimeout(() => this._webrtcPeer && this._webrtcPeer.destroy(), 5000);
 
       // Handle incoming MediaStreamTrack from remote peer
-      this._simplePeer.on("track", (mediaStreamTrack, mediaStream) => {
+      this._webrtcPeer.on("track", (mediaStreamTrack, mediaStream) => {
         // NOTE (jh): This timeout seems to improve an issue w/ iOS 14
         // sometimes disconnecting when tracks are added
         setTimeout(() => {
@@ -658,7 +658,7 @@ export default class ZenRTCPeer extends PhantomCore {
         }, 500);
       });
 
-      this._simplePeer.on("data", data => {
+      this._webrtcPeer.on("data", data => {
         this.emit(EVT_DATA_RECEIVED, data);
       });
 
@@ -680,9 +680,9 @@ export default class ZenRTCPeer extends PhantomCore {
     // NOTE (jh): It is intentional that this check comes after the previous
     // sleep promise
     if (!this._isDestroyed) {
-      this._simplePeer = null;
+      this._webrtcPeer = null;
 
-      console.debug("Trying to reconnect");
+      this.log.debug("Trying to reconnect");
 
       const ret = this.connect(...this._reconnectArgs);
 
@@ -724,7 +724,7 @@ export default class ZenRTCPeer extends PhantomCore {
     capabilities,
     // offerConstraints,
   }) {
-    if (this._simplePeer) {
+    if (this._webrtcPeer) {
       for (const name of capabilities) {
         this._addRemoteCapability(name);
       }
@@ -732,9 +732,9 @@ export default class ZenRTCPeer extends PhantomCore {
       signal.sdp = this._handleSdpAnswerTransform(signal.sdp);
 
       try {
-        this._simplePeer.signal(signal);
+        this._webrtcPeer.signal(signal);
       } catch (err) {
-        console.warn("Caught", err);
+        this.log.warn("Caught", err);
       }
 
       this._sdpAnswer = signal.sdp;
@@ -840,8 +840,8 @@ export default class ZenRTCPeer extends PhantomCore {
   async addOutgoingMediaStreamTrack(mediaStreamTrack, mediaStream) {
     // TODO: Verify mediaStream doesn't have more than one of the given track type, already (if it does, replace it?)
 
-    if (!this._simplePeer) {
-      console.warn("WebRTCPeer is not open");
+    if (!this._webrtcPeer) {
+      this.log.warn("WebRTCPeer is not open");
       return;
     }
 
@@ -859,7 +859,7 @@ export default class ZenRTCPeer extends PhantomCore {
       //
       // NOTE (jh): As of Sept. 12, 2020, this isn't a Promise, but I'm treating
       // it as one because that's more in-line with WebRTC spec
-      await this._simplePeer.addTrack(mediaStreamTrack, mediaStream);
+      await this._webrtcPeer.addTrack(mediaStreamTrack, mediaStream);
 
       // FIXME: Firefox 86 doesn't listen to "ended" event, and the
       // functionality has to be monkeypatched into the onended handler. Note
@@ -871,7 +871,7 @@ export default class ZenRTCPeer extends PhantomCore {
           oEnded(...args);
         }
 
-        console.debug(
+        this.log.debug(
           "Automatically removing ended media stream track",
           mediaStreamTrack
         );
@@ -886,7 +886,7 @@ export default class ZenRTCPeer extends PhantomCore {
 
       this.emit(EVT_UPDATED);
     } catch (err) {
-      console.warn("Caught error in addOutgoingMediaStreamTrack", err);
+      this.log.warn("Caught error in addOutgoingMediaStreamTrack", err);
     }
   }
 
@@ -898,16 +898,16 @@ export default class ZenRTCPeer extends PhantomCore {
    * @return {Promise<void>}
    */
   async removeOutgoingMediaStreamTrack(mediaStreamTrack, mediaStream) {
-    if (!this._simplePeer) {
-      console.warn("WebRTCPeer is not open");
+    if (!this._webrtcPeer) {
+      this.log.warn("WebRTCPeer is not open");
       return;
     }
 
     try {
       // Unpublish track
-      await this._simplePeer.removeTrack(mediaStreamTrack, mediaStream);
+      await this._webrtcPeer.removeTrack(mediaStreamTrack, mediaStream);
     } catch (err) {
-      console.warn("Caught", err);
+      this.log.warn("Caught", err);
     }
 
     // Remove local representation of stream
@@ -1004,14 +1004,14 @@ export default class ZenRTCPeer extends PhantomCore {
 
     if (
       this._isConnected &&
-      this._simplePeer &&
+      this._webrtcPeer &&
       // Simple-peer utilizes a single data channel
       //
       // Also
       // @see https://github.com/feross/simple-peer/issues/480
       // InvalidStateError: RTCDataChannel.readyState is not 'open'
-      this._simplePeer._channel &&
-      this._simplePeer._channel.readyState === "open"
+      this._webrtcPeer._channel &&
+      this._webrtcPeer._channel.readyState === "open"
     ) {
       // Serialize objects for transport
       if (typeof data === "object") {
@@ -1019,14 +1019,16 @@ export default class ZenRTCPeer extends PhantomCore {
       }
 
       try {
-        this._simplePeer.send(data);
+        this._webrtcPeer.send(data);
 
         return true;
       } catch (err) {
-        console.warn("Caught", err);
+        this.log.warn("Caught", err);
       }
     } else {
-      console.warn("Data channel is not open.  Retrying data send after open.");
+      this.log.warn(
+        "Data channel is not open.  Retrying data send after open."
+      );
 
       // Allow a grace period before trying to retry data send
       await sleep(2000);
@@ -1088,7 +1090,7 @@ export default class ZenRTCPeer extends PhantomCore {
           );
 
           if (!mediaStream) {
-            console.warn(
+            this.log.warn(
               `Could not locate incoming MediaStream with id "${msid}"`
             );
           } else {
@@ -1109,7 +1111,7 @@ export default class ZenRTCPeer extends PhantomCore {
 
       case SYNC_EVT_DEBUG:
         // TODO: Change implementation, however necessary
-        console.log(
+        this.log.debug(
           JSON.stringify({
             SYNC_EVT_DEBUG: {
               eventName,
@@ -1165,18 +1167,18 @@ export default class ZenRTCPeer extends PhantomCore {
         return;
       }
 
-      if (this._simplePeer) {
+      if (this._webrtcPeer) {
         this.emitSyncEvent(SYNC_EVT_BYE);
 
         // Give message some time to get delivered
         await new Promise(resolve => setTimeout(resolve, 100));
 
         // Check again because the peer may have been destroyed during the async period
-        if (this._simplePeer) {
+        if (this._webrtcPeer) {
           /** @see https://github.com/feross/simple-peer#peerdestroyerr */
-          this._simplePeer.destroy();
+          this._webrtcPeer.destroy();
 
-          this._simplePeer = null;
+          this._webrtcPeer = null;
         }
       }
 
