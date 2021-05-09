@@ -627,7 +627,18 @@ export default class ZenRTCPeer extends PhantomCore {
         this._isConnected = true;
         this._connectTime = getUnixTime();
 
-        this.emit(EVT_CONNECTED);
+        // Apply timeout to ensure stability of connection before emitting
+        // EVT_CONNECTED
+        //
+        // FIXME: Perhaps a better approach is to ensure we've finished all
+        // current negotiations?  Would changing webrtcPeer's "connect" event
+        // timing be better, instead?
+        setTimeout(() => {
+          // Check if still connected before emitting EVT_CONNECTED
+          if (this._isConnected) {
+            this.emit(EVT_CONNECTED);
+          }
+        }, 1000);
       });
 
       // Handle WebRTC disconnect
