@@ -632,7 +632,9 @@ export default class ZenRTCPeer extends PhantomCore {
         //
         // FIXME: Perhaps a better approach is to ensure we've finished all
         // current negotiations?  Would changing webrtcPeer's "connect" event
-        // timing be better, instead?
+        // timing be better, instead?  Perhaps we should wait until the main
+        // DataChannel has established before emitting this, or at least
+        // determining it is established before we can call this.send().
         setTimeout(() => {
           // Check if still connected before emitting EVT_CONNECTED
           if (this._isConnected) {
