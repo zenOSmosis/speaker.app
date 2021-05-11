@@ -1135,7 +1135,7 @@ export default class ZenRTCPeer extends PhantomCore {
    * @return {Promise<void>}
    */
   async disconnect() {
-    this.destroy();
+    return this.destroy();
   }
 
   /**
