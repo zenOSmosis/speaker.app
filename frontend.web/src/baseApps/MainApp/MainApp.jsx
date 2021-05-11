@@ -10,7 +10,7 @@ import IDCard from "@components/IDCard";
 
 import AppLayout from "./subViews/AppLayout";
 
-import WebZenRTCPeer, { EVT_DESTROYED } from "@src/WebZenRTCPeer";
+import WebZenRTCPeer, { EVT_DISCONNECTED } from "@src/WebZenRTCPeer";
 
 import SplitAppMessageBusProvider, {
   ROLE_MAIN_APP,
@@ -234,7 +234,7 @@ function useTieIns() {
         // Kill mic on disconnect
         //
         // TODO: Add any other stream disconnects here
-        zenRTCPeer.once(EVT_DESTROYED, () => {
+        zenRTCPeer.once(EVT_DISCONNECTED, () => {
           controller.destroy();
 
           setIsMuted(true);
