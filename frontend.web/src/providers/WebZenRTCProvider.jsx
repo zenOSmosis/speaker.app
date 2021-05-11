@@ -9,6 +9,7 @@ import WebZenRTCPeer, {
   EVT_CONNECTING,
   EVT_CONNECTED,
   EVT_DISCONNECTED,
+  EVT_DESTROYED,
   EVT_UPDATED,
   EVT_OUTGOING_MEDIA_STREAM_TRACK_ADDED,
   EVT_OUTGOING_MEDIA_STREAM_TRACK_REMOVED,
@@ -44,15 +45,11 @@ export default function WebZenRTCProvider({
     []
   );
 
-  const [
-    incomingAudioMediaStreamTracks,
-    _setIncomingAudioMediaStreamTracks,
-  ] = useState([]);
+  const [incomingAudioMediaStreamTracks, _setIncomingAudioMediaStreamTracks] =
+    useState([]);
 
-  const [
-    incomingVideoMediaStreamTracks,
-    _setIncomingVideoMediaStreamTracks,
-  ] = useState([]);
+  const [incomingVideoMediaStreamTracks, _setIncomingVideoMediaStreamTracks] =
+    useState([]);
 
   const [latency, setLatency] = useState(0);
 
@@ -69,14 +66,10 @@ export default function WebZenRTCProvider({
   const [outgoingMediaStreamTracks, _setOutgoingMediaStreamTracks] = useState(
     []
   );
-  const [
-    outgoingAudioMediaStreamTracks,
-    _setOutgoingAudioMediaStreamTracks,
-  ] = useState([]);
-  const [
-    outgoingVideoMediaStreamTracks,
-    _setOutgoingVideoMediaStreamTracks,
-  ] = useState([]);
+  const [outgoingAudioMediaStreamTracks, _setOutgoingAudioMediaStreamTracks] =
+    useState([]);
+  const [outgoingVideoMediaStreamTracks, _setOutgoingVideoMediaStreamTracks] =
+    useState([]);
 
   const isSocketIoConnected = socket && socket.connected;
 
@@ -140,19 +133,27 @@ export default function WebZenRTCProvider({
             _setIsZenRTCConnected(true);
           });
 
-          // Handle cleanup
-          zenRTCPeer.on(EVT_DISCONNECTED, () => {
+          const _handleDisconnected = () => {
             _setIsZenRTCConnecting(false);
             _setIsZenRTCConnected(false);
 
             // Remove incoming tracks
             _setIncomingMediaStreamTracks([]);
+          };
 
+          zenRTCPeer.on(EVT_DISCONNECTED, _handleDisconnected);
+
+          // Handle cleanup
+          zenRTCPeer.on(EVT_DESTROYED, () => {
+            _handleDisconnected();
+
+            // Clear hook zenRTC instance
             _setZenRTCPeer(null);
           });
 
           const _handleOutgoingMediaStreamTrackAddRemove = () => {
-            const outgoingMediaStreamTracks = zenRTCPeer.getOutgoingMediaStreamTracks();
+            const outgoingMediaStreamTracks =
+              zenRTCPeer.getOutgoingMediaStreamTracks();
 
             _setOutgoingMediaStreamTracks(outgoingMediaStreamTracks);
 
@@ -179,7 +180,8 @@ export default function WebZenRTCProvider({
           _handleOutgoingMediaStreamTrackAddRemove();
 
           const _handleIncomingMediaStreamTrackAddRemove = () => {
-            const incomingMediaStreamTracks = zenRTCPeer.getIncomingMediaStreamTracks();
+            const incomingMediaStreamTracks =
+              zenRTCPeer.getIncomingMediaStreamTracks();
             _setIncomingMediaStreamTracks(incomingMediaStreamTracks);
 
             _setIncomingAudioMediaStreamTracks(

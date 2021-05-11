@@ -632,8 +632,8 @@ export default class ZenRTCPeer extends PhantomCore {
 
       // Handle WebRTC disconnect
       this._webrtcPeer.on("close", async () => {
-        // IMPORTANT: _isConnected is set in destroy handler (do not set it
-        // here)
+        this._isConnected = false;
+        this.emit(EVT_DISCONNECTED);
 
         // Provide automated re-connect mechanism, if this is the initiator and
         // we've closed before we expected

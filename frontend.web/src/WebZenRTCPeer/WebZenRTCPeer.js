@@ -1,4 +1,3 @@
-import { EVT_DESTROYED } from "phantom-core";
 import ZenRTCPeer, {
   EVT_UPDATED,
   EVT_CONNECTING,
@@ -13,6 +12,7 @@ import ZenRTCPeer, {
   EVT_SDP_OFFERED,
   EVT_SDP_ANSWERED,
   EVT_ZENRTC_SIGNAL,
+  EVT_DESTROYED,
 } from "@shared/ZenRTCPeer";
 import WebIPCMessageBroker, {
   EVT_MESSAGE_RECEIVED,
@@ -32,6 +32,7 @@ export {
   EVT_SDP_OFFERED,
   EVT_SDP_ANSWERED,
   EVT_ZENRTC_SIGNAL,
+  EVT_DESTROYED,
 };
 
 // IMPORTANT: Not to be used w/ transcoder peer
