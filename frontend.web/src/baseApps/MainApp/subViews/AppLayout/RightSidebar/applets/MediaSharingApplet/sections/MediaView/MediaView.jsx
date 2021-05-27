@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import Section from "@components/Section";
-import { MediaStreamTrackAudioLevelVUMeter } from "@components/VUMeter";
+import { AudioMediaStreamTrackLevelVUMeter } from "@components/VUMeter";
 // import MediaStreamAudioController from "@shared/audio/MediaStreamAudioController";
 import LED from "@components/LED";
 import { Video } from "@components/AV";
@@ -84,7 +84,7 @@ export default function MediaView() {
           // TODO: Pipe audio streams here
         }
         {getAudioMediaStreamTracks().map((mediaStreamTrack, idx) => (
-          <MediaStreamTrackAudioLevelVUMeter
+          <AudioMediaStreamTrackLevelVUMeter
             key={idx}
             mediaStreamTrack={mediaStreamTrack}
           />

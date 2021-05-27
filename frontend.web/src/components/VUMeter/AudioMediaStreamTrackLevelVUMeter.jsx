@@ -7,7 +7,7 @@ import {
 
 const { EVT_AUDIO_LEVEL_TICK } = MediaStreamTrackAudioLevelMonitorEvents;
 
-export default function MediaStreamTrackAudioLevelVUMeter({
+export default function AudioMediaStreamTrackLevelVUMeter({
   mediaStreamTrack,
   ...rest
 }) {

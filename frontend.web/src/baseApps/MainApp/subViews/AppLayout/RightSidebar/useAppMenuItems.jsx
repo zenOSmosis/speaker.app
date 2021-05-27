@@ -54,7 +54,7 @@ import {
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 
-import { MediaStreamTrackAudioLevelMeter } from "@components/AudioLevelMeter";
+import { AudioMediaStreamTrackLevelMeter } from "@components/AudioLevelMeter";
 
 // import Center from "@components/Center";
 import useLocalProfileContext from "@hooks/useLocalProfileContext";
@@ -73,10 +73,8 @@ export default function useAppMenuItems() {
   } = useZenRTCContext();
   */
 
-  const {
-    avatarURL: profileAvatarURL,
-    name: profileName,
-  } = useLocalProfileContext();
+  const { avatarURL: profileAvatarURL, name: profileName } =
+    useLocalProfileContext();
 
   const {
     realmId,
@@ -225,7 +223,7 @@ export default function useAppMenuItems() {
             {
               // TODO: Use outgoing mic audio level
             }
-            <MediaStreamTrackAudioLevelMeter
+            <AudioMediaStreamTrackLevelMeter
               mediaStreamTrack={
                 // TODO: Make this more efficient
                 micAudioController &&
@@ -349,7 +347,7 @@ export default function useAppMenuItems() {
         ]
           .filter(({ kind }) => kind === "audio")
           .map((mediaStreamTrack, idx) => (
-            <MediaStreamTrackAudioLevelMeter
+            <AudioMediaStreamTrackLevelMeter
               key={idx}
               mediaStreamTrack={mediaStreamTrack}
               style={{ height: 40, width: 10, marginBottom: 4 }}
@@ -360,7 +358,7 @@ export default function useAppMenuItems() {
           <div>
             <div>
               {!mediaStreamTrackViews.length ? (
-                <MediaStreamTrackAudioLevelMeter
+                <AudioMediaStreamTrackLevelMeter
                   style={{ height: 40, width: 10, marginBottom: 4 }}
                   mediaStreamTrack={null}
                 />

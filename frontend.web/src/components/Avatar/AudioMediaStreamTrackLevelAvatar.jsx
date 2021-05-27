@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from "react";
-import AudioLevelMeter from "./AudioLevelMeter";
+import Avatar from "../Avatar";
+
 import {
   MediaStreamTrackAudioLevelMonitor,
   MediaStreamTrackAudioLevelMonitorEvents,
 } from "media-stream-track-controller";
 
+import getPercentColor from "@shared/string/getPercentColor";
+
 const { EVT_AUDIO_LEVEL_TICK } = MediaStreamTrackAudioLevelMonitorEvents;
 
-export default function MediaStreamTrackAudioLevelMeter({
+export default function AudioMediaStreamTrackLevelAvatar({
   mediaStreamTrack,
   ...rest
 }) {
-  const [percent, setPercent] = useState(0);
+  const [avatarEl, setAvatarEl] = useState(null);
 
   useEffect(() => {
-    if (mediaStreamTrack) {
+    if (avatarEl && mediaStreamTrack) {
       const mediaStreamMonitor = new MediaStreamTrackAudioLevelMonitor(
         mediaStreamTrack
       );
@@ -22,14 +25,14 @@ export default function MediaStreamTrackAudioLevelMeter({
       mediaStreamMonitor.on(EVT_AUDIO_LEVEL_TICK, ({ rms }) => {
         // FIXME: This is probably not supposed to be RMS, but it's close
         // enough for prototyping
-        setPercent(rms);
+        avatarEl.style.borderColor = getPercentColor(rms / 100 / 1.5);
       });
 
       return function unmount() {
         mediaStreamMonitor.destroy();
       };
     }
-  }, [mediaStreamTrack]);
+  }, [avatarEl, mediaStreamTrack]);
 
-  return <AudioLevelMeter percent={percent} {...rest} />;
+  return <Avatar {...rest} onEl={setAvatarEl} />;
 }

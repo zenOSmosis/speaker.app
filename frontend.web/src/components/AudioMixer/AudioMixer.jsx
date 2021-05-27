@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
-import { MediaStreamTrackAudioLevelMeter } from "../AudioLevelMeter";
+import { AudioMediaStreamTrackLevelMeter } from "../AudioLevelMeter";
 import styles from "./AudioMixer.module.css";
 import classNames from "classnames";
 
@@ -30,7 +30,7 @@ export default function AudioMixer({ channels }) {
           {
             channelName,
             isActive = true,
-            onChange = (data) => console.debug(data),
+            onChange = data => console.debug(data),
             volumeLevel,
             mediaStream,
             ...rest
@@ -87,7 +87,7 @@ function ChannelView({
         {mediaStream && (
           <React.Fragment>
             {mediaStream.getAudioTracks().map((audioTrack, idx) => (
-              <MediaStreamTrackAudioLevelMeter
+              <AudioMediaStreamTrackLevelMeter
                 key={idx}
                 mediaStreamTrack={audioTrack}
                 style={{ height: 60, width: 20 }}
@@ -107,7 +107,7 @@ function ChannelView({
       ></button>
       <Fader
         defaultLevel={volumeLevel}
-        onVolumeChange={(volumeLevel) => updateChannelData({ volumeLevel })}
+        onVolumeChange={volumeLevel => updateChannelData({ volumeLevel })}
       />
     </section>
   );
@@ -138,7 +138,7 @@ function Fader({ defaultLevel, onVolumeChange }) {
         type="range"
         min="0"
         max="100"
-        onChange={(evt) => onVolumeChange(parseInt(evt.target.value, 10))}
+        onChange={evt => onVolumeChange(parseInt(evt.target.value, 10))}
       />
     </React.Fragment>
   );

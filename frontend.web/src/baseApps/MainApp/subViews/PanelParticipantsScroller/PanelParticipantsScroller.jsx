@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 
-import { MediaStreamTrackAudioLevelAvatar } from "@components/Avatar";
+import { AudioMediaStreamTrackLevelAvatar } from "@components/Avatar";
 import Animation from "@components/Animation";
 import ButtonTransparent from "@components/ButtonTransparent";
 
@@ -60,10 +60,10 @@ function Participant({ participant, onClick }) {
     [participant]
   );
 
-  const handleClick = useCallback(() => onClick(participant), [
-    onClick,
-    participant,
-  ]);
+  const handleClick = useCallback(
+    () => onClick(participant),
+    [onClick, participant]
+  );
 
   return (
     <ButtonTransparent
@@ -75,7 +75,7 @@ function Participant({ participant, onClick }) {
       }}
     >
       <Animation animationName="flipInX">
-        <MediaStreamTrackAudioLevelAvatar
+        <AudioMediaStreamTrackLevelAvatar
           key={participant.socketIoId}
           mediaStreamTrack={audioMediaStreamTrack}
           src={participant.avatarURL}

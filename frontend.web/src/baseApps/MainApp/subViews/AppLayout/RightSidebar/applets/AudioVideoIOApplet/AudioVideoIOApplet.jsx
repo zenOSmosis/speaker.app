@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Layout, { Content, Footer } from "@components/Layout";
 import Section from "@components/Section";
-import { MediaStreamTrackAudioLevelMeter } from "@components/AudioLevelMeter";
+import { AudioMediaStreamTrackLevelMeter } from "@components/AudioLevelMeter";
 import { Video } from "@components/AV";
 import ButtonPanel from "@components/ButtonPanel";
 import AutoScaler from "@components/AutoScaler";
@@ -45,7 +45,7 @@ export default function AudioVideoIOApplet({
    * Applies audio / video / "both" filtering to the given list of MediaStreamTracks.
    */
   const filterTracks = useCallback(
-    (mediaStreamTracks) => {
+    mediaStreamTracks => {
       switch (displayFilterType) {
         case DISPLAY_FILTER_TYPE_AUDIO:
           return mediaStreamTracks.filter(({ kind }) => kind === "audio");
@@ -109,22 +109,17 @@ export default function AudioVideoIOApplet({
               ...filteredIncomingMediaStreamTracks,
             ].map((mediaStreamTrack, idx) => {
               // TODO: Memoize this
-              const mediaStream = zenRTCPeer.getTrackMediaStream(
-                mediaStreamTrack
-              );
+              const mediaStream =
+                zenRTCPeer.getTrackMediaStream(mediaStreamTrack);
 
               // TODO: Refactor
               if (mediaStreamTrack.kind === "audio") {
-                const {
-                  channelCount,
-                  deviceId,
-                  latency,
-                  sampleRate,
-                } = mediaStreamTrack.getSettings();
+                const { channelCount, deviceId, latency, sampleRate } =
+                  mediaStreamTrack.getSettings();
 
                 return (
                   <Section key={idx} style={{ overflow: "auto" }}>
-                    <MediaStreamTrackAudioLevelMeter
+                    <AudioMediaStreamTrackLevelMeter
                       mediaStreamTrack={mediaStreamTrack}
                       style={{
                         height: 150,

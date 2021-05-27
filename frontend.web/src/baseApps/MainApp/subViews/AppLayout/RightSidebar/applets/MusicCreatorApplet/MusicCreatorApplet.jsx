@@ -70,7 +70,7 @@ export default function MusicCreatorApplet({
 
   useKeyboardEvents({
     isEnabled: true,
-    onKeyDown: (keyCode) => {
+    onKeyDown: keyCode => {
       switch (keyCode) {
         case 49: // 1
         case 97: // Number pad 1
@@ -113,7 +113,7 @@ export default function MusicCreatorApplet({
           }
       }
     },
-    onKeyUp: (keyCode) => {
+    onKeyUp: keyCode => {
       if (!isSustain) {
         if (isZenRTCConnected) {
           const map = getMapWithKeyCode(keyCode);
@@ -142,7 +142,7 @@ export default function MusicCreatorApplet({
             <h1>Lead Instrument</h1>
 
             <div>
-              <select onChange={(evt) => setInstrumentId(evt.target.value)}>
+              <select onChange={evt => setInstrumentId(evt.target.value)}>
                 {stringedInstruments.map(({ name, id }, idx) => (
                   <option key={idx} value={id}>
                     {name}
@@ -215,7 +215,7 @@ export default function MusicCreatorApplet({
             <div style={{ margin: 10 }}>
               <button
                 onClick={() =>
-                  setIsSpringyOctaveEnabled((isEnabled) => !isEnabled)
+                  setIsSpringyOctaveEnabled(isEnabled => !isEnabled)
                 }
               >
                 Springy Octave <SpringIcon />{" "}
@@ -278,7 +278,7 @@ export default function MusicCreatorApplet({
         {[...outgoingMediaStreamTracks, ...incomingMediaStreamTracks]
           .filter(({ kind }) => kind === "audio")
           .map((mediaStreamTrack, idx) => (
-            <MediaStreamTrackAudioLevelMeter
+            <AudioMediaStreamTrackLevelMeter
               key={idx}
               mediaStreamTrack={mediaStreamTrack}
               style={{ height: 50, width: 10 }}
