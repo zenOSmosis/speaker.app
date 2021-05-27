@@ -1,7 +1,10 @@
 import { useCallback } from "react";
+
+/*
 import MediaStreamAudioController, {
   EVT_UPDATED,
 } from "@shared/audio/MediaStreamAudioController";
+*/
 
 import useForceUpdate from "@hooks/useForceUpdate";
 
@@ -13,11 +16,12 @@ const DEFAULT_AUDIO_CONSTRAINTS = {
   sampleSize: 16,
 };
 
-export default function useMediaStreamAudioController() {
+export default function useAudioMediaStreamTrackController() {
   /**
    * @param {string} deviceId
    * @return {MediaStreamAudioController | void}
    */
+  /*
   const getAudioControllerWithDeviceId = useCallback((deviceId) => {
     const audioController = MediaStreamAudioController.getControllerWithDeviceId(
       deviceId
@@ -25,14 +29,17 @@ export default function useMediaStreamAudioController() {
 
     return audioController;
   }, []);
+  */
 
   /**
    * @return {MediaStreamAudioController[]}
    */
+  /*
   const getAudioControllers = useCallback(
     () => MediaStreamAudioController.getAudioControllerInstances(),
     []
   );
+  */
 
   const forceUpdate = useForceUpdate();
 
@@ -40,8 +47,9 @@ export default function useMediaStreamAudioController() {
    * @param {Object} audioConstraints? [optional; default = {}]
    * @return {Promise<MediaStreamAudioController>}
    */
+  /*
   const captureAudioMedia = useCallback(
-    async (audioConstraints) => {
+    async audioConstraints => {
       const mergedAudioConstraints = {
         ...DEFAULT_AUDIO_CONSTRAINTS,
         ...audioConstraints,
@@ -62,10 +70,11 @@ export default function useMediaStreamAudioController() {
     },
     [forceUpdate]
   );
+  */
 
   return {
-    getAudioControllers,
-    getAudioControllerWithDeviceId,
-    captureAudioMedia,
+    // getAudioControllers,
+    // getAudioControllerWithDeviceId,
+    // captureAudioMedia,
   };
 }

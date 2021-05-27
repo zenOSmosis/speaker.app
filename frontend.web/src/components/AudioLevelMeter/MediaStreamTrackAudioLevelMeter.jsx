@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import AudioLevelMeter from "./AudioLevelMeter";
-import MediaStreamTrackAudioLevelMonitor, {
-  EVT_AUDIO_LEVEL_TICK,
-} from "@shared/audio/MediaStreamTrackAudioLevelMonitor";
+import {
+  MediaStreamTrackAudioLevelMonitor,
+  MediaStreamTrackAudioLevelMonitorEvents,
+} from "media-stream-track-controller";
+
+const { EVT_AUDIO_LEVEL_TICK } = MediaStreamTrackAudioLevelMonitorEvents;
 
 export default function MediaStreamTrackAudioLevelMeter({
   mediaStreamTrack,

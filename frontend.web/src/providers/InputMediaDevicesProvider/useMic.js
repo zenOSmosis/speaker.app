@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { EVT_DESTROYED } from "@shared/audio/MediaStreamAudioController";
-import useMediaStreamAudioController from "./useMediaStreamAudioController";
+// import { EVT_DESTROYED } from "@shared/audio/MediaStreamAudioController";
+// import useMediaStreamAudioController from "./useMediaStreamAudioController";
 
 export default function useMic({
   defaultAudioInputDevice,
@@ -23,15 +23,18 @@ export default function useMic({
         setMicAudioController(null);
       };
 
-      micAudioController.once(EVT_DESTROYED, _handleMicControllerDestroyed);
-
+      // TODO: Reimplement
+      // micAudioController.once(EVT_DESTROYED, _handleMicControllerDestroyed);
+      /*
       return function unmount() {
         micAudioController.off(EVT_DESTROYED, _handleMicControllerDestroyed);
       };
+      */
     }
   }, [micAudioController]);
 
-  const { captureAudioMedia } = useMediaStreamAudioController();
+  // TODO: Reimplement
+  // const { captureAudioMedia } = useMediaStreamAudioController();
 
   /**
    * @param {Object} audioConstraints? [optional; default = {}] These get
@@ -59,14 +62,13 @@ export default function useMic({
         return;
       }
 
-      const newMicAudioController = await captureAudioMedia(audioConstraints);
-
-      setMicAudioController(newMicAudioController);
-
-      return newMicAudioController;
+      // TODO: Reimplement
+      // const newMicAudioController = await captureAudioMedia(audioConstraints);
+      // setMicAudioController(newMicAudioController);
+      // return newMicAudioController;
     },
     [
-      captureAudioMedia,
+      // captureAudioMedia,
       micAudioController,
       defaultAudioInputDevice,
       defaultIsAudioEchoCancellation,
@@ -84,9 +86,10 @@ export default function useMic({
     }
   }, [micAudioController]);
 
-  const isMicStarted = useMemo(() => Boolean(micAudioController), [
-    micAudioController,
-  ]);
+  const isMicStarted = useMemo(
+    () => Boolean(micAudioController),
+    [micAudioController]
+  );
 
   return {
     startMic,

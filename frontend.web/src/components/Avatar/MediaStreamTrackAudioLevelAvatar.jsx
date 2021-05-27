@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Avatar from "../Avatar";
 
-import MediaStreamTrackAudioLevelMonitor, {
-  EVT_AUDIO_LEVEL_TICK,
-} from "@shared/audio/MediaStreamTrackAudioLevelMonitor";
+import {
+  MediaStreamTrackAudioLevelMonitor,
+  MediaStreamTrackAudioLevelMonitorEvents,
+} from "media-stream-track-controller";
+
 import getPercentColor from "@shared/string/getPercentColor";
+
+const { EVT_AUDIO_LEVEL_TICK } = MediaStreamTrackAudioLevelMonitorEvents;
 
 export default function MediaStreamTrackAudioLevelAvatar({
   mediaStreamTrack,

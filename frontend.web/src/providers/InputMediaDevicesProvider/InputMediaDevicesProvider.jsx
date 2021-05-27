@@ -1,7 +1,7 @@
 import React, { createContext, useCallback } from "react";
 
 import useAudioDeviceDefaults from "./useAudioDeviceDefaults";
-import useMediaStreamAudioController from "./useMediaStreamAudioController";
+import useAudioMediaStreamTrackController from "./useAudioMediaStreamTrackController";
 import useMic from "./useMic";
 import useScreenCapture from "./useScreenCapture";
 
@@ -60,13 +60,13 @@ export default function InputMediaDevicesProvider({ children }) {
       devices = await fetchDevices();
 
       // ... then turn off the mic
-      tempMediaStream.getTracks().forEach((track) => track.stop());
+      tempMediaStream.getTracks().forEach(track => track.stop());
     }
 
     return devices;
   }, []);
 
-  const { captureAudioMedia } = useMediaStreamAudioController();
+  const { captureAudioMedia } = useAudioMediaStreamTrackController();
 
   const {
     isScreenSharingSupported,
