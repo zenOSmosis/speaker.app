@@ -15,6 +15,7 @@
     "howler": "^2.2.1",
     "jsnes": "^1.1.0",
     "lodash": "^4.17.21",
+    "media-stream-track-controller": "github:zenosmosis/media-stream-track-controller",
     "normalize.css": "^8.0.1",
     "phantom-core": "github:zenosmosis/phantom-core",
     "preload-it": "^1.4.0",
