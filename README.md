@@ -26,7 +26,7 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
   - [Architecture Overview](#architecture-overview)
     - [Conventional WebRTC Network Topologies](#conventional-webrtc-network-topologies)
     - [Speaker.app Peer-Based Network Topology](#speakerapp-peer-based-network-topology)
-    - [Inspiration to Create this Project](#inspiration-to-create-this-project)
+  - [Inspiration to Create this Project](#inspiration-to-create-this-project)
   - [Getting Started](#getting-started)
     - [Dependencies](#dependencies)
     - [Building and Running](#building-and-running)
@@ -107,7 +107,7 @@ Speaker.app is able to provide a quasi-decentralized MCU / SFU by enabling clien
 Network hosting has also been tested on non-optimal hardware (i.e. 2018 Samsung J2; Intel i3) with adequate results for streaming 4K video streams to 4 participants.  Good hardware such as the new Apple M1 processor allows much greater yields, and better scalability.*
 
 
-### Inspiration to Create this Project
+## Inspiration to Create this Project
 
 *TLDR; Experimentation.*
 
