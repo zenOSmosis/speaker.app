@@ -12,9 +12,9 @@ export default function useAudioDeviceDefaults() {
   const cachedDefaults = useMemo(
     () =>
       getItem(KEY_LOCAL_AUDIO_DEFAULTS) || {
-        defaultIsAudioNoiseSuppression: true,
-        defaultIsAudioEchoCancellation: true,
-        defaultIsAudioAutoGainControl: true,
+        defaultAudioNoiseSuppression: true,
+        defaultAudioEchoCancellation: true,
+        defaultAudioAutoGainControl: true,
       },
     [getItem]
   );
@@ -22,66 +22,64 @@ export default function useAudioDeviceDefaults() {
   const [
     {
       defaultAudioInputDevice,
-      defaultIsAudioNoiseSuppression,
-      defaultIsAudioEchoCancellation,
-      defaultIsAudioAutoGainControl,
+      defaultAudioNoiseSuppression,
+      defaultAudioEchoCancellation,
+      defaultAudioAutoGainControl,
     },
     setObjectState,
   ] = useObjectState({
     defaultAudioInputDevice: null,
-    defaultIsAudioNoiseSuppression:
-      cachedDefaults.defaultIsAudioNoiseSuppression,
-    defaultIsAudioEchoCancellation:
-      cachedDefaults.defaultIsAudioEchoCancellation,
-    defaultIsAudioAutoGainControl: cachedDefaults.defaultIsAudioAutoGainControl,
+    defaultAudioNoiseSuppression: cachedDefaults.defaultAudioNoiseSuppression,
+    defaultAudioEchoCancellation: cachedDefaults.defaultAudioEchoCancellation,
+    defaultAudioAutoGainControl: cachedDefaults.defaultAudioAutoGainControl,
   });
 
   // Write back changed values to local storage cache
   useEffect(() => {
     setItem(KEY_LOCAL_AUDIO_DEFAULTS, {
-      defaultIsAudioNoiseSuppression,
-      defaultIsAudioEchoCancellation,
-      defaultIsAudioAutoGainControl,
+      defaultAudioNoiseSuppression,
+      defaultAudioEchoCancellation,
+      defaultAudioAutoGainControl,
     });
   }, [
     setItem,
-    defaultIsAudioNoiseSuppression,
-    defaultIsAudioEchoCancellation,
-    defaultIsAudioAutoGainControl,
+    defaultAudioNoiseSuppression,
+    defaultAudioEchoCancellation,
+    defaultAudioAutoGainControl,
   ]);
 
   const setDefaultAudioInputDevice = useCallback(
-    (defaultAudioInputDevice) => {
-      setObjectState((prev) => ({ ...prev, ...{ defaultAudioInputDevice } }));
+    defaultAudioInputDevice => {
+      setObjectState(prev => ({ ...prev, ...{ defaultAudioInputDevice } }));
     },
     [setObjectState]
   );
 
-  const setDefaultIsAudioNoiseSuppression = useCallback(
-    (defaultIsAudioNoiseSuppression) => {
-      setObjectState((prev) => ({
+  const setDefaultAudioNoiseSuppression = useCallback(
+    defaultAudioNoiseSuppression => {
+      setObjectState(prev => ({
         ...prev,
-        ...{ defaultIsAudioNoiseSuppression },
+        ...{ defaultAudioNoiseSuppression },
       }));
     },
     [setObjectState]
   );
 
-  const setDefaultIsAudioEchoCancellation = useCallback(
-    (defaultIsAudioEchoCancellation) => {
-      setObjectState((prev) => ({
+  const setDefaultAudioEchoCancellation = useCallback(
+    defaultAudioEchoCancellation => {
+      setObjectState(prev => ({
         ...prev,
-        ...{ defaultIsAudioEchoCancellation },
+        ...{ defaultAudioEchoCancellation },
       }));
     },
     [setObjectState]
   );
 
-  const setDefaultIsAudioAutoGainControl = useCallback(
-    (defaultIsAudioAutoGainControl) => {
-      setObjectState((prev) => ({
+  const setDefaultAudioAutoGainControl = useCallback(
+    defaultAudioAutoGainControl => {
+      setObjectState(prev => ({
         ...prev,
-        ...{ defaultIsAudioAutoGainControl },
+        ...{ defaultAudioAutoGainControl },
       }));
     },
     [setObjectState]
@@ -91,13 +89,13 @@ export default function useAudioDeviceDefaults() {
     defaultAudioInputDevice,
     setDefaultAudioInputDevice,
 
-    defaultIsAudioNoiseSuppression,
-    setDefaultIsAudioNoiseSuppression,
+    defaultAudioNoiseSuppression,
+    setDefaultAudioNoiseSuppression,
 
-    defaultIsAudioEchoCancellation,
-    setDefaultIsAudioEchoCancellation,
+    defaultAudioEchoCancellation,
+    setDefaultAudioEchoCancellation,
 
-    defaultIsAudioAutoGainControl,
-    setDefaultIsAudioAutoGainControl,
+    defaultAudioAutoGainControl,
+    setDefaultAudioAutoGainControl,
   };
 }

@@ -17,12 +17,12 @@ export default function AudioInputDeviceSelector() {
     fetchMediaInputDevices,
     defaultAudioInputDevice,
     setDefaultAudioInputDevice,
-    defaultIsAudioNoiseSuppression,
-    setDefaultIsAudioNoiseSuppression,
-    defaultIsAudioEchoCancellation,
-    setDefaultIsAudioEchoCancellation,
-    defaultIsAudioAutoGainControl,
-    setDefaultIsAudioAutoGainControl,
+    defaultAudioNoiseSuppression,
+    setDefaultAudioNoiseSuppression,
+    defaultAudioEchoCancellation,
+    setDefaultAudioEchoCancellation,
+    defaultAudioAutoGainControl,
+    setDefaultAudioAutoGainControl,
   } = useInputMediaDevicesContext();
 
   useEffect(() => {
@@ -96,18 +96,18 @@ export default function AudioInputDeviceSelector() {
                 </div>
                 <LabeledSwitch
                   masterLabel="Noise Suppression"
-                  isOn={defaultIsAudioNoiseSuppression}
-                  onChange={setDefaultIsAudioNoiseSuppression}
+                  isOn={defaultAudioNoiseSuppression}
+                  onChange={setDefaultAudioNoiseSuppression}
                 />
                 <LabeledSwitch
                   masterLabel="Echo Cancellation"
-                  isOn={defaultIsAudioEchoCancellation}
-                  onChange={setDefaultIsAudioEchoCancellation}
+                  isOn={defaultAudioEchoCancellation}
+                  onChange={setDefaultAudioEchoCancellation}
                 />
                 <LabeledSwitch
                   masterLabel="Auto Gain Control"
-                  isOn={defaultIsAudioAutoGainControl}
-                  onChange={setDefaultIsAudioAutoGainControl}
+                  isOn={defaultAudioAutoGainControl}
+                  onChange={setDefaultAudioAutoGainControl}
                 />
               </div>
             </Footer>

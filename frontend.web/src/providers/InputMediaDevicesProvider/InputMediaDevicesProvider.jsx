@@ -11,12 +11,12 @@ export default function InputMediaDevicesProvider({ children }) {
   const {
     defaultAudioInputDevice,
     setDefaultAudioInputDevice,
-    defaultIsAudioNoiseSuppression,
-    setDefaultIsAudioNoiseSuppression,
-    defaultIsAudioEchoCancellation,
-    setDefaultIsAudioEchoCancellation,
-    defaultIsAudioAutoGainControl,
-    setDefaultIsAudioAutoGainControl,
+    defaultAudioNoiseSuppression,
+    setDefaultAudioNoiseSuppression,
+    defaultAudioEchoCancellation,
+    setDefaultAudioEchoCancellation,
+    defaultAudioAutoGainControl,
+    setDefaultAudioAutoGainControl,
   } = useAudioDeviceDefaults();
 
   const {
@@ -29,9 +29,9 @@ export default function InputMediaDevicesProvider({ children }) {
     setMicAudioController,
   } = useMic({
     defaultAudioInputDevice,
-    defaultIsAudioNoiseSuppression,
-    defaultIsAudioEchoCancellation,
-    defaultIsAudioAutoGainControl,
+    defaultAudioNoiseSuppression,
+    defaultAudioEchoCancellation,
+    defaultAudioAutoGainControl,
   });
 
   /**
@@ -101,12 +101,12 @@ export default function InputMediaDevicesProvider({ children }) {
       value={{
         defaultAudioInputDevice,
         setDefaultAudioInputDevice,
-        defaultIsAudioNoiseSuppression,
-        setDefaultIsAudioNoiseSuppression,
-        defaultIsAudioEchoCancellation,
-        setDefaultIsAudioEchoCancellation,
-        defaultIsAudioAutoGainControl,
-        setDefaultIsAudioAutoGainControl,
+        defaultAudioNoiseSuppression,
+        setDefaultAudioNoiseSuppression,
+        defaultAudioEchoCancellation,
+        setDefaultAudioEchoCancellation,
+        defaultAudioAutoGainControl,
+        setDefaultAudioAutoGainControl,
         startMic,
         stopMic,
         hasUIMicPermission,

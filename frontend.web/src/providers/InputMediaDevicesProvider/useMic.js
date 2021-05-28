@@ -4,9 +4,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function useMic({
   defaultAudioInputDevice,
-  defaultIsAudioNoiseSuppression,
-  defaultIsAudioEchoCancellation,
-  defaultIsAudioAutoGainControl,
+  defaultAudioNoiseSuppression,
+  defaultAudioEchoCancellation,
+  defaultAudioAutoGainControl,
 }) {
   const [micAudioController, setMicAudioController] = useState(null);
   const [hasUIMicPermission, setHasUIMicPermission] = useState(true);
@@ -47,9 +47,9 @@ export default function useMic({
         audioConstraints = {
           ...audioConstraints,
           ...{
-            echoCancellation: defaultIsAudioEchoCancellation,
-            noiseSuppression: defaultIsAudioNoiseSuppression,
-            autoGainControl: defaultIsAudioAutoGainControl,
+            echoCancellation: defaultAudioEchoCancellation,
+            noiseSuppression: defaultAudioNoiseSuppression,
+            autoGainControl: defaultAudioAutoGainControl,
             deviceId: {
               exact: defaultAudioInputDevice.deviceId,
             },
@@ -71,9 +71,9 @@ export default function useMic({
       // captureAudioMedia,
       micAudioController,
       defaultAudioInputDevice,
-      defaultIsAudioEchoCancellation,
-      defaultIsAudioNoiseSuppression,
-      defaultIsAudioAutoGainControl,
+      defaultAudioEchoCancellation,
+      defaultAudioNoiseSuppression,
+      defaultAudioAutoGainControl,
     ]
   );
 
