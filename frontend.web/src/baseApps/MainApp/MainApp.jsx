@@ -46,8 +46,11 @@ import SetupModal, { PROFILE_TAB } from "@baseApps/MainApp/subViews/SetupModal";
 
 import sleep from "@shared/sleep";
 
-// import { EVT_UPDATED } from "@shared/audio/MediaStreamAudioController";
 import { ROUTE_HOME, ROUTE_SETUP_PROFILE } from "./routes";
+
+import { MediaStreamTrackControllerEvents } from "media-stream-track-controller";
+
+const { EVT_UPDATED } = MediaStreamTrackControllerEvents;
 
 export default function MainApp() {
   const handleOpenProfile = useCallback(
@@ -218,8 +221,6 @@ function useTieIns() {
 
         const controller = micAudioController || newMicAudioController;
 
-        // TODO: Reimplement
-        /*
         controller.on(EVT_UPDATED, () => {
           const newMuted = controller.getIsMuted();
 
@@ -227,7 +228,6 @@ function useTieIns() {
             setIsMuted(newMuted);
           }
         });
-        */
 
         // Perform initial sync
         setIsMuted(controller.getIsMuted());
