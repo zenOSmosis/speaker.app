@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { utils } from "media-stream-track-controller";
+
+const { captureDeviceMedia } = utils;
 // import { EVT_DESTROYED } from "@shared/audio/MediaStreamAudioController";
 // import useMediaStreamAudioController from "./useMediaStreamAudioController";
 
@@ -62,13 +65,13 @@ export default function useMic({
         return;
       }
 
-      // TODO: Reimplement
-      // const newMicAudioController = await captureAudioMedia(audioConstraints);
-      // setMicAudioController(newMicAudioController);
-      // return newMicAudioController;
+      const newMicAudioController = await captureDeviceMedia(audioConstraints);
+
+      setMicAudioController(newMicAudioController);
+      return newMicAudioController;
     },
     [
-      // captureAudioMedia,
+      captureDeviceMedia,
       micAudioController,
       defaultAudioInputDevice,
       defaultAudioEchoCancellation,

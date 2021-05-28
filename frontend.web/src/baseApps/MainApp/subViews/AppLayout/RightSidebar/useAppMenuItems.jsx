@@ -224,11 +224,16 @@ export default function useAppMenuItems() {
               // TODO: Use outgoing mic audio level
             }
             <AudioMediaStreamTrackLevelMeter
-              mediaStreamTrack={
-                // TODO: Make this more efficient
-                micAudioController &&
-                micAudioController.getOutputMediaStream().getAudioTracks()[0]
-              }
+              mediaStreamTrack={(() => {
+                const mediaStream =
+                  micAudioController &&
+                  micAudioController.getOutputMediaStream();
+
+                if (mediaStream) {
+                  // TODO: Make this more efficient
+                  return mediaStream.getAudioTracks()[0];
+                }
+              })()}
               style={{
                 marginLeft: 7,
                 height: 40,

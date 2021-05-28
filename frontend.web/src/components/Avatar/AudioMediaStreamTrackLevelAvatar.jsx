@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import Avatar from "../Avatar";
 
 import {
-  MediaStreamTrackAudioLevelMonitor,
-  MediaStreamTrackAudioLevelMonitorEvents,
+  AudioMediaStreamTrackLevelMonitor,
+  AudioMediaStreamTrackLevelMonitorEvents,
 } from "media-stream-track-controller";
 
 import getPercentColor from "@shared/string/getPercentColor";
 
-const { EVT_AUDIO_LEVEL_TICK } = MediaStreamTrackAudioLevelMonitorEvents;
+const { EVT_AUDIO_LEVEL_TICK } = AudioMediaStreamTrackLevelMonitorEvents;
 
 export default function AudioMediaStreamTrackLevelAvatar({
   mediaStreamTrack,
@@ -18,7 +18,7 @@ export default function AudioMediaStreamTrackLevelAvatar({
 
   useEffect(() => {
     if (avatarEl && mediaStreamTrack) {
-      const mediaStreamMonitor = new MediaStreamTrackAudioLevelMonitor(
+      const mediaStreamMonitor = new AudioMediaStreamTrackLevelMonitor(
         mediaStreamTrack
       );
 

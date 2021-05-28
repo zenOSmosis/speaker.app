@@ -234,6 +234,9 @@ function useTieIns() {
 
         const mediaStream = controller && controller.getOutputMediaStream();
 
+        // TODO: Remove
+        console.log({ mediaStream });
+
         // Kill mic on disconnect
         //
         // TODO: Add any other stream disconnects here
