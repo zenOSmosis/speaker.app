@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@tensorflow-models/posenet": "^2.2.2",
-    "@tensorflow/tfjs": "^3.6.0",
     "anchorme": "^2.1.2",
     "animate.css": "^4.1.1",
     "classnames": "^2.3.1",
@@ -13,7 +11,6 @@
     "fabric": "^4.5.0",
     "flat": "^5.0.2",
     "howler": "^2.2.1",
-    "jsnes": "^1.1.0",
     "lodash": "^4.17.21",
     "media-stream-track-controller": "github:zenosmosis/media-stream-track-controller",
     "normalize.css": "^8.0.1",
