@@ -221,6 +221,7 @@ function useTieIns() {
 
         const controller = micAudioController || newMicAudioController;
 
+        // This makes the UI immediately update when the mic is muted / unmuted
         controller.on(EVT_UPDATED, () => {
           const newMuted = controller.getIsMuted();
 
@@ -233,9 +234,6 @@ function useTieIns() {
         setIsMuted(controller.getIsMuted());
 
         const mediaStream = controller && controller.getOutputMediaStream();
-
-        // TODO: Remove
-        console.log({ mediaStream });
 
         // Kill mic on disconnect
         //
