@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { utils } from "media-stream-track-controller";
+import {
+  MediaStreamTrackControllerEvents,
+  utils,
+} from "media-stream-track-controller";
 
+const { EVT_DESTROYED } = MediaStreamTrackControllerEvents;
 const { captureDeviceMedia } = utils;
-// import { EVT_DESTROYED } from "@shared/audio/MediaStreamAudioController";
-// import useMediaStreamAudioController from "./useMediaStreamAudioController";
 
 export default function useMic({
   defaultAudioInputDevice,
@@ -26,18 +28,13 @@ export default function useMic({
         setMicAudioController(null);
       };
 
-      // TODO: Reimplement
-      // micAudioController.once(EVT_DESTROYED, _handleMicControllerDestroyed);
-      /*
+      micAudioController.once(EVT_DESTROYED, _handleMicControllerDestroyed);
+
       return function unmount() {
         micAudioController.off(EVT_DESTROYED, _handleMicControllerDestroyed);
       };
-      */
     }
   }, [micAudioController]);
-
-  // TODO: Reimplement
-  // const { captureAudioMedia } = useMediaStreamAudioController();
 
   /**
    * @param {Object} audioConstraints? [optional; default = {}] These get
@@ -71,7 +68,6 @@ export default function useMic({
       return newMicAudioController;
     },
     [
-      captureDeviceMedia,
       micAudioController,
       defaultAudioInputDevice,
       defaultAudioEchoCancellation,
