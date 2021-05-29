@@ -221,14 +221,33 @@ function useTieIns() {
 
         const controller = micAudioController || newMicAudioController;
 
-        // This makes the UI immediately update when the mic is muted / unmuted
-        controller.on(EVT_UPDATED, () => {
-          const newMuted = controller.getIsMuted();
+        if (newMicAudioController) {
+          // This makes the UI immediately update when the mic is muted / unmuted
+          controller.on(EVT_UPDATED, () => {
+            const newMuted = controller.getIsMuted();
 
-          if (newMuted !== getIsMuted()) {
-            setIsMuted(newMuted);
-          }
-        });
+            /**
+             * TODO: Fix this
+             *
+             * For some reason, this is being called twice, rapidly, with the
+             * first value being undefined. When debugging the controller
+             * itself, it doesn't seem to be emitting EVT_UPDATED rapidly
+             * twice, so I'm not sure how this is being called. Furthermore,
+             * I've also checked the underlying controller._isMuted property
+             * and uuid, and the _isMuted property shows undefined on the first
+             * round as well and includes the same uuid.
+             *
+             * This entire block needs refactoring so maybe that will fix it.
+             */
+            if (newMuted === undefined) {
+              return;
+            }
+
+            if (newMuted !== getIsMuted()) {
+              setIsMuted(newMuted);
+            }
+          });
+        }
 
         // Perform initial sync
         setIsMuted(controller.getIsMuted());
