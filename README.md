@@ -131,11 +131,11 @@ Wanting to continue pursuing the effort of a script-able WebRTC bridge using a w
 - Bash (Unix shell) _If running the included Bash build scripts_
 - Docker
 - Docker Compose
+- 1024 MB RAM if not running the Coturn server on the same server; 2048 MB otherwise (less than 2048 MAY work but build times may be prolonged)
 
 **Development environments require**
 
 - Node.js 12+
-
 
 ### Building and Running
 
@@ -201,11 +201,11 @@ Source-code contributions and forks are welcome. [Open an issue](https://github.
 
 ### Invalid MongoDB Permissions (or some other missing environment variable)
 
-Refer to environment setup in [Building and Running](#building-and-running)
+Refer to environment setup in [Building and Running](#building-and-running).
 
 ### Invalid Elf header (farmhash)
 
-Related to scaling Socket.io across CPU cores. Make sure all npm installs are executed on the same platform as used during runtime. See https://github.com/lovell/farmhash/issues/21
+Related to scaling Socket.io across CPU cores. Make sure all npm installs are executed on the same platform as used during runtime. See https://github.com/lovell/farmhash/issues/21.
 
 ### Error: ENOSPC: System limit for number of file watchers reached
 
