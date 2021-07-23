@@ -28,7 +28,7 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
     - [Speaker.app Peer-Based Network Topology](#speakerapp-peer-based-network-topology)
   - [Inspiration to Create this Project](#inspiration-to-create-this-project)
   - [Getting Started](#getting-started)
-    - [Dependencies](#dependencies)
+    - [Dependencies / System Requirements](#dependencies--system-requirements)
     - [Building and Running](#building-and-running)
   - [Public Network Discovery / Private Networks](#public-network-discovery--private-networks)
   - [Testing](#testing)
@@ -124,7 +124,7 @@ Wanting to continue pursuing the effort of a script-able WebRTC bridge using a w
 
 **The following is ONLY if you wish to host the entire infrastructure yourself.**
 
-### Dependencies
+### Dependencies / System Requirements
 
 **All environments require**
 
@@ -136,6 +136,13 @@ Wanting to continue pursuing the effort of a script-able WebRTC bridge using a w
 **Development environments require**
 
 - Node.js 12+
+
+**Recommended system requirements**
+
+The following should get the system up and running, though additional resources may be required for higher traffic environments.  Presumably, these minimum requirements should host at least several dozen people concurrently before needing to add more RAM.
+
+- 2048 MB RAM (1048 MAY work if Coturn server is hosted separately)
+- Two CPU cores (one should work just fine for low traffic environments)
 
 ### Building and Running
 
