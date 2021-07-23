@@ -131,6 +131,7 @@ Wanting to continue pursuing the effort of a script-able WebRTC bridge using a w
 - Bash (Unix shell) _If running the included Bash build scripts_
 - Docker
 - Docker Compose
+- 1024 MB RAM if not running the Coturn server on the same server; 2048 MB otherwise (less than 2048 MAY work but build times may be prolonged)
 
 **Development environments require**
 
