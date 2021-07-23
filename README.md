@@ -139,6 +139,8 @@ Wanting to continue pursuing the effort of a script-able WebRTC bridge using a w
 
 ### Building and Running
 
+TODO: Add server minimum system requirements (i.e. 2048 mb RAM)
+
 Some Bash scripts have been provided to help facilitate the starting and stopping of the respective environments. It is recommended to use these scripts instead of calling the Docker commands directly, as they will provide supplemental environment variables as well as any additional build instructions.
 
 In development environments, most of the container volumes have a mount directly to the host so that the source code can be updated in the containers without rebuilding.  See the respective docker.compose*.yml configurations and corresponding Dockerfile files for more details.
@@ -201,11 +203,11 @@ Source-code contributions and forks are welcome. [Open an issue](https://github.
 
 ### Invalid MongoDB Permissions (or some other missing environment variable)
 
-Refer to environment setup in [Building and Running](#building-and-running)
+Refer to environment setup in [Building and Running](#building-and-running).
 
 ### Invalid Elf header (farmhash)
 
-Related to scaling Socket.io across CPU cores. Make sure all npm installs are executed on the same platform as used during runtime. See https://github.com/lovell/farmhash/issues/21
+Related to scaling Socket.io across CPU cores. Make sure all npm installs are executed on the same platform as used during runtime. See https://github.com/lovell/farmhash/issues/21.
 
 ### Error: ENOSPC: System limit for number of file watchers reached
 
