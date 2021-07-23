@@ -34,6 +34,7 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
   - [Testing](#testing)
   - [Contributing / Forking](#contributing--forking)
   - [Troubleshooting / Miscellaneous](#troubleshooting--miscellaneous)
+    - [Invalid MongoDB Permissions (or some other missing environment variable)](#invalid-mongodb-permissions-or-some-other-missing-environment-variable)
     - [Invalid Elf header (farmhash)](#invalid-elf-header-farmhash)
     - [Error: ENOSPC: System limit for number of file watchers reached](#error-enospc-system-limit-for-number-of-file-watchers-reached)
     - [Linux check CPU speed](#linux-check-cpu-speed)
@@ -197,6 +198,10 @@ Jest tests / Manual tests via BrowserStack
 Source-code contributions and forks are welcome. [Open an issue](https://github.com/zenOSmosis/speaker.app/issues) if something needs to be addressed.
 
 ## Troubleshooting / Miscellaneous
+
+### Invalid MongoDB Permissions (or some other missing environment variable)
+
+Refer to environment setup in [Building and Running](#building-and-running)
 
 ### Invalid Elf header (farmhash)
 
