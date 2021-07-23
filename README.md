@@ -131,15 +131,13 @@ Wanting to continue pursuing the effort of a script-able WebRTC bridge using a w
 - Bash (Unix shell) _If running the included Bash build scripts_
 - Docker
 - Docker Compose
+- 1024 MB RAM if not running the Coturn server on the same server; 2048 MB otherwise (less than 2048 MAY work but build times may be prolonged)
 
 **Development environments require**
 
 - Node.js 12+
 
-
 ### Building and Running
-
-TODO: Add server minimum system requirements (i.e. 2048 mb RAM)
 
 Some Bash scripts have been provided to help facilitate the starting and stopping of the respective environments. It is recommended to use these scripts instead of calling the Docker commands directly, as they will provide supplemental environment variables as well as any additional build instructions.
 
