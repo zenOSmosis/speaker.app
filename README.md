@@ -137,7 +137,7 @@ Wanting to continue pursuing the effort of a script-able WebRTC bridge using a w
 
 - Node.js 12+
 
-** Recommended system requirements **
+**Recommended system requirements**
 
 The following should get the system up and running, though additional resources may be required for higher traffic environments.  Presumably, these minimum requirements should host at least several dozen people concurrently before needing to add more RAM.
 
