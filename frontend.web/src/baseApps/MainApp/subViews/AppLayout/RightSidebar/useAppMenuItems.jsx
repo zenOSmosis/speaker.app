@@ -35,8 +35,8 @@ import InfoApplet from "./applets/InfoApplet";
 import ShareIcon from "@icons/ShareIcon";
 import ShareApplet from "./applets/ShareApplet";
 import Avatar from "@components/Avatar";
-import CustomizationApplet from "./applets/CustomizationApplet";
-import CustomizeIcon from "@icons/CustomizeIcon";
+// import CustomizationApplet from "./applets/CustomizationApplet";
+// import CustomizeIcon from "@icons/CustomizeIcon";
 // import SearchApplet from "./applets/SearchApplet";
 // import SearchIcon from "@icons/SearchIcon";
 import SettingsIcon from "@icons/SettingsIcon";
@@ -526,6 +526,8 @@ export default function useAppMenuItems() {
   );
   */
 
+  /*
+  // For background setting
   const menuItem__CustomizeApplet = useMemo(
     () => ({
       name: "Background",
@@ -542,6 +544,7 @@ export default function useAppMenuItems() {
     }),
     [isConnected]
   );
+  */
 
   /*
   const menuItem__SearchApplet = useMemo(
@@ -764,7 +767,7 @@ export default function useAppMenuItems() {
     // menuItem__MediaSharingApplet,
     // menuItem__TensorFlowApplet,
     menuItem__ChatApplet,
-    menuItem__CustomizeApplet,
+    // menuItem__CustomizeApplet,
     // menuItem__DrawApplet,
     // menuItem__SearchApplet,
     menuItem__SettingsApplet,
