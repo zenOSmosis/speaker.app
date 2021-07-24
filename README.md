@@ -103,9 +103,9 @@ Every participant connects to the Phantom Server via a P2P connection and Phanto
 
 Speaker.app is able to provide a quasi-decentralized MCU / SFU by enabling clients to run them in their own browsers, as a virtual machine.
 
-*At the time of writing the Chrome on the Apple M1 processor is by far the most efficient for doing browser-based streaming transcoding, compared to a variety of Intel processors which have been tested on, though development has mostly been done on Intel processors / Linux.  ARM is the future, it seems.
+_At the time of writing the Chrome on the Apple M1 processor is by far the most efficient for doing browser-based streaming transcoding, compared to a variety of Intel processors which have been tested on, though development has mostly been done on Intel processors / Linux.  ARM is the future, it seems._
 
-Network hosting has also been tested on non-optimal hardware (i.e. 2018 Samsung J2; Intel i3) with adequate results for streaming 4K video streams to 4 participants.  Good hardware such as the new Apple M1 processor allows much greater yields, and better scalability.*
+_Network hosting has also been tested on non-optimal hardware (i.e. 2018 Samsung J2; Intel i3) with adequate results for streaming 4K video streams to 4 participants.  Good hardware such as the new Apple M1 processor allows much greater yields, and better scalability._
 
 
 ## Inspiration to Create this Project
