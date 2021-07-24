@@ -17,4 +17,5 @@ jobs:
         with:
           ref: ${{ github.head_ref }} # Source branch of the pull request if the event that triggers the run is a pull_request
       - run: bash ./test.sh
-      - run: bash cp .env.sample .env && ./build.prod.sh
+      - run: cp .env.sample .env
+      - run: bash ./build.prod.sh
