@@ -835,7 +835,7 @@ export default class ZenRTCPeer extends PhantomCore {
    *
    * @param {MediaStreamTrack} mediaStreamTrack
    * @param {MediaStream} mediaStream
-   * @return {Promise<void>}
+   * @return {void}
    */
   async addOutgoingMediaStreamTrack(mediaStreamTrack, mediaStream) {
     // TODO: Verify mediaStream doesn't have more than one of the given track type, already (if it does, replace it?)
@@ -855,11 +855,7 @@ export default class ZenRTCPeer extends PhantomCore {
         this._outgoingMediaStreams
       );
 
-      // Publish track / information
-      //
-      // NOTE (jh): As of Sept. 12, 2020, this isn't a Promise, but I'm treating
-      // it as one because that's more in-line with WebRTC spec
-      await this._webrtcPeer.addTrack(mediaStreamTrack, mediaStream);
+      this._webrtcPeer.addTrack(mediaStreamTrack, mediaStream);
 
       // FIXME: Firefox 86 doesn't listen to "ended" event, and the
       // functionality has to be monkeypatched into the onended handler. Note
