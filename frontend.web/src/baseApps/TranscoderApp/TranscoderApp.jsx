@@ -48,7 +48,7 @@ function AppNetworkTranscoderView() {
       theme={THEME_DARKER}
       headerView={() => {
         return (
-          <div style={{ padding: 2 }}>
+          <nav style={{ padding: 2 }}>
             <SpeakerIcon
               style={{
                 color: "inherit",
@@ -71,7 +71,7 @@ function AppNetworkTranscoderView() {
                 </button>
               )}
             </div>
-          </div>
+          </nav>
         );
       }}
       footerView={
