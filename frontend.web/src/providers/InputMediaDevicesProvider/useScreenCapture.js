@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+// TODO: Use screen capture from media-stream-controller
 
 /**
  * Supports concurrent screen capturing of multiple streams.
@@ -67,7 +68,7 @@ export default function useScreenCapture() {
       const capturedTracks = mediaStream.getTracks();
       let remainingTracks = capturedTracks.length;
 
-      capturedTracks.forEach((track) => {
+      capturedTracks.forEach(track => {
         console.debug("starting track", track.id);
 
         // FIXME: Firefox 86 doesn't listen to "ended" event, and the
@@ -84,7 +85,7 @@ export default function useScreenCapture() {
 
           if (!remainingTracks) {
             // Unregister screen capture w/ list of streams
-            setScreenCaptureMediaStreams((prev) =>
+            setScreenCaptureMediaStreams(prev =>
               prev.filter(({ id }) => id !== mediaStream.id)
             );
           }
@@ -93,7 +94,7 @@ export default function useScreenCapture() {
     })();
 
     // Register screen capture w/ list of streams
-    setScreenCaptureMediaStreams((prev) => [...prev, mediaStream]);
+    setScreenCaptureMediaStreams(prev => [...prev, mediaStream]);
 
     return mediaStream;
   }, []);
@@ -107,12 +108,12 @@ export default function useScreenCapture() {
     (mediaStream = null) => {
       if (!mediaStream) {
         // Iterate through all screen captures, and stop those streams
-        return screenCaptureMediaStreams.forEach((stream) =>
+        return screenCaptureMediaStreams.forEach(stream =>
           stopScreenCapture(stream)
         );
       }
 
-      mediaStream.getTracks().forEach((track) => {
+      mediaStream.getTracks().forEach(track => {
         track.stop();
 
         // Dispatch "ended" event so that our auto-cleanup handler runs
@@ -122,9 +123,10 @@ export default function useScreenCapture() {
     [screenCaptureMediaStreams]
   );
 
-  const isScreenSharing = useMemo(() => screenCaptureMediaStreams.length > 0, [
-    screenCaptureMediaStreams,
-  ]);
+  const isScreenSharing = useMemo(
+    () => screenCaptureMediaStreams.length > 0,
+    [screenCaptureMediaStreams]
+  );
 
   /**
    * @return {Promise<void>}
