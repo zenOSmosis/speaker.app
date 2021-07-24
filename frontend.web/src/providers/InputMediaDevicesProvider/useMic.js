@@ -1,22 +1,32 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { EVT_DESTROYED } from "@shared/audio/MediaStreamAudioController";
-import useMediaStreamAudioController from "./useMediaStreamAudioController";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  MediaStreamTrackControllerEvents,
+  utils,
+} from "media-stream-track-controller";
+import { logger } from "phantom-core";
+
+const { EVT_DESTROYED } = MediaStreamTrackControllerEvents;
+const { captureDeviceMedia } = utils;
 
 export default function useMic({
   defaultAudioInputDevice,
-  defaultIsAudioNoiseSuppression,
-  defaultIsAudioEchoCancellation,
-  defaultIsAudioAutoGainControl,
+  defaultAudioNoiseSuppression,
+  defaultAudioEchoCancellation,
+  defaultAudioAutoGainControl,
 }) {
   const [micAudioController, setMicAudioController] = useState(null);
+
+  // FIXME: Should this really default to true?
   const [hasUIMicPermission, setHasUIMicPermission] = useState(true);
 
+  // Destruct mic controller if no UI mic permissions are available
   useEffect(() => {
     if (!hasUIMicPermission && micAudioController) {
       micAudioController.destroy();
     }
   }, [hasUIMicPermission, micAudioController]);
 
+  // Update hook state when mic controller is destructed
   useEffect(() => {
     if (micAudioController) {
       const _handleMicControllerDestroyed = () => {
@@ -31,22 +41,29 @@ export default function useMic({
     }
   }, [micAudioController]);
 
-  const { captureAudioMedia } = useMediaStreamAudioController();
+  const refIsMicStarting = useRef(false);
 
   /**
    * @param {Object} audioConstraints? [optional; default = {}] These get
    * merged into the audio constraints set in useMediaStreamAudioController.
-   * @return {Promise<MediaStreamAudioController>}
+   * @return {Promise<MediaStreamAudioController | void>}
    */
   const startMic = useCallback(
     async (audioConstraints = {}) => {
+      if (micAudioController || refIsMicStarting.current) {
+        console.warn("Microphone is already starting or has started");
+        return;
+      }
+
+      refIsMicStarting.current = true;
+
       if (defaultAudioInputDevice) {
         audioConstraints = {
           ...audioConstraints,
           ...{
-            echoCancellation: defaultIsAudioEchoCancellation,
-            noiseSuppression: defaultIsAudioNoiseSuppression,
-            autoGainControl: defaultIsAudioAutoGainControl,
+            echoCancellation: defaultAudioEchoCancellation,
+            noiseSuppression: defaultAudioNoiseSuppression,
+            autoGainControl: defaultAudioAutoGainControl,
             deviceId: {
               exact: defaultAudioInputDevice.deviceId,
             },
@@ -54,24 +71,27 @@ export default function useMic({
         };
       }
 
-      if (micAudioController) {
-        console.warn("Microphone is already started");
-        return;
+      try {
+        const newMicAudioController = await captureDeviceMedia(
+          audioConstraints
+        );
+
+        refIsMicStarting.current = false;
+
+        setMicAudioController(newMicAudioController);
+        return newMicAudioController;
+      } catch (err) {
+        logger.error(err);
+
+        refIsMicStarting.current = false;
       }
-
-      const newMicAudioController = await captureAudioMedia(audioConstraints);
-
-      setMicAudioController(newMicAudioController);
-
-      return newMicAudioController;
     },
     [
-      captureAudioMedia,
       micAudioController,
       defaultAudioInputDevice,
-      defaultIsAudioEchoCancellation,
-      defaultIsAudioNoiseSuppression,
-      defaultIsAudioAutoGainControl,
+      defaultAudioEchoCancellation,
+      defaultAudioNoiseSuppression,
+      defaultAudioAutoGainControl,
     ]
   );
 
@@ -84,9 +104,13 @@ export default function useMic({
     }
   }, [micAudioController]);
 
-  const isMicStarted = useMemo(() => Boolean(micAudioController), [
-    micAudioController,
-  ]);
+  /**
+   * @type {boolean}
+   */
+  const isMicStarted = useMemo(
+    () => Boolean(micAudioController),
+    [micAudioController]
+  );
 
   return {
     startMic,

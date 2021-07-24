@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import List, { ListItem } from "@components/List";
 import Section from "@components/Section";
 import LED from "@components/LED";
-import { MediaStreamTrackAudioLevelVUMeter } from "@components/VUMeter";
+import { AudioMediaStreamTrackLevelVUMeter } from "@components/VUMeter";
 import ReloadIcon from "@icons/ReloadIcon";
 
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
@@ -38,7 +38,7 @@ export default function MediaDevicesList({ displayFilterType, prefixLabel }) {
   // TODO: Use io context here
   const fetchMediaDevices = useCallback(() => {
     setIsFetchingMediaDevices(true);
-    fetchMediaInputDevices().then((mediaDevices) => {
+    fetchMediaInputDevices().then(mediaDevices => {
       // Filtered to displayFilterType
       const filteredMediaDevices = [];
 
@@ -127,7 +127,7 @@ export default function MediaDevicesList({ displayFilterType, prefixLabel }) {
             <h3>Physical</h3>
             <List>
               {mediaDevices
-                .filter((mediaDevice) => mediaDevice.kind.includes("input"))
+                .filter(mediaDevice => mediaDevice.kind.includes("input"))
                 .map((mediaDevice, idx) => {
                   const mediaController = getAudioControllerWithDeviceId(
                     mediaDevice.deviceId
@@ -230,7 +230,7 @@ export default function MediaDevicesList({ displayFilterType, prefixLabel }) {
                       {isAudio && (
                         <div style={{ textAlign: "center" }}>
                           {audioTracks.map((audioTrack, idx) => (
-                            <MediaStreamTrackAudioLevelVUMeter
+                            <AudioMediaStreamTrackLevelVUMeter
                               key={idx}
                               mediaStreamTrack={audioTrack}
                               style={{ marginTop: 22 }}
@@ -277,7 +277,7 @@ export default function MediaDevicesList({ displayFilterType, prefixLabel }) {
             <h2>{prefixLabel} Outputs</h2>
             <List>
               {mediaDevices
-                .filter((device) => device.kind.includes("output"))
+                .filter(device => device.kind.includes("output"))
                 .map((mediaDevice, idx) => {
                   return (
                     <ListItem key={idx}>

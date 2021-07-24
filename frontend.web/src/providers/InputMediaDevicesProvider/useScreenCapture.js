@@ -1,44 +1,66 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  MediaStreamTrackControllerEvents,
+  utils,
+} from "media-stream-track-controller";
+
+const { EVT_DESTROYED } = MediaStreamTrackControllerEvents;
 
 /**
  * Supports concurrent screen capturing of multiple streams.
  */
 export default function useScreenCapture() {
-  /** @type {MediaStream[]} */
-  const [screenCaptureMediaStreams, setScreenCaptureMediaStreams] = useState(
-    []
-  );
+  /** @type {MediaStreamTrackControllerFactory[]} */
+  const [
+    screenCaptureControllerFactories,
+    setScreenCaptureControllerFactories,
+  ] = useState([]);
+
+  // Auto-manage factory state registration on destruct
+  useEffect(() => {
+    const boundFactoryListeners = [];
+
+    screenCaptureControllerFactories.forEach(factory => {
+      const _handleFactoryDestruct = () => {
+        setScreenCaptureControllerFactories(prev =>
+          prev.filter(prevFactory => !Object.is(prevFactory, factory))
+        );
+      };
+
+      factory.once(EVT_DESTROYED, _handleFactoryDestruct);
+
+      boundFactoryListeners.push([factory, _handleFactoryDestruct]);
+    });
+
+    return function unmount() {
+      boundFactoryListeners.forEach(([factory, listener]) =>
+        factory.off(EVT_DESTROYED, listener)
+      );
+    };
+  }, [screenCaptureControllerFactories]);
 
   const [isScreenSharingSupported, setIsScreenSharingSupported] = useState(
-    navigator.mediaDevices &&
-      typeof navigator.mediaDevices.getDisplayMedia === "function"
+    utils.getIsScreenCaptureSupported()
   );
 
   /**
-   * @return {Promise<MediaStream}
+   * @return {Promise<MediaStreamTrackControllerFactory}
    */
   const startScreenCapture = useCallback(async () => {
-    let mediaStream;
+    let screenCaptureControllerFactory;
 
     try {
-      mediaStream = await navigator.mediaDevices.getDisplayMedia({
-        // TODO: Make these constraints configurable
-        video: {
-          cursor: "always",
-        },
-        audio: {
-          echoCancellation: false,
-          noiseSuppression: false,
-          autoGainControl: false,
-          sampleRate: 48000,
-          sampleSize: 16,
-          // Stereo
-          // channelCount: 2,
-        },
-      });
+      screenCaptureControllerFactory = await utils.captureScreen(
+        null,
+        // Dynamically give the factory an alias based on the number of the
+        // index it will be in the state array
+        `captureScreen-${screenCaptureControllerFactories.length}`
+      );
     } catch (err) {
       console.warn("Caught", err);
 
+      // TODO: The following MAY be resolved; test it
+      //
       // FIXME: Safari 14 (desktop / BrowserStack) throws "Unhandled Rejection
       // (InvalidAccessError): getDisplayMedia must be called from a user
       // gesture handler."
@@ -49,6 +71,7 @@ export default function useScreenCapture() {
         err.message ===
         "getDisplayMedia must be called from a user gesture handler."
       ) {
+        // TODO: Handle more gracefully
         alert(
           "There is currently an issue with trying to do screen sharing with Safari.  Please try from a different browser."
         );
@@ -57,74 +80,40 @@ export default function useScreenCapture() {
       return setIsScreenSharingSupported(false);
     }
 
-    /**
-     * Handle auto-cleanup once tracks have ended.
-     *
-     * This also directly takes into consideration if the screenshare was
-     * stopped directly by the native UI.
-     */
-    (() => {
-      const capturedTracks = mediaStream.getTracks();
-      let remainingTracks = capturedTracks.length;
-
-      capturedTracks.forEach((track) => {
-        console.debug("starting track", track.id);
-
-        // FIXME: Firefox 86 doesn't listen to "ended" event, and the
-        // functionality has to be monkeypatched into the onended
-        // handler.  Note that this still works in conjunction with
-        // track.dispatchEvent(new Event("ended")).
-        const oEnded = track.onended;
-        track.onended = (...args) => {
-          if (typeof oEnded === "function") {
-            oEnded(...args);
-          }
-
-          --remainingTracks;
-
-          if (!remainingTracks) {
-            // Unregister screen capture w/ list of streams
-            setScreenCaptureMediaStreams((prev) =>
-              prev.filter(({ id }) => id !== mediaStream.id)
-            );
-          }
-        };
-      });
-    })();
-
     // Register screen capture w/ list of streams
-    setScreenCaptureMediaStreams((prev) => [...prev, mediaStream]);
+    setScreenCaptureControllerFactories(prev => [
+      ...prev,
+      screenCaptureControllerFactory,
+    ]);
 
-    return mediaStream;
-  }, []);
+    return screenCaptureControllerFactory;
+  }, [screenCaptureControllerFactories]);
 
   /**
-   * @param {MediaStream} mediaStream? [optional] If no MediaStream is passed,
-   * it will stop all existing screen captures.
-   * @return {void}
+   * @param {MediaStreamTrackControllerFactory} mediaStreamTrackControllerFactory?
+   * [optional] If nothing is passed, all existing screen capture factories
+   * will be stopped.
+   * @return {Promise<void>}
    */
   const stopScreenCapture = useCallback(
-    (mediaStream = null) => {
-      if (!mediaStream) {
+    (screenCaptureControllerFactory = null) => {
+      if (!screenCaptureControllerFactory) {
         // Iterate through all screen captures, and stop those streams
-        return screenCaptureMediaStreams.forEach((stream) =>
-          stopScreenCapture(stream)
+        return Promise.all(
+          screenCaptureControllerFactories.map(factory => factory.destroy())
         );
+      } else {
+        return screenCaptureControllerFactory.destroy();
       }
-
-      mediaStream.getTracks().forEach((track) => {
-        track.stop();
-
-        // Dispatch "ended" event so that our auto-cleanup handler runs
-        track.dispatchEvent(new Event("ended"));
-      });
     },
-    [screenCaptureMediaStreams]
+    [screenCaptureControllerFactories]
   );
 
-  const isScreenSharing = useMemo(() => screenCaptureMediaStreams.length > 0, [
-    screenCaptureMediaStreams,
-  ]);
+  /** @type {boolean} */
+  const isScreenSharing = useMemo(
+    () => screenCaptureControllerFactories.length > 0,
+    [screenCaptureControllerFactories]
+  );
 
   /**
    * @return {Promise<void>}
@@ -137,12 +126,22 @@ export default function useScreenCapture() {
     }
   }, [isScreenSharing, startScreenCapture, stopScreenCapture]);
 
+  /** @type {MediaStream[]} */
+  const screenCaptureMediaStreams = useMemo(
+    () =>
+      screenCaptureControllerFactories.map(factory =>
+        factory.getOutputMediaStream()
+      ),
+    [screenCaptureControllerFactories]
+  );
+
   return {
     isScreenSharingSupported,
     startScreenCapture,
     stopScreenCapture,
     toggleScreenCapture,
     screenCaptureMediaStreams,
+    screenCaptureControllerFactories,
     isScreenSharing,
   };
 }

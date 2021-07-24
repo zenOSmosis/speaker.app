@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import VUMeter from "./VUMeter";
-import MediaStreamTrackAudioLevelMonitor, {
-  EVT_AUDIO_LEVEL_TICK,
-} from "@shared/audio/MediaStreamTrackAudioLevelMonitor";
+import {
+  AudioMediaStreamTrackLevelMonitor,
+  AudioMediaStreamTrackLevelMonitorEvents,
+} from "media-stream-track-controller";
 
-export default function MediaStreamTrackAudioLevelVUMeter({
+const { EVT_AUDIO_LEVEL_TICK } = AudioMediaStreamTrackLevelMonitorEvents;
+
+export default function AudioMediaStreamTrackLevelVUMeter({
   mediaStreamTrack,
   ...rest
 }) {
@@ -12,7 +15,7 @@ export default function MediaStreamTrackAudioLevelVUMeter({
 
   useEffect(() => {
     if (mediaStreamTrack) {
-      const mediaStreamMonitor = new MediaStreamTrackAudioLevelMonitor(
+      const mediaStreamMonitor = new AudioMediaStreamTrackLevelMonitor(
         mediaStreamTrack
       );
 

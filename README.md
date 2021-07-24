@@ -21,7 +21,7 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
 ## Table of Contents
 - [Speaker.app / zenRTC / Phantom Server](#speakerapp--zenrtc--phantom-server)
   - [Table of Contents](#table-of-contents)
-  - [Browser Support](#browser-support)
+  - [Browser Support Matrix](#browser-support-matrix)
   - [What's in the Box](#whats-in-the-box)
   - [Architecture Overview](#architecture-overview)
     - [Conventional WebRTC Network Topologies](#conventional-webrtc-network-topologies)
@@ -43,7 +43,7 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
   - [Help Us Continue Writing Free Software](#help-us-continue-writing-free-software)
   - [License](#license)
 
-## Browser Support
+## Browser Support Matrix
 
 |             | Chrome                 | Edge (Chromium) | Firefox | Safari |
 | ----------- | ---------------------- | --------------- | ------- | ------ |
@@ -166,6 +166,7 @@ Note that other environment variables are set within the docker-compose*.yml fil
 
 Note that development environments may require additional [dependencies](#dependencies) to be installed. 
 
+_IMPORTANT: If you are using a shell other than Bash, the following scripts should be proceeded with the "bash" command (i.e. "bash ./build.prod.sh")._
 
 ```bash
 $ ./build.prod.sh # Or ./build.dev.sh, depending on environment

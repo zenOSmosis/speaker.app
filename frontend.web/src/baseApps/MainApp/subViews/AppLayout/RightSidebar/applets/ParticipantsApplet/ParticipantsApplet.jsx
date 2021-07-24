@@ -1,6 +1,6 @@
 import React from "react";
 // import Center from "@components/Center";
-// import { MediaStreamTrackAudioLevelMeter } from "@components/AudioLevelMeter";
+// import { AudioMediaStreamTrackLevelMeter } from "@components/AudioLevelMeter";
 
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
 
@@ -11,7 +11,7 @@ export default function ParticipantsApplet() {
     <div style={{ width: "100%", height: "100%", overflowY: "auto" }}>
       {participants
         .sort((a, b) => (!a.isLocal && !b.isLocal ? 0 : b.isLocal ? -1 : 1))
-        .map((participant) => {
+        .map(participant => {
           const {
             socketIoId,
             avatarURL,

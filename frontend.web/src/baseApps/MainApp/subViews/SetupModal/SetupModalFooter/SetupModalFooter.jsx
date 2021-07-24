@@ -39,7 +39,7 @@ export default function SetupModalFooter() {
     <Row>
       <Column style={{ whiteSpace: "nowrap" }}>
         <Center>
-          <div style={{ textAlign: "left", paddingLeft: 8 }}>
+          <nav style={{ textAlign: "left", paddingLeft: 8 }}>
             {/*
               <LabeledLED
                 color={isSocketConnected ? "green" : "white"}
@@ -78,7 +78,7 @@ export default function SetupModalFooter() {
                 verticalAlign: "bottom",
               }}
             />
-          </div>
+          </nav>
         </Center>
       </Column>
       <Column style={{ textAlign: "right", whiteSpace: "nowrap" }}>

@@ -1,9 +1,9 @@
-import React, { createContext, useCallback } from "react";
+import React, { createContext } from "react";
 
 import useAudioDeviceDefaults from "./useAudioDeviceDefaults";
-import useMediaStreamAudioController from "./useMediaStreamAudioController";
 import useMic from "./useMic";
 import useScreenCapture from "./useScreenCapture";
+import { utils } from "media-stream-track-controller";
 
 export const InputMediaDevicesContext = createContext({});
 
@@ -11,12 +11,12 @@ export default function InputMediaDevicesProvider({ children }) {
   const {
     defaultAudioInputDevice,
     setDefaultAudioInputDevice,
-    defaultIsAudioNoiseSuppression,
-    setDefaultIsAudioNoiseSuppression,
-    defaultIsAudioEchoCancellation,
-    setDefaultIsAudioEchoCancellation,
-    defaultIsAudioAutoGainControl,
-    setDefaultIsAudioAutoGainControl,
+    defaultAudioNoiseSuppression,
+    setDefaultAudioNoiseSuppression,
+    defaultAudioEchoCancellation,
+    setDefaultAudioEchoCancellation,
+    defaultAudioAutoGainControl,
+    setDefaultAudioAutoGainControl,
   } = useAudioDeviceDefaults();
 
   const {
@@ -29,44 +29,10 @@ export default function InputMediaDevicesProvider({ children }) {
     setMicAudioController,
   } = useMic({
     defaultAudioInputDevice,
-    defaultIsAudioNoiseSuppression,
-    defaultIsAudioEchoCancellation,
-    defaultIsAudioAutoGainControl,
+    defaultAudioNoiseSuppression,
+    defaultAudioEchoCancellation,
+    defaultAudioAutoGainControl,
   });
-
-  /**
-   * List cameras, microphones, etc.
-   *
-   * @return {Promise<MediaDeviceInfo[]>}
-   */
-  const fetchMediaInputDevices = useCallback(async () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-      console.warn("enumerateDevices() not supported.");
-      return [];
-    }
-
-    const fetchDevices = () => navigator.mediaDevices.enumerateDevices();
-
-    let devices = await fetchDevices();
-
-    // If not able to fetch label for all devices...
-    if (devices.some(({ label }) => !label.length)) {
-      // ... temporarily turn on microphone...
-      const tempMediaStream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
-
-      //  ... and fetch again
-      devices = await fetchDevices();
-
-      // ... then turn off the mic
-      tempMediaStream.getTracks().forEach((track) => track.stop());
-    }
-
-    return devices;
-  }, []);
-
-  const { captureAudioMedia } = useMediaStreamAudioController();
 
   const {
     isScreenSharingSupported,
@@ -77,6 +43,7 @@ export default function InputMediaDevicesProvider({ children }) {
     isScreenSharing,
   } = useScreenCapture();
 
+  // TODO: Move into media-stream-track-controller
   /**
    * Creates a video MediaStreamTrack from the given DOM Canvas element.
    *
@@ -101,12 +68,12 @@ export default function InputMediaDevicesProvider({ children }) {
       value={{
         defaultAudioInputDevice,
         setDefaultAudioInputDevice,
-        defaultIsAudioNoiseSuppression,
-        setDefaultIsAudioNoiseSuppression,
-        defaultIsAudioEchoCancellation,
-        setDefaultIsAudioEchoCancellation,
-        defaultIsAudioAutoGainControl,
-        setDefaultIsAudioAutoGainControl,
+        defaultAudioNoiseSuppression,
+        setDefaultAudioNoiseSuppression,
+        defaultAudioEchoCancellation,
+        setDefaultAudioEchoCancellation,
+        defaultAudioAutoGainControl,
+        setDefaultAudioAutoGainControl,
         startMic,
         stopMic,
         hasUIMicPermission,
@@ -114,11 +81,14 @@ export default function InputMediaDevicesProvider({ children }) {
         setHasUIMicPermission,
         micAudioController,
         setMicAudioController,
-        fetchMediaInputDevices,
+        fetchMediaInputDevices: utils.fetchMediaDevices,
+
+        // TODO: Reimplement
         // getAudioControllerWithDeviceId,
         // toggleCaptureAudioMedia,
-        captureAudioMedia,
+        // captureAudioMedia,
         // getMonitoringMediaStreamAudioTracks,
+
         isScreenSharingSupported,
         startScreenCapture,
         stopScreenCapture,

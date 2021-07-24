@@ -35,8 +35,8 @@ import InfoApplet from "./applets/InfoApplet";
 import ShareIcon from "@icons/ShareIcon";
 import ShareApplet from "./applets/ShareApplet";
 import Avatar from "@components/Avatar";
-import CustomizationApplet from "./applets/CustomizationApplet";
-import CustomizeIcon from "@icons/CustomizeIcon";
+// import CustomizationApplet from "./applets/CustomizationApplet";
+// import CustomizeIcon from "@icons/CustomizeIcon";
 // import SearchApplet from "./applets/SearchApplet";
 // import SearchIcon from "@icons/SearchIcon";
 import SettingsIcon from "@icons/SettingsIcon";
@@ -54,7 +54,7 @@ import {
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 
-import { MediaStreamTrackAudioLevelMeter } from "@components/AudioLevelMeter";
+import { AudioMediaStreamTrackLevelMeter } from "@components/AudioLevelMeter";
 
 // import Center from "@components/Center";
 import useLocalProfileContext from "@hooks/useLocalProfileContext";
@@ -73,10 +73,8 @@ export default function useAppMenuItems() {
   } = useZenRTCContext();
   */
 
-  const {
-    avatarURL: profileAvatarURL,
-    name: profileName,
-  } = useLocalProfileContext();
+  const { avatarURL: profileAvatarURL, name: profileName } =
+    useLocalProfileContext();
 
   const {
     realmId,
@@ -225,12 +223,17 @@ export default function useAppMenuItems() {
             {
               // TODO: Use outgoing mic audio level
             }
-            <MediaStreamTrackAudioLevelMeter
-              mediaStreamTrack={
-                // TODO: Make this more efficient
-                micAudioController &&
-                micAudioController.getOutputMediaStream().getAudioTracks()[0]
-              }
+            <AudioMediaStreamTrackLevelMeter
+              mediaStreamTrack={(() => {
+                const mediaStream =
+                  micAudioController &&
+                  micAudioController.getOutputMediaStream();
+
+                if (mediaStream) {
+                  // TODO: Make this more efficient
+                  return mediaStream.getAudioTracks()[0];
+                }
+              })()}
               style={{
                 marginLeft: 7,
                 height: 40,
@@ -349,7 +352,7 @@ export default function useAppMenuItems() {
         ]
           .filter(({ kind }) => kind === "audio")
           .map((mediaStreamTrack, idx) => (
-            <MediaStreamTrackAudioLevelMeter
+            <AudioMediaStreamTrackLevelMeter
               key={idx}
               mediaStreamTrack={mediaStreamTrack}
               style={{ height: 40, width: 10, marginBottom: 4 }}
@@ -360,7 +363,7 @@ export default function useAppMenuItems() {
           <div>
             <div>
               {!mediaStreamTrackViews.length ? (
-                <MediaStreamTrackAudioLevelMeter
+                <AudioMediaStreamTrackLevelMeter
                   style={{ height: 40, width: 10, marginBottom: 4 }}
                   mediaStreamTrack={null}
                 />
@@ -523,6 +526,8 @@ export default function useAppMenuItems() {
   );
   */
 
+  /*
+  // For background setting
   const menuItem__CustomizeApplet = useMemo(
     () => ({
       name: "Background",
@@ -539,6 +544,7 @@ export default function useAppMenuItems() {
     }),
     [isConnected]
   );
+  */
 
   /*
   const menuItem__SearchApplet = useMemo(
@@ -761,7 +767,7 @@ export default function useAppMenuItems() {
     // menuItem__MediaSharingApplet,
     // menuItem__TensorFlowApplet,
     menuItem__ChatApplet,
-    menuItem__CustomizeApplet,
+    // menuItem__CustomizeApplet,
     // menuItem__DrawApplet,
     // menuItem__SearchApplet,
     menuItem__SettingsApplet,

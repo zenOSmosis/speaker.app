@@ -84,7 +84,7 @@ export default function SetupModal({ selectedTab = NETWORK_TAB }) {
   return (
     <SystemModal
       headerView={() => (
-        <>
+        <nav>
           <div style={{ float: "right" }}>
             {isConnected ? (
               <button
@@ -148,7 +148,7 @@ export default function SetupModal({ selectedTab = NETWORK_TAB }) {
               </div>
             </button>
           )}
-        </>
+        </nav>
       )}
       footerView={<SetupModalFooter />}
     >

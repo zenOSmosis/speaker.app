@@ -1,5 +1,5 @@
 import VUMeter from "./VUMeter";
-import MediaStreamTrackAudioLevelVUMeter from "./MediaStreamTrackAudioLevelVUMeter";
+import AudioMediaStreamTrackLevelVUMeter from "./AudioMediaStreamTrackLevelVUMeter";
 
 export default VUMeter;
-export { MediaStreamTrackAudioLevelVUMeter };
+export { AudioMediaStreamTrackLevelVUMeter };

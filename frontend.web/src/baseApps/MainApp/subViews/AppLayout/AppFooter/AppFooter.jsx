@@ -2,7 +2,7 @@ import React from "react";
 import { Footer, Row, Column } from "@components/Layout";
 import ButtonTransparent from "@components/ButtonTransparent";
 import Center from "@components/Center";
-import { MediaStreamTrackAudioLevelMeter } from "@components/AudioLevelMeter";
+import { AudioMediaStreamTrackLevelMeter } from "@components/AudioLevelMeter";
 
 import PanelParticipantsScroller, {
   HORIZONTAL_ORIENTATION,
@@ -24,11 +24,8 @@ import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 export default function AppFooter({ className }) {
   const { micAudioController } = useInputMediaDevicesContext();
 
-  const {
-    toggleSidebar,
-    sidebarMenuSelectedIdx,
-    isSidebarOpen,
-  } = useAppLayoutContext();
+  const { toggleSidebar, sidebarMenuSelectedIdx, isSidebarOpen } =
+    useAppLayoutContext();
 
   return (
     <Footer>
@@ -56,14 +53,17 @@ export default function AppFooter({ className }) {
                   {
                     // TODO: Use outgoing mic audio level
                   }
-                  <MediaStreamTrackAudioLevelMeter
-                    mediaStreamTrack={
-                      // TODO: Make this more efficient
-                      micAudioController &&
-                      micAudioController
-                        .getOutputMediaStream()
-                        .getAudioTracks()[0]
-                    }
+                  <AudioMediaStreamTrackLevelMeter
+                    mediaStreamTrack={(() => {
+                      const mediaStream =
+                        micAudioController &&
+                        micAudioController.getOutputMediaStream();
+
+                      if (mediaStream) {
+                        // TODO: Make this more efficient
+                        return mediaStream.getAudioTracks()[0];
+                      }
+                    })()}
                     style={{
                       marginLeft: 5,
                       marginBottom: 2,

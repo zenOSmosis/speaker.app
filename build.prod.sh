@@ -10,8 +10,12 @@
 set -e
 
 # Read in environment variables
-if test -f ".env"; then
+if test -f ".env"
+then
   source .env
+else
+  echo "No .env file"
+  exit 1
 fi
 
 GIT_HASH=$(git rev-parse --short=5 HEAD)

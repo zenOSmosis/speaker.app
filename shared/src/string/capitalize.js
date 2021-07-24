@@ -3,7 +3,7 @@
  *
  * @see https://flaviocopes.com/how-to-uppercase-first-letter-javascript/
  *
- * @param {string} s
+ * @param {string}
  * @return {string}
  */
 export default function capitalize(s) {

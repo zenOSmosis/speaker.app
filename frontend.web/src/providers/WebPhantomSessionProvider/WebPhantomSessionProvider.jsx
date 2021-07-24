@@ -107,11 +107,8 @@ export default function WebPhantomSessionProvider({ children }) {
   /**
    * Local and remote participants
    */
-  const {
-    participants,
-    networkData,
-    getParticipantWithDeviceAddress,
-  } = useNetworkState(zenRTCPeer);
+  const { participants, networkData, getParticipantWithDeviceAddress } =
+    useNetworkState(zenRTCPeer);
 
   const [isHostOnline, setIsHostOnline] = useState(false);
 
