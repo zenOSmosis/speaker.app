@@ -1,10 +1,9 @@
-import React, { createContext, useCallback } from "react";
+import React, { createContext } from "react";
 
 import useAudioDeviceDefaults from "./useAudioDeviceDefaults";
 import useMic from "./useMic";
 import useScreenCapture from "./useScreenCapture";
 import { utils } from "media-stream-track-controller";
-import { fetchMediaDevices } from "media-stream-track-controller/src/utils";
 
 export const InputMediaDevicesContext = createContext({});
 
@@ -44,6 +43,7 @@ export default function InputMediaDevicesProvider({ children }) {
     isScreenSharing,
   } = useScreenCapture();
 
+  // TODO: Move into media-stream-track-controller
   /**
    * Creates a video MediaStreamTrack from the given DOM Canvas element.
    *
