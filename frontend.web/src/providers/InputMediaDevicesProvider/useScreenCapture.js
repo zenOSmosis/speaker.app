@@ -16,9 +16,9 @@ export default function useScreenCapture() {
     setScreenCaptureControllerFactories,
   ] = useState([]);
 
-  // Auto-manage factories
+  // Auto-manage factory state registration on destruct
   useEffect(() => {
-    const boundListeners = [];
+    const boundFactoryListeners = [];
 
     screenCaptureControllerFactories.forEach(factory => {
       const _handleFactoryDestruct = () => {
@@ -29,11 +29,11 @@ export default function useScreenCapture() {
 
       factory.once(EVT_DESTROYED, _handleFactoryDestruct);
 
-      boundListeners.push([factory, _handleFactoryDestruct]);
+      boundFactoryListeners.push([factory, _handleFactoryDestruct]);
     });
 
     return function unmount() {
-      boundListeners.forEach(([factory, listener]) =>
+      boundFactoryListeners.forEach(([factory, listener]) =>
         factory.off(EVT_DESTROYED, listener)
       );
     };
@@ -52,7 +52,9 @@ export default function useScreenCapture() {
     try {
       screenCaptureControllerFactory = await utils.captureScreen(
         null,
-        "captureScreen"
+        // Dynamically give the factory an alias based on the number of the
+        // index it will be in the state array
+        `captureScreen-${screenCaptureControllerFactories.length}`
       );
     } catch (err) {
       console.warn("Caught", err);
@@ -85,7 +87,7 @@ export default function useScreenCapture() {
     ]);
 
     return screenCaptureControllerFactory;
-  }, []);
+  }, [screenCaptureControllerFactories]);
 
   /**
    * @param {MediaStreamTrackControllerFactory} mediaStreamTrackControllerFactory?
@@ -101,7 +103,7 @@ export default function useScreenCapture() {
           screenCaptureControllerFactories.map(factory => factory.destroy())
         );
       } else {
-        screenCaptureControllerFactory.destroy();
+        return screenCaptureControllerFactory.destroy();
       }
     },
     [screenCaptureControllerFactories]
