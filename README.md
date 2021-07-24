@@ -158,6 +158,7 @@ Note that other environment variables are set within the docker-compose*.yml fil
 
 Note that development environments may require additional [dependencies](#dependencies) to be installed. 
 
+_IMPORTANT: If you are using a shell other than Bash, the following scripts should be proceeded with the "bash" command (i.e. "bash ./build.prod.sh")._
 
 ```bash
 $ ./build.prod.sh # Or ./build.dev.sh, depending on environment
