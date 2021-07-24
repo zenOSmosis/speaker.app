@@ -1,7 +1,6 @@
 import React, { createContext, useCallback } from "react";
 
 import useAudioDeviceDefaults from "./useAudioDeviceDefaults";
-import useAudioMediaStreamTrackController from "./useAudioMediaStreamTrackController";
 import useMic from "./useMic";
 import useScreenCapture from "./useScreenCapture";
 
@@ -66,8 +65,6 @@ export default function InputMediaDevicesProvider({ children }) {
     return devices;
   }, []);
 
-  const { captureAudioMedia } = useAudioMediaStreamTrackController();
-
   const {
     isScreenSharingSupported,
     startScreenCapture,
@@ -115,10 +112,13 @@ export default function InputMediaDevicesProvider({ children }) {
         micAudioController,
         setMicAudioController,
         fetchMediaInputDevices,
+
+        // TODO: Reimplement
         // getAudioControllerWithDeviceId,
         // toggleCaptureAudioMedia,
-        captureAudioMedia,
+        // captureAudioMedia,
         // getMonitoringMediaStreamAudioTracks,
+
         isScreenSharingSupported,
         startScreenCapture,
         stopScreenCapture,
