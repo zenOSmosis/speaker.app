@@ -3,6 +3,8 @@ import React, { createContext, useCallback } from "react";
 import useAudioDeviceDefaults from "./useAudioDeviceDefaults";
 import useMic from "./useMic";
 import useScreenCapture from "./useScreenCapture";
+import { utils } from "media-stream-track-controller";
+import { fetchMediaDevices } from "media-stream-track-controller/src/utils";
 
 export const InputMediaDevicesContext = createContext({});
 
@@ -32,38 +34,6 @@ export default function InputMediaDevicesProvider({ children }) {
     defaultAudioEchoCancellation,
     defaultAudioAutoGainControl,
   });
-
-  /**
-   * List cameras, microphones, etc.
-   *
-   * @return {Promise<MediaDeviceInfo[]>}
-   */
-  const fetchMediaInputDevices = useCallback(async () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-      console.warn("enumerateDevices() not supported.");
-      return [];
-    }
-
-    const fetchDevices = () => navigator.mediaDevices.enumerateDevices();
-
-    let devices = await fetchDevices();
-
-    // If not able to fetch label for all devices...
-    if (devices.some(({ label }) => !label.length)) {
-      // ... temporarily turn on microphone...
-      const tempMediaStream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
-
-      //  ... and fetch again
-      devices = await fetchDevices();
-
-      // ... then turn off the mic
-      tempMediaStream.getTracks().forEach(track => track.stop());
-    }
-
-    return devices;
-  }, []);
 
   const {
     isScreenSharingSupported,
@@ -111,7 +81,7 @@ export default function InputMediaDevicesProvider({ children }) {
         setHasUIMicPermission,
         micAudioController,
         setMicAudioController,
-        fetchMediaInputDevices,
+        fetchMediaInputDevices: utils.fetchMediaDevices,
 
         // TODO: Reimplement
         // getAudioControllerWithDeviceId,
