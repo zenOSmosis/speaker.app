@@ -11,6 +11,7 @@ import SetupModal, {
   PRIVATE_NETWORK_TAB,
   CREATE_NETWORK_TAB,
   SETTINGS_TAB,
+  ABOUT_TAB,
 } from "./subViews/SetupModal";
 
 export const ROUTE_SETUP_PROFILE = {
@@ -38,18 +39,18 @@ export const ROUTE_SETUP_CONFIGURE = {
   modalView: () => <SetupModal selectedTab={SETTINGS_TAB} />,
 };
 
+export const ROUTE_ABOUT = {
+  path: "/about",
+  modalView: () => <SetupModal selectedTab={ABOUT_TAB} />,
+};
+
 export const ROUTE_CALL_URL = {
   path: "/network/:realmId/:channelId",
   useController: ({ realmId, channelId }) => {
     const { isConnected: isSocketIoConnected } = useSocketContext();
 
-    const {
-      setRealmId,
-      setChannelId,
-      connect,
-      isConnected,
-      isHostOnline,
-    } = useWebPhantomSessionContext();
+    const { setRealmId, setChannelId, connect, isConnected, isHostOnline } =
+      useWebPhantomSessionContext();
 
     // The realm and channel must be pre-set in order for the isHostOnline
     // check to function
@@ -114,7 +115,7 @@ export const getCallURL = ({ realmId, channelId }) => {
  * "https://speaker.app/network/realm/channel").
  * @return {Object} An object w/ realmId and channelId properties.
  */
-export const parseCallURL = (callURL) => {
+export const parseCallURL = callURL => {
   const { pathname } = urlParse(callURL);
 
   const matched = matchPath(pathname, ROUTE_CALL_URL.path);

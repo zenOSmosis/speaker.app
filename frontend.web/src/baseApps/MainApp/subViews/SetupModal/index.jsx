@@ -4,6 +4,7 @@ import SetupModal, {
   PRIVATE_NETWORK_TAB,
   CREATE_NETWORK_TAB,
   SETTINGS_TAB,
+  ABOUT_TAB,
 } from "./SetupModal";
 
 export default SetupModal;
@@ -13,4 +14,5 @@ export {
   PRIVATE_NETWORK_TAB,
   CREATE_NETWORK_TAB,
   SETTINGS_TAB,
+  ABOUT_TAB,
 };

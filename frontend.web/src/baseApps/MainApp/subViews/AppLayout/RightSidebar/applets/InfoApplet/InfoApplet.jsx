@@ -9,6 +9,8 @@ import DebugIcon from "@icons/DebugIcon";
 
 import useAppLayoutContext from "@hooks/useAppLayoutContext";
 
+import getAboutHTML from "@utils/getAboutHTML";
+
 export default function InfoApplet() {
   const [contentViewBody, setContentView] = useState(null);
   const { modalView } = useAppLayoutContext();
@@ -42,7 +44,7 @@ export default function InfoApplet() {
                       <div
                         style={{ textAlign: "left" }}
                         dangerouslySetInnerHTML={{
-                          __html: window.__aboutHTML,
+                          __html: getAboutHTML(),
                         }}
                       />
                     </div>

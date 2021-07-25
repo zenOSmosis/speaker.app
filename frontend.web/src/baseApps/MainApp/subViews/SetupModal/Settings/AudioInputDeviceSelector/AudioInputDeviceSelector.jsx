@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ButtonTransparent from "@components/ButtonTransparent";
 import Center from "@components/Center";
-import Layout, { Header, Content, Footer } from "@components/Layout";
+import Layout, { Content, Footer } from "@components/Layout";
 import LabeledSwitch from "@components/labeled/LabeledSwitch";
 import Full from "@components/Full";
 
