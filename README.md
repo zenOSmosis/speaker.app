@@ -200,7 +200,9 @@ $ ./test.sh
 
 Note, development packages will be automatically installed locally when testing.
 
-Jest tests / Manual tests via BrowserStack
+At this time, testing is not fully automated.  Several internal utilities are tested using Jest, while other testing is performed manually using [BrowserStack](https://www.browserstack.com).
+
+<a href="https://www.browserstack.com" target="_blank"><img src="https://github.com/zenOSmosis/js-shell/raw/master/assets/BrowserStack-logo.svg" alt="BrowserStack" width="320"></a>
 
 ## Contributing / Forking
 
