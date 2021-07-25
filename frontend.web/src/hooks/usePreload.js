@@ -10,8 +10,10 @@ export default function usePreload(resources = []) {
   const [isPreloaded, _setIsPreloaded] = useState(false);
   const [progress, _setProgress] = useState(0);
 
-  // Cache the resources; This fixes an issue where the image may preload
-  // multiple times in Firefox (version 90 was problematic)
+  // Cache the resources; This fixes an issue where passing in a non-memoized
+  // array could cause the following useEffect to trigger more than once.
+  //
+  // Issue was discovered when images would preload multiple times in Firefox.
   const refResources = useRef(resources);
 
   useEffect(() => {
