@@ -13,6 +13,12 @@ ButtonPanel.propTypes = {
 
       disabled: PropTypes.bool,
 
+      // Optional style override
+      style: PropTypes.string,
+
+      // Optional style override
+      className: PropTypes.string,
+
       /** If set to true, this acts as the default button */
       isSelected: PropTypes.bool,
     })
@@ -38,7 +44,18 @@ export default function ButtonPanel({ buttons, ...rest }) {
   return (
     <div {...rest}>
       {buttons.map(
-        ({ content: Content, onClick, disabled, isSelected, ...args }, idx) => {
+        (
+          {
+            content: Content,
+            onClick,
+            disabled,
+            isSelected,
+            style,
+            className,
+            ...args
+          },
+          idx
+        ) => {
           // If first render, and we're at the defaultSelectedIdx, call the onClick handler
           // TODO: Detect if first render of React after page updates
           if (refRenderIdx.current === 0 && selectedIdx === idx) {
@@ -59,7 +76,11 @@ export default function ButtonPanel({ buttons, ...rest }) {
                 onClick();
               }}
               disabled={disabled}
-              className={classNames(selectedIdx === idx && "active")}
+              style={style}
+              className={classNames([
+                selectedIdx === idx && "active",
+                className,
+              ])}
             >
               {typeof Content === "function" ? <Content /> : { Content }}
             </button>
