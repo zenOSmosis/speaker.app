@@ -5,6 +5,7 @@ import SystemModal from "@components/SystemModal";
 import PropTypes from "prop-types";
 
 import BackArrowIcon from "@icons/BackArrowIcon";
+import InfoIcon from "@icons/InfoIcon";
 
 import SetupModalFooter from "./SetupModalFooter";
 
@@ -86,6 +87,18 @@ export default function SetupModal({ selectedTab = NETWORK_TAB }) {
       headerView={() => (
         <nav>
           <div style={{ float: "right" }}>
+            <button
+              style={{
+                float: "right",
+                margin: "0px .5em",
+                borderRadius: "50%",
+                width: "2em",
+                backgroundColor: "#ccc",
+                color: "#000",
+              }}
+            >
+              <InfoIcon />
+            </button>
             {isConnected ? (
               <button
                 onClick={() =>
@@ -101,7 +114,10 @@ export default function SetupModal({ selectedTab = NETWORK_TAB }) {
                 Return to call
               </button>
             ) : (
-              <div style={{ marginTop: 8 }} className="note">
+              <div
+                style={{ marginTop: 8, display: "inline-block" }}
+                className="note"
+              >
                 Not connected to a network.
               </div>
             )}
