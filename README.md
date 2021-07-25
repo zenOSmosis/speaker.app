@@ -68,7 +68,7 @@ Note, on every OS except iOS, Chrome is the recommended browser;  On iOS, Safari
 
 **Let's Encrypt**: Free SSL certificates are managed via the [linuxserver.io/docker-swag Docker](https://github.com/linuxserver/docker-swag) image.
 
-**dev-ssl-proxy**: In development, a [self-signed SSL proxy](https://github.com/zenOSmosis/docker-dev-ssl-proxy) is utilized in replacement of Let's Encrypt, to enable local development with SSL turned on (cam / mic / other HTML5-related APIs require SSL by default).
+**dev-ssl-proxy**: In development, a [self-signed SSL proxy](https://github.com/zenOSmosis/docker-dev-ssl-proxy) is utilized in replacement of Let's Encrypt, to enable local development with SSL turned on (cam / mic / other HTML5-related APIs which require SSL by default).
 
 **Coturn**: A [STUN / TURN server](https://github.com/zenOSmosis/docker-coturn) for WebRTC NAT traversal is included in the Docker Compose configuration, but is not enabled by default.
 
