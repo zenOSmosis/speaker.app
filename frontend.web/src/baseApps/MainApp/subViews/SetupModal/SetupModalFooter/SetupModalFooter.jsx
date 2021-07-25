@@ -18,6 +18,7 @@ import {
   ROUTE_HOME,
   ROUTE_CALL_URL,
   ROUTE_SETUP_CONFIGURE,
+  ROUTE_SETUP_NETWORKS,
 } from "@baseApps/MainApp/routes";
 
 export default function SetupModalFooter() {
@@ -85,8 +86,14 @@ export default function SetupModalFooter() {
         <div style={{ display: "inline-block" }}>
           <ButtonTransparent
             onClick={() =>
+              // Speaker.app footer logo will open call screen if already on a
+              // call; otherwise it will open main networks screen if not
+              // already on that screen, and if on the screen it will hide the
+              // setup modal
               !isSessionConnected
-                ? openRoute(ROUTE_HOME)
+                ? !getIsCurrentRoute(ROUTE_SETUP_NETWORKS)
+                  ? openRoute(ROUTE_SETUP_NETWORKS)
+                  : openRoute(ROUTE_HOME)
                 : openRoute(ROUTE_CALL_URL, { realmId, channelId })
             }
             style={{ marginRight: 8 }}
