@@ -68,7 +68,7 @@ Note, on every OS except iOS, Chrome is the recommended browser;  On iOS, Safari
 
 **Let's Encrypt**: Free SSL certificates are managed via the [linuxserver.io/docker-swag Docker](https://github.com/linuxserver/docker-swag) image.
 
-**dev-ssl-proxy**: In development, a [self-signed SSL proxy](https://github.com/zenOSmosis/docker-dev-ssl-proxy) is utilized in replacement of Let's Encrypt, to enable local development with SSL turned on (cam / mic / other HTML5-related APIs require SSL by default).
+**dev-ssl-proxy**: In development, a [self-signed SSL proxy](https://github.com/zenOSmosis/docker-dev-ssl-proxy) is utilized in replacement of Let's Encrypt, to enable local development with SSL turned on (cam / mic / other HTML5-related APIs which require SSL by default).
 
 **Coturn**: A [STUN / TURN server](https://github.com/zenOSmosis/docker-coturn) for WebRTC NAT traversal is included in the Docker Compose configuration, but is not enabled by default.
 
@@ -133,7 +133,6 @@ Wanting to continue pursuing the effort of a script-able WebRTC bridge using a w
 - Bash (Unix shell) _If running the included Bash build scripts_
 - Docker
 - Docker Compose
-- 1024 MB RAM if not running the Coturn server on the same server; 2048 MB otherwise (less than 2048 MAY work but build times may be prolonged)
 
 **Development environments require**
 
@@ -143,8 +142,8 @@ Wanting to continue pursuing the effort of a script-able WebRTC bridge using a w
 
 The following should get the system up and running, though additional resources may be required for higher traffic environments.  Presumably, these minimum requirements should host at least several dozen people concurrently before needing to add more RAM.
 
-- 2048 MB RAM (1048 MAY work if Coturn server is hosted separately)
-- Two CPU cores (one should work just fine for low traffic environments)
+- 2048 MB RAM _(1048 MAY work if Coturn server is hosted separately)_
+- Two CPU cores _(one should work just fine for low traffic environments)_
 
 ### Building and Running
 
@@ -201,7 +200,9 @@ $ ./test.sh
 
 Note, development packages will be automatically installed locally when testing.
 
-Jest tests / Manual tests via BrowserStack
+At this time, testing is not fully automated.  Several internal utilities are tested using Jest (via the above command), while device-specific testing is performed manually using [BrowserStack](https://www.browserstack.com).
+
+<a href="https://www.browserstack.com" target="_blank"><img src="https://github.com/zenOSmosis/js-shell/raw/master/assets/BrowserStack-logo.svg" alt="BrowserStack" width="320"></a>
 
 ## Contributing / Forking
 
