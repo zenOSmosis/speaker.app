@@ -317,7 +317,7 @@ export default class NetworkController extends PhantomCore {
     this.emit(EVT_NETWORK_DESTROYED, network);
 
     // TODO: Update verbiage
-    console.log("Successfully deregister-ed network");
+    console.log("Successfully deregistered network");
   }
 
   // TODO: Document
