@@ -21,23 +21,27 @@ import {
   ROUTE_SETUP_PROFILE,
   ROUTE_SETUP_NETWORKS,
   ROUTE_SETUP_CREATE_NETWORK,
+  ROUTE_ABOUT,
 } from "@baseApps/MainApp/routes";
 
 import useAppRoutesContext from "@hooks/useAppRoutesContext";
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
+
+import getAboutHTML from "@utils/getAboutHTML";
 
 export const PROFILE_TAB = 0;
 export const NETWORK_TAB = 1;
 export const CREATE_NETWORK_TAB = 2;
 export const PRIVATE_NETWORK_TAB = 3;
 export const SETTINGS_TAB = 4;
+export const ABOUT_TAB = 5;
 
 SetupModal.propTypes = {
   selectedTab: PropTypes.number.isRequired,
 };
 
 export default function SetupModal({ selectedTab = NETWORK_TAB }) {
-  const { openRoute } = useAppRoutesContext();
+  const { openRoute, getIsCurrentRoute } = useAppRoutesContext();
   const { isConnected, realmId, channelId } = useWebPhantomSessionContext();
 
   const [mainContent, _setMainContent] = useState(null);
@@ -77,6 +81,23 @@ export default function SetupModal({ selectedTab = NETWORK_TAB }) {
         _setMainContent(<Settings />);
         break;
 
+      // TODO: Build out
+      case ABOUT_TAB:
+        _setMainContent(
+          <div
+            style={{
+              textAlign: "left",
+              width: "100%",
+              height: "100%",
+              overflow: "auto",
+            }}
+            dangerouslySetInnerHTML={{
+              __html: getAboutHTML(),
+            }}
+          ></div>
+        );
+        break;
+
       default:
         throw new Error(`Unknown tab "${selectedTab}"`);
     }
@@ -96,6 +117,8 @@ export default function SetupModal({ selectedTab = NETWORK_TAB }) {
                 backgroundColor: "#ccc",
                 color: "#000",
               }}
+              onClick={() => openRoute(ROUTE_ABOUT)}
+              disabled={getIsCurrentRoute(ROUTE_ABOUT)}
             >
               <InfoIcon />
             </button>

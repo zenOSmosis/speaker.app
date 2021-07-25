@@ -76,7 +76,8 @@
       "@shared/(.*)": "<rootDir>/src/shared/$1",
       "@hooks/(.*)": "<rootDir>/src/hooks/$1",
       "@providers/(.*)": "<rootDir>/src/providers/$1",
-      "@icons/(.*)": "<rootDir>/src/icons/$1"
+      "@icons/(.*)": "<rootDir>/src/icons/$1",
+      "@utils/(.*)": "<rootDir>/src/utils/$1"
     }
   }
 }
