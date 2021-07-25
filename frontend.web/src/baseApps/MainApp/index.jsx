@@ -1,3 +1,3 @@
-import MainApp from "./MainApp";
+import MainAppIntro from "./MainAppIntro";
 
-export default MainApp;
+export default MainAppIntro;
