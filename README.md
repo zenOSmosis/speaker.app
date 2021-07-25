@@ -142,8 +142,8 @@ Wanting to continue pursuing the effort of a script-able WebRTC bridge using a w
 
 The following should get the system up and running, though additional resources may be required for higher traffic environments.  Presumably, these minimum requirements should host at least several dozen people concurrently before needing to add more RAM.
 
-- 2048 MB RAM (1048 MAY work if Coturn server is hosted separately)
-- Two CPU cores (one should work just fine for low traffic environments)
+- 2048 MB RAM _(1048 MAY work if Coturn server is hosted separately)_
+- Two CPU cores _(one should work just fine for low traffic environments)_
 
 ### Building and Running
 
