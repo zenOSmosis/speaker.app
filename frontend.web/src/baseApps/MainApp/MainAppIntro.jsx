@@ -12,12 +12,12 @@ export default function MainAppIntro() {
 
   useEffect(() => {
     if (isLogoPreloaded) {
-      const to = setTimeout(() => {
+      const logoDisplayTimeout = setTimeout(() => {
         setIsIntroView(false);
-      }, 1500);
+      }, 2500);
 
       return function unmount() {
-        clearTimeout(to);
+        clearTimeout(logoDisplayTimeout);
       };
     }
   }, [isLogoPreloaded]);
