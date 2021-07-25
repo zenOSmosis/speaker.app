@@ -81,7 +81,6 @@ export default function SetupModal({ selectedTab = NETWORK_TAB }) {
         _setMainContent(<Settings />);
         break;
 
-      // TODO: Build out
       case ABOUT_TAB:
         _setMainContent(
           <div
