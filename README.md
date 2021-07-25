@@ -62,6 +62,8 @@ Note, on every OS except iOS, Chrome is the recommended browser;  On iOS, Safari
 
 **Backend:** Node.js app, using [Socket.io](https://github.com/socketio/socket.io) and [Express](https://github.com/expressjs/express).  Cluster module is utilized to utilize multiple CPUs and a Redis store is utilize to scale Socket.io across the CPUs.
 
+**Redis**: Utilized with [Socket.io's Redis adapter](https://socket.io/docs/v4/redis-adapter) to provide scalability of Socket.io across a cluster of Node.js running in different processes or servers, so they can all communicate, broadcast, and emit events to and from one another.  _This is mostly used in conjunction with the signaling layer to initiate WebRTC sessions & media, and most private communication happens over WebRTC data channels._
+
 **MongoDB**: Network details (name, host, number of participants) are stored in [MongoDB](https://github.com/mongodb/mongo).  When in development mode, [Mongo Express](https://github.com/mongo-express/mongo-express) is available at http://localhost:8081, and provides a web-based administrative interface.
 
 **Let's Encrypt**: Free SSL certificates are managed via the [linuxserver.io/docker-swag Docker](https://github.com/linuxserver/docker-swag) image.
