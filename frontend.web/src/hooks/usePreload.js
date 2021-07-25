@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import Preload from "preload-it";
 
 /**
- * @param {string[]} resources? A list of URLs to preload. Note that these are
+ * Pre-loads resources, as a React hook.
+ *
+ * @param {string[]} resources An array of URLs to preload. Note that these are
  * cached and the list cannot be changed without re-instantiating the hook.
  * @return {Object}
  */
-export default function usePreload(resources = []) {
+export default function usePreload(resources) {
   const [isPreloaded, _setIsPreloaded] = useState(false);
   const [progress, _setProgress] = useState(0);
 
