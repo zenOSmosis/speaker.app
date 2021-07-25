@@ -51,68 +51,64 @@ export default function AudioInputDeviceSelector() {
   }
 
   return (
-    <Full style={{ padding: 8 }}>
+    <Full>
       <Layout>
-        <Header style={{ textAlign: "left" }}>
-          <h1>Default Audio Input Device</h1>
-          <p>Choose default audio device when starting new calls.</p>
-          <p>
-            Default audio device selection may not persist accurately when
-            starting new sessions.
-          </p>
-        </Header>
-        <Content>
-          <Layout className={styles["audio-input-device-selector"]}>
-            <Content>
-              <Center canOverflow={true}>
-                {mediaDevices.map((device, idx) => (
-                  <div key={idx} className={styles["button-wrap"]}>
-                    <ButtonTransparent
-                      style={{ width: "100%", height: "100%" }}
-                      onClick={() => setDefaultAudioInputDevice(device)}
-                    >
-                      <div>Kind: {device.kind}</div>
+        <Content style={{ overflow: "auto" }}>
+          <div style={{ textAlign: "left" }}>
+            <h1>Default Audio Input Device</h1>
+            <p>Choose default audio device when starting new calls.</p>
+            <p>
+              Default audio device selection may not persist accurately when
+              starting new sessions.
+            </p>
+          </div>
 
-                      <div>Label: {device.label}</div>
+          <div className={styles["audio-input-device-selector"]}>
+            {mediaDevices.map((device, idx) => (
+              <div key={idx} className={styles["button-wrap"]}>
+                <ButtonTransparent
+                  style={{ width: "100%", height: "100%" }}
+                  onClick={() => setDefaultAudioInputDevice(device)}
+                >
+                  <div>Kind: {device.kind}</div>
 
-                      {!defaultAudioInputDevice && idx === 0 ? (
-                        <div className={styles["selected-triangle"]} />
-                      ) : (
-                        defaultAudioInputDevice &&
-                        defaultAudioInputDevice.deviceId ===
-                          device.deviceId && (
-                          <div className={styles["selected-triangle"]} />
-                        )
-                      )}
-                    </ButtonTransparent>
-                  </div>
-                ))}
-              </Center>
-            </Content>
-            <Footer style={{ backgroundColor: "rgba(0,0,0,.2)", padding: 8 }}>
-              <div style={{ display: "inline-block" }}>
-                <div className="note" style={{ marginBottom: 8 }}>
-                  Audio quality adjustments
-                </div>
-                <LabeledSwitch
-                  masterLabel="Noise Suppression"
-                  isOn={defaultAudioNoiseSuppression}
-                  onChange={setDefaultAudioNoiseSuppression}
-                />
-                <LabeledSwitch
-                  masterLabel="Echo Cancellation"
-                  isOn={defaultAudioEchoCancellation}
-                  onChange={setDefaultAudioEchoCancellation}
-                />
-                <LabeledSwitch
-                  masterLabel="Auto Gain Control"
-                  isOn={defaultAudioAutoGainControl}
-                  onChange={setDefaultAudioAutoGainControl}
-                />
+                  <div>Label: {device.label}</div>
+
+                  {!defaultAudioInputDevice && idx === 0 ? (
+                    <div className={styles["selected-triangle"]} />
+                  ) : (
+                    defaultAudioInputDevice &&
+                    defaultAudioInputDevice.deviceId === device.deviceId && (
+                      <div className={styles["selected-triangle"]} />
+                    )
+                  )}
+                </ButtonTransparent>
               </div>
-            </Footer>
-          </Layout>
+            ))}
+          </div>
         </Content>
+        <Footer style={{ backgroundColor: "rgba(0,0,0,.2)" }}>
+          <div style={{ display: "inline-block" }}>
+            <div className="note" style={{ marginBottom: 8 }}>
+              Audio quality adjustments
+            </div>
+            <LabeledSwitch
+              masterLabel="Noise Suppression"
+              isOn={defaultAudioNoiseSuppression}
+              onChange={setDefaultAudioNoiseSuppression}
+            />
+            <LabeledSwitch
+              masterLabel="Echo Cancellation"
+              isOn={defaultAudioEchoCancellation}
+              onChange={setDefaultAudioEchoCancellation}
+            />
+            <LabeledSwitch
+              masterLabel="Auto Gain Control"
+              isOn={defaultAudioAutoGainControl}
+              onChange={setDefaultAudioAutoGainControl}
+            />
+          </div>
+        </Footer>
       </Layout>
     </Full>
   );
