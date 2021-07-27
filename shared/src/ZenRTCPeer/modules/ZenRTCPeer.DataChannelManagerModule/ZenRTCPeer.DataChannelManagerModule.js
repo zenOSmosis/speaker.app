@@ -84,7 +84,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       rawData = rawData.substr(MARSHALL_PREFIX.length);
       rawData = rawData.substr(0, rawData.length - MARSHALL_SUFFIX.length);
 
-      let channel = "";
+      let channelName = "";
       let type = null;
       let data = null;
 
@@ -101,7 +101,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
         const char = rawData[i];
 
         if (char !== ",") {
-          channel += rawData[i];
+          channelName += rawData[i];
         } else {
           type = rawData[i + 1];
 
@@ -132,7 +132,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
         }
       } while (true);
 
-      return [channel, data];
+      return [channelName, data];
     }
   }
 
