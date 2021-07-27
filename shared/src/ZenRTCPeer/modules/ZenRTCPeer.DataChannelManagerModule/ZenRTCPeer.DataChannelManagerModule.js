@@ -156,7 +156,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
               break;
 
             default:
-              throw new TypeError(`Unknown serial type: ${type}`);
+              throw new TypeError(`Unknown serial type: ${serialType}`);
           }
 
           // TODO: Document why this works
