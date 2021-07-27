@@ -14,7 +14,7 @@ export default function MainAppIntro() {
     if (isLogoPreloaded) {
       const logoDisplayTimeout = setTimeout(() => {
         setIsIntroView(false);
-      }, 2500);
+      }, 1500);
 
       return function unmount() {
         clearTimeout(logoDisplayTimeout);
@@ -27,7 +27,7 @@ export default function MainAppIntro() {
   } else if (isIntroView) {
     return (
       <Center>
-        <Animation animationName="fadeIn" animationDuration="5s">
+        <Animation animationName="fadeIn" animationDuration="2s">
           <div>
             <div>
               <img src={zenLogo} style={{ width: "90%" }} alt="zenOSmosis" />
