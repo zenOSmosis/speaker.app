@@ -7,6 +7,8 @@ import { EVT_DATA_RECEIVED } from "./constants";
  * channels.  By using this class we can do multiplexing to start with, and
  * then switch to WebRTC data channels under the hood without changing the API.
  * @see https://github.com/feross/simple-peer/pull/694
+ * 
+ * The bulk of the work is handled via DataChannelManagerModule.
  */
 export default class DataChannel extends PhantomCore {
   // static doesChannelExistForOtherManager(dataChannel, dataChannelManager) {}

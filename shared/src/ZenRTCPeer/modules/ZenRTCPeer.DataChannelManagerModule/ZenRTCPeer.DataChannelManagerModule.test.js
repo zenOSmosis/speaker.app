@@ -1,6 +1,6 @@
 import DataChannelManager from "./ZenRTCPeer.DataChannelManagerModule";
 
-describe("packs and unpacks channel data", () => {
+describe("packs and unpacks channel data (non-chunked)", () => {
   it("packs channel data", () => {
     expect(DataChannelManager.pack("some-channel-name", 123)).toEqual(
       "<z:some-channel-name,i,123/>",
@@ -22,7 +22,7 @@ describe("packs and unpacks channel data", () => {
     ).toEqual(`<z:some-channel-name,o,[1,2,3,"test"]/>`, "serializes array");
   });
 
-  it("unpacks channel data", () => {
+  it("unpacks channel data (non-chunked)", () => {
     expect(
       DataChannelManager.unpack(DataChannelManager.pack("test-channel", 123))
     ).toEqual(["test-channel", 123], "unpacks integer type");

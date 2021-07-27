@@ -7,14 +7,34 @@ import {
   EVT_DATA_RECEIVED,
 } from "./constants";
 
-const MARSHAL_PREFIX = "<z:";
-const MARSHAL_SUFFIX = "/>";
+const MARSHALL_PREFIX = "<z:";
+const MARSHALL_SUFFIX = "/>";
+
+const SERIAL_TYPE_STRING = "s";
+const SERIAL_TYPE_OBJECT = "o";
+const SERIAL_TYPE_INTEGER = "i";
+const SERIAL_TYPE_FLOAT = "f";
 
 /**
- * Manages the creation and multiplexing / distribution of data across multiple
- * DataChannel instances.
+ * Manages the creation, multiplexing / distribution, and chunking of data
+ * across multiple DataChannel instances.
  */
 export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
+  /**
+   * Retrieves custom serial type for the given data.
+   *
+   * This class will use one of these types to convert received serialized data
+   * back to its original type.
+   *
+   * @param {any} data
+   * @return {SERIAL_TYPE_STRING | SERIAL_TYPE_OBJECT | SERIAL_TYPE_INTEGER | SERIAL_TYPE_FLOAT}
+   */
+  static getSerialType(data) {
+    const type = isNaN(data) ? typeof data : Number.isInteger(data) ? "i" : "f";
+
+    return type;
+  }
+
   /**
    * Marshals data for transmission to other peer.
    *
@@ -29,14 +49,14 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
 
     let isObject = false;
 
-    let type = isNaN(data) ? typeof data : Number.isInteger(data) ? "i" : "f";
+    const type = ZenRTCPeerDataChannelManagerModule.getSerialType(data);
 
     if (type === "object") {
       isObject = true;
       data = JSON.stringify(data);
     }
 
-    return `${MARSHAL_PREFIX}${channelName},${type[0]},${data}${MARSHAL_SUFFIX}`;
+    return `${MARSHALL_PREFIX}${channelName},${type[0]},${data}${MARSHALL_SUFFIX}`;
   }
 
   /**
@@ -48,16 +68,18 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
    * @return {Array[channelName: string, channelData: number | string | Object | Array] | void}
    */
   static unpack(rawData) {
+    // TODO: Provide unchunking ability, buffering (and not returning) until the inbound message is complete
+
     if (typeof rawData !== "string") {
       rawData = rawData.toString();
     }
 
     if (
-      rawData.startsWith(MARSHAL_PREFIX) &&
-      rawData.endsWith(MARSHAL_SUFFIX)
+      rawData.startsWith(MARSHALL_PREFIX) &&
+      rawData.endsWith(MARSHALL_SUFFIX)
     ) {
-      rawData = rawData.substr(MARSHAL_PREFIX.length);
-      rawData = rawData.substr(0, rawData.length - MARSHAL_SUFFIX.length);
+      rawData = rawData.substr(MARSHALL_PREFIX.length);
+      rawData = rawData.substr(0, rawData.length - MARSHALL_SUFFIX.length);
 
       let channel = "";
       let type = null;
@@ -78,24 +100,24 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
           rawData = rawData.substr(i + 3);
 
           switch (type) {
-            case "s":
+            case SERIAL_TYPE_STRING:
               data = rawData;
               break;
 
-            case "o":
+            case SERIAL_TYPE_OBJECT:
               data = JSON.parse(rawData);
               break;
 
-            case "i":
+            case SERIAL_TYPE_INTEGER:
               data = parseInt(rawData);
               break;
 
-            case "f":
+            case SERIAL_TYPE_FLOAT:
               data = parseFloat(rawData);
               break;
 
             default:
-              throw new TypeError(`Unknown type: ${type}`);
+              throw new TypeError(`Unknown serial type: ${type}`);
           }
 
           break;
