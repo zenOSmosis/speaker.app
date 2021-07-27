@@ -22,19 +22,21 @@ describe("packs and unpacks channel data (non-chunked)", () => {
     ).toEqual(`<z:some-channel-name,o,[1,2,3,"test"]/>`, "serializes array");
   });
 
-  it("unpacks channel data (non-chunked)", () => {
+  it("unpacks channel data (non-chunked)", async () => {
     expect(
-      DataChannelManager.unpack(DataChannelManager.pack("test-channel", 123))
+      await DataChannelManager.unpack(
+        DataChannelManager.pack("test-channel", 123)
+      )
     ).toEqual(["test-channel", 123], "unpacks integer type");
 
     expect(
-      DataChannelManager.unpack(
+      await DataChannelManager.unpack(
         DataChannelManager.pack("test-channel", 123.456)
       )
     ).toEqual(["test-channel", 123.456], "unpacks float type");
 
     expect(
-      DataChannelManager.unpack(
+      await DataChannelManager.unpack(
         DataChannelManager.pack("test-channel", { foo: 123, test: "abc" })
       )
     ).toEqual(
@@ -43,12 +45,12 @@ describe("packs and unpacks channel data (non-chunked)", () => {
     );
 
     expect(
-      DataChannelManager.unpack(
+      await DataChannelManager.unpack(
         DataChannelManager.pack("test-channel", "stringy")
       )
     ).toEqual(["test-channel", "stringy"], "unpacks string type");
 
-    expect(DataChannelManager.unpack("abc")).toEqual(
+    expect(await DataChannelManager.unpack("abc")).toEqual(
       undefined,
       "ignores invalid type"
     );

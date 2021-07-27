@@ -2,11 +2,17 @@ import BaseModule, { EVT_DESTROYED } from "../ZenRTCPeer.BaseModule";
 import DataChannel from "./DataChannel";
 import { logger } from "phantom-core";
 
+// IMPORTANT: Module aliases are not currently supported w/ shared modules,
+// hence the full relative path
+import getRoughSizeOfObject from "../../../number/getRoughSizeOfObject";
+
 import {
   EVT_DATA_CHANNEL_OPENED,
   EVT_DATA_CHANNEL_CLOSED,
   EVT_DATA_RECEIVED,
 } from "./constants";
+
+import fastChunkString from "@shelf/fast-chunk-string";
 
 const MARSHALL_PREFIX = "<z:";
 const MARSHALL_SUFFIX = "/>";
@@ -15,6 +21,10 @@ const SERIAL_TYPE_STRING = "s";
 const SERIAL_TYPE_OBJECT = "o";
 const SERIAL_TYPE_INTEGER = "i";
 const SERIAL_TYPE_FLOAT = "f";
+
+// Shared across all instances; represents the current chunk batch number; used
+// for receiving peer identification of received chunk
+let _chunkBatchNumber = -1;
 
 /**
  * Manages the creation, multiplexing / distribution, and chunking of data
@@ -58,11 +68,12 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
    * Marshals data for transmission to other peer.
    *
    * @param {string} channelName
-   * @param {number | string | Object | array} data
+   * @param {number | string | Object | Array} data
+   * @param {number} maxChunkSize? [default = 62kiB]
    * @return {string | string[]} Returns a string or an array of serialized
    * chunks intended to be transmitted to the other peer.
    */
-  static pack(channelName, data = null) {
+  static pack(channelName, data, maxChunkSize = 1024 * 62) {
     if (typeof channelName !== "string") {
       throw new TypeError("channelName must be a string");
     }
@@ -74,7 +85,44 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       data = JSON.stringify(data);
     }
 
-    return `${MARSHALL_PREFIX}${channelName},${serialType},${data}${MARSHALL_SUFFIX}`;
+    // TODO: Remove
+    console.log({
+      roughSize: getRoughSizeOfObject(data),
+      maxChunkSize,
+    });
+
+    // If data is larger than maxChunkSize, break into array of chunks and return the array
+    if (getRoughSizeOfObject(data) > maxChunkSize) {
+      data = data.toString();
+
+      const rawChunks = fastChunkString(data, {
+        size: maxChunkSize,
+        unicodeAware: true,
+      });
+
+      // Increment chunk batch number
+      ++_chunkBatchNumber;
+
+      // Return an array of marshalled strings
+      return rawChunks.map((rawChunk, chunkIdx) =>
+        ZenRTCPeerDataChannelManagerModule.pack(
+          channelName,
+
+          // Wrap rawChunk with extra data to show this is chunked
+          JSON.stringify({
+            isChunked: true,
+            d: rawChunk,
+            i: chunkIdx,
+            b: _chunkBatchNumber,
+          }),
+
+          maxChunkSize
+        )
+      );
+    } else {
+      // Return the marshalled string
+      return `${MARSHALL_PREFIX}${channelName},${serialType},${data}${MARSHALL_SUFFIX}`;
+    }
   }
 
   /**
@@ -83,9 +131,11 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
    * If not able to unmarshall data, it will return void.
    *
    * @param {string} rawData
-   * @return {Array[channelName: string, channelData: number | string | Object | Array] | void}
+   * @return {Promise<Array[channelName: string, channelData: number | string | Object | Array] | void>}
+   * NOTE: A promise is used for the return as it will await all chunked data
+   * to be received before resolving.
    */
-  static unpack(rawData) {
+  static async unpack(rawData) {
     // TODO: Provide unchunking ability, buffering (and not returning) until the inbound message is complete
 
     /**
@@ -114,17 +164,11 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       let serialType = null;
       let data = null;
 
-      // Iterate over each character
+      // Parse channelName, serialType and data from raw data
+      // NOTE (jh): I used this instead of JSON parsing the raw data because of
+      // theoretical performance enhancements, but haven't actually measured it
       let i = -1;
       do {
-        // TODO: Remove
-        // Stop iterating once we have parsed data
-        /*
-        if (data) {
-          break;
-        }
-        */
-
         ++i;
 
         const char = rawData[i];
@@ -159,7 +203,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
               throw new TypeError(`Unknown serial type: ${serialType}`);
           }
 
-          // TODO: Document why this works
+          // Stop iterating once we know the data
           break;
         }
       } while (true);
@@ -171,22 +215,26 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
   constructor(zenRTCPeer) {
     super(zenRTCPeer);
 
-    // TODO: Use read/write sync states to keep track of currently open channels?
+    // TODO: Use read / write sync states to keep track of currently open channels?
 
     this._dataChannels = {};
 
     // Bind data receptor
     (() => {
       /**
-       * @param {Object} param TODO: Document
+       * @param {any} rawData
        * @return {void}
        */
-      const _handleDataReceived = rawData => {
-        const unpacked = ZenRTCPeerDataChannelManagerModule.unpack(rawData);
+      const _handleDataReceived = async rawData => {
+        /** @type {Array<string, any> | void} */
+        const unpacked = await ZenRTCPeerDataChannelManagerModule.unpack(
+          rawData
+        );
 
         if (unpacked) {
           const [channelName, channelData] = unpacked;
 
+          /** @type {DataChannel} */
           const dataChannel = this.getOrCreateDataChannel(channelName);
 
           this.receiveChannelData(dataChannel, channelData);
