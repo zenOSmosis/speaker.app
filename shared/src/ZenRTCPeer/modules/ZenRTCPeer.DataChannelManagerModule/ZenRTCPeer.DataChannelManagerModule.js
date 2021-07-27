@@ -69,11 +69,14 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
    */
   static unpack(rawData) {
     // TODO: Provide unchunking ability, buffering (and not returning) until the inbound message is complete
+    // IMPORTANT: We can't assume the received packs will be in order, so we need to force them to be in order
 
     if (typeof rawData !== "string") {
       rawData = rawData.toString();
     }
 
+    // Only handle data that has been marshalled by this class on the other end
+    // of the wire.
     if (
       rawData.startsWith(MARSHALL_PREFIX) &&
       rawData.endsWith(MARSHALL_SUFFIX)
@@ -85,9 +88,14 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       let type = null;
       let data = null;
 
+      // Iterate over each character
       let i = -1;
-
       do {
+        // Stop iterating once we have parsed data
+        if (data) {
+          break;
+        }
+
         ++i;
 
         const char = rawData[i];
