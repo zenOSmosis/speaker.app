@@ -85,7 +85,15 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
    */
   static unpack(rawData) {
     // TODO: Provide unchunking ability, buffering (and not returning) until the inbound message is complete
-    // IMPORTANT: We can't assume the received packs will be in order, so we need to force them to be in order
+
+    /**
+     * IMPORTANT: We can't assume the received packs will be in order, so we
+     * need to force them to be in order.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Games/Techniques/WebRTC_data_channels
+     * for how data channels can either be reliable (similar to TCP; in order)
+     * or unreliable (similar to UDP; not guaranteed to be in order).
+     */
 
     if (typeof rawData !== "string") {
       rawData = rawData.toString();
@@ -107,6 +115,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       // Iterate over each character
       let i = -1;
       do {
+        // TODO: Remove
         // Stop iterating once we have parsed data
         /*
         if (data) {
