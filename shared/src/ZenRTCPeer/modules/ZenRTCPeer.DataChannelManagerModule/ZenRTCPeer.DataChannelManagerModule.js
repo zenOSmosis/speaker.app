@@ -55,7 +55,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
    * Marshals data for transmission to other peer.
    *
    * @param {string} channelName
-   * @param {number | string | Object | Array} data
+   * @param {number | string | Object | array} data
    * @returns
    */
   static pack(channelName, data = null) {
