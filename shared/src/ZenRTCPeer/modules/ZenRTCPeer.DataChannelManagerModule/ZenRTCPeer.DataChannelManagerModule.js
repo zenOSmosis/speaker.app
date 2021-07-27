@@ -66,12 +66,10 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       throw new TypeError("channelName must be a string");
     }
 
-    let isObject = false;
-
     const serialType = ZenRTCPeerDataChannelManagerModule.getSerialType(data);
 
+    // Serialize JS objects as JSON
     if (serialType === SERIAL_TYPE_OBJECT) {
-      isObject = true;
       data = JSON.stringify(data);
     }
 
