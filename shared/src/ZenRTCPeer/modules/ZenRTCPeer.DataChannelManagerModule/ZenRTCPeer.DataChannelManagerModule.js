@@ -19,6 +19,9 @@ const SERIAL_TYPE_FLOAT = "f";
 /**
  * Manages the creation, multiplexing / distribution, and chunking of data
  * across multiple DataChannel instances.
+ *
+ * IMPORTANT: At this time, binary transfers are not directly supported in this
+ * module.  It has mostly been designed with syncing JSON data in mind.
  */
 export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
   /**
