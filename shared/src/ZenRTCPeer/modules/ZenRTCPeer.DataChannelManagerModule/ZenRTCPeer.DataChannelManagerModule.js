@@ -109,7 +109,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       rawData = rawData.substr(0, rawData.length - MARSHALL_SUFFIX.length);
 
       let channelName = "";
-      let type = null;
+      let serialType = null;
       let data = null;
 
       // Iterate over each character
@@ -131,12 +131,12 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
           channelName += rawData[i];
         } else {
           // TODO: Document
-          type = rawData[i + 1];
+          serialType = rawData[i + 1];
 
           // TODO: Document
           rawData = rawData.substr(i + 3);
 
-          switch (type) {
+          switch (serialType) {
             case SERIAL_TYPE_STRING:
               data = rawData;
               break;
