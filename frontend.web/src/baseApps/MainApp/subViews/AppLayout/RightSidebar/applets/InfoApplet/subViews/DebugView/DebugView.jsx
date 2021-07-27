@@ -15,12 +15,8 @@ import { EVT_SDP_OFFERED, EVT_SDP_ANSWERED } from "@src/WebZenRTCPeer";
 export default function DebugView() {
   const { historicalSessionCount, coreCount } = useClientDeviceContext();
 
-  const {
-    zenRTCPeer,
-    getClientSessionUptime,
-    latency,
-    isHostOnline,
-  } = useWebPhantomSessionContext();
+  const { zenRTCPeer, getClientSessionUptime, latency, isHostOnline } =
+    useWebPhantomSessionContext();
 
   const { getConnectionUptime: getSocketConnectionUptime } = useSocketContext();
 
@@ -114,23 +110,26 @@ export default function DebugView() {
         <Section>
           <h2>Misc.</h2>
 
-          {
-            // TODO: Remove or refactor
-          }
-          <button
-            onClick={() => {
-              const dataChannel = zenRTCPeer.createDataChannel("test");
+          <div style={{ margin: 8 }}>
+            {
+              // TODO: Remove or refactor
+            }
+            <button
+              onClick={() => {
+                const dataChannel = zenRTCPeer.createDataChannel("test");
 
-              // TODO: Remove
-              console.log({
-                dataChannel,
-                send: dataChannel.send,
-              });
-              dataChannel.send("hello there");
-            }}
-          >
-            Create Test Data Channel
-          </button>
+                // TODO: Remove
+                console.log({
+                  dataChannel,
+                  send: dataChannel.send,
+                });
+                dataChannel.send("hello there");
+              }}
+              disabled={!zenRTCPeer}
+            >
+              Create Test Data Channel
+            </button>
+          </div>
 
           <div>
             <button
