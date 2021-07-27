@@ -1,7 +1,8 @@
-import DataChannelManager from "./ZenRTCPeer.DataChannelManagerModule";
+// import DataChannelChunkBatch from "./ZenRTCPeer.DataChannelChunkBatch";
 
-// TODO: Add tests for constructed DataChannelManager instance (will need a mock ZenRTCPeer instance)
+// TODO: Pass each generated chunk to read functions in order to determine if they are valid
 
+/*
 describe("packs and unpacks channel data (non-chunked)", () => {
   it("packs channel data", () => {
     expect(DataChannelManager.pack("some-channel-name", 123)).toEqual(
@@ -58,3 +59,4 @@ describe("packs and unpacks channel data (non-chunked)", () => {
     );
   });
 });
+*/

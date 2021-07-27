@@ -1,18 +1,14 @@
 import BaseModule, { EVT_DESTROYED } from "../ZenRTCPeer.BaseModule";
-import DataChannel from "./DataChannel";
+import DataChannel from "./ZenRTCPeer.DataChannel";
 import { logger } from "phantom-core";
 
-// IMPORTANT: Module aliases are not currently supported w/ shared modules,
-// hence the full relative path
-import getRoughSizeOfObject from "../../../number/getRoughSizeOfObject";
+import DataChannelChunkBatch from "./ZenRTCPeer.DataChannelChunkBatch";
 
 import {
   EVT_DATA_CHANNEL_OPENED,
   EVT_DATA_CHANNEL_CLOSED,
   EVT_DATA_RECEIVED,
 } from "./constants";
-
-import fastChunkString from "@shelf/fast-chunk-string";
 
 const MARSHALL_PREFIX = "<z:";
 const MARSHALL_SUFFIX = "/>";
@@ -21,10 +17,6 @@ const SERIAL_TYPE_STRING = "s";
 const SERIAL_TYPE_OBJECT = "o";
 const SERIAL_TYPE_INTEGER = "i";
 const SERIAL_TYPE_FLOAT = "f";
-
-// Shared across all instances; represents the current chunk batch number; used
-// for receiving peer identification of received chunk
-let _chunkBatchNumber = -1;
 
 /**
  * Manages the creation, multiplexing / distribution, and chunking of data
@@ -85,40 +77,26 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       data = JSON.stringify(data);
     }
 
-    // TODO: Remove
-    console.log({
-      roughSize: getRoughSizeOfObject(data),
-      maxChunkSize,
-    });
+    // If data is larger than maxChunkSize, break into array of chunks, then
+    // recursively return the packed (marshalled) string
+    if (DataChannelChunkBatch.getShouldBeChunked(data, maxChunkSize)) {
+      const chunkBatch = new ChunkBatch(data, maxChunkSize);
 
-    // If data is larger than maxChunkSize, break into array of chunks and return the array
-    if (getRoughSizeOfObject(data) > maxChunkSize) {
-      data = data.toString();
+      // Pack each chunk, where each chunk will be emit separately over the
+      // WebRTC data channel
+      const serialChunks = chunkBatch
+        .getChunks()
+        .map(chunk =>
+          ZenRTCPeerDataChannelManagerModule.pack(
+            channelName,
+            chunk,
+            maxChunkSize
+          )
+        );
 
-      const rawChunks = fastChunkString(data, {
-        size: maxChunkSize,
-        unicodeAware: true,
-      });
+      chunkBatch.destroy();
 
-      // Increment chunk batch number
-      ++_chunkBatchNumber;
-
-      // Return an array of marshalled strings
-      return rawChunks.map((rawChunk, chunkIdx) =>
-        ZenRTCPeerDataChannelManagerModule.pack(
-          channelName,
-
-          // Wrap rawChunk with extra data to show this is chunked
-          JSON.stringify({
-            isChunked: true,
-            d: rawChunk,
-            i: chunkIdx,
-            b: _chunkBatchNumber,
-          }),
-
-          maxChunkSize
-        )
-      );
+      return serialChunks;
     } else {
       // Return the marshalled string
       return `${MARSHALL_PREFIX}${channelName},${serialType},${data}${MARSHALL_SUFFIX}`;
@@ -136,8 +114,6 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
    * to be received before resolving.
    */
   static async unpack(rawData) {
-    // TODO: Provide unchunking ability, buffering (and not returning) until the inbound message is complete
-
     /**
      * IMPORTANT: We can't assume the received packs will be in order, so we
      * need to force them to be in order.
@@ -208,10 +184,19 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
         }
       } while (true);
 
-      return [channelName, data];
+      // If matches internal chunk structure, await batch
+      if (DataChannelChunkBatch.getIsChunked(data)) {
+        // TODO: Provide unchunking ability, buffering (and not returning) until the inbound message is complete
+        // TODO: If incomplete batch, return void
+      } else {
+        return [channelName, data];
+      }
     }
   }
 
+  /**
+   * @param {ZenRTCPeer} zenRTCPeer
+   */
   constructor(zenRTCPeer) {
     super(zenRTCPeer);
 
@@ -263,7 +248,11 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
     );
 
     if (Array.isArray(packed)) {
-      packed.forEach(chunk => this._zenRTCPeer.send(chunk));
+      // NOTE: Each chunk is sent via a resolved promise to enable potential
+      // interleaving of other requests to prevent them from being blocked
+      packed.forEach(
+        chunk => new Promise.resolve(() => this._zenRTCPeer.send(chunk))
+      );
     } else {
       this._zenRTCPeer.send(packed);
     }
