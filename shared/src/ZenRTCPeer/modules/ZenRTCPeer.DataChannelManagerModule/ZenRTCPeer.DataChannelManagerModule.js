@@ -59,7 +59,8 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
    *
    * @param {string} channelName
    * @param {number | string | Object | array} data
-   * @returns
+   * @return {string | string[]} Returns a string or an array of serialized
+   * chunks intended to be transmitted to the other peer.
    */
   static pack(channelName, data = null) {
     if (typeof channelName !== "string") {
@@ -205,11 +206,19 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
    *
    * @param {DataChannel} channel
    * @param {any} data
+   * @return {void}
    */
   sendChannelData(channel, data) {
-    this._zenRTCPeer.send(
-      ZenRTCPeerDataChannelManagerModule.pack(channel.getChannelName(), data)
+    const packed = ZenRTCPeerDataChannelManagerModule.pack(
+      channel.getChannelName(),
+      data
     );
+
+    if (Array.isArray(packed)) {
+      packed.forEach(chunk => this._zenRTCPeer.send(chunk));
+    } else {
+      this._zenRTCPeer.send(packed);
+    }
   }
 
   /**
@@ -217,6 +226,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
    *
    * @param {DataChannel} channel
    * @param {any} data
+   * @return {void}
    */
   receiveChannelData(channel, data) {
     channel.receive(data);
