@@ -1,5 +1,6 @@
 import BaseModule, { EVT_DESTROYED } from "../ZenRTCPeer.BaseModule";
 import DataChannel from "./DataChannel";
+import { logger } from "phantom-core";
 
 import {
   EVT_DATA_CHANNEL_OPENED,
@@ -30,9 +31,24 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
    * @return {SERIAL_TYPE_STRING | SERIAL_TYPE_OBJECT | SERIAL_TYPE_INTEGER | SERIAL_TYPE_FLOAT}
    */
   static getSerialType(data) {
-    const type = isNaN(data) ? typeof data : Number.isInteger(data) ? "i" : "f";
+    const serialType = isNaN(data)
+      ? (typeof data)[0]
+      : Number.isInteger(data)
+      ? "i"
+      : "f";
 
-    return type;
+    if (
+      ![
+        SERIAL_TYPE_STRING,
+        SERIAL_TYPE_OBJECT,
+        SERIAL_TYPE_INTEGER,
+        SERIAL_TYPE_FLOAT,
+      ].includes(serialType)
+    ) {
+      logger.warn(`Unknown serial type: ${serialType}`);
+    }
+
+    return serialType;
   }
 
   /**
@@ -49,14 +65,14 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
 
     let isObject = false;
 
-    const type = ZenRTCPeerDataChannelManagerModule.getSerialType(data);
+    const serialType = ZenRTCPeerDataChannelManagerModule.getSerialType(data);
 
-    if (type === "object") {
+    if (serialType === SERIAL_TYPE_OBJECT) {
       isObject = true;
       data = JSON.stringify(data);
     }
 
-    return `${MARSHALL_PREFIX}${channelName},${type[0]},${data}${MARSHALL_SUFFIX}`;
+    return `${MARSHALL_PREFIX}${channelName},${serialType},${data}${MARSHALL_SUFFIX}`;
   }
 
   /**
@@ -92,9 +108,11 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       let i = -1;
       do {
         // Stop iterating once we have parsed data
+        /*
         if (data) {
           break;
         }
+        */
 
         ++i;
 
@@ -103,8 +121,10 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
         if (char !== ",") {
           channelName += rawData[i];
         } else {
+          // TODO: Document
           type = rawData[i + 1];
 
+          // TODO: Document
           rawData = rawData.substr(i + 3);
 
           switch (type) {
@@ -128,6 +148,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
               throw new TypeError(`Unknown serial type: ${type}`);
           }
 
+          // TODO: Document why this works
           break;
         }
       } while (true);
