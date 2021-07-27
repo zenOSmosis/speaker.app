@@ -78,7 +78,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
     }
 
     // If data is larger than maxChunkSize, break into array of chunks, then
-    // recursively return the packed (marshalled) string
+    // recursively return the packed (marshalled) string as an array
     if (DataChannelChunkBatch.getShouldBeChunked(data, maxChunkSize)) {
       const chunkBatch = new ChunkBatch(data, maxChunkSize);
 
@@ -158,26 +158,11 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
           // TODO: Document
           rawData = rawData.substr(i + 3);
 
-          switch (serialType) {
-            case SERIAL_TYPE_STRING:
-              data = rawData;
-              break;
-
-            case SERIAL_TYPE_OBJECT:
-              data = JSON.parse(rawData);
-              break;
-
-            case SERIAL_TYPE_INTEGER:
-              data = parseInt(rawData);
-              break;
-
-            case SERIAL_TYPE_FLOAT:
-              data = parseFloat(rawData);
-              break;
-
-            default:
-              throw new TypeError(`Unknown serial type: ${serialType}`);
-          }
+          // Turn data type into original before serialization
+          data = ZenRTCPeerDataChannelManagerModule.coerceReceivedDataType(
+            rawData,
+            serialType
+          );
 
           // Stop iterating once we know the data
           break;
@@ -185,13 +170,45 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       } while (true);
 
       // If matches internal chunk structure, await batch
-      if (DataChannelChunkBatch.getIsChunked(data)) {
-        // TODO: Provide unchunking ability, buffering (and not returning) until the inbound message is complete
-        // TODO: If incomplete batch, return void
-      } else {
-        return [channelName, data];
-      }
+      // if (DataChannelChunkBatch.getIsChunked(data)) {
+      // TODO: Provide unchunking ability, buffering (and not returning) until the inbound message is complete
+      // TODO: If incomplete batch, return void
+      // } else {
+      return [channelName, data];
+      // }
     }
+  }
+
+  /**
+   * Returns data of coerced type
+   *
+   * @param {string | Object | number} data
+   * @param {string} serialType
+   * @return {string | Object | number}
+   */
+  static coerceReceivedDataType(data, serialType) {
+    switch (serialType) {
+      case SERIAL_TYPE_STRING:
+        // Do nothing
+        break;
+
+      case SERIAL_TYPE_OBJECT:
+        data = JSON.parse(data);
+        break;
+
+      case SERIAL_TYPE_INTEGER:
+        data = parseInt(data);
+        break;
+
+      case SERIAL_TYPE_FLOAT:
+        data = parseFloat(data);
+        break;
+
+      default:
+        throw new TypeError(`Unknown serial type: ${serialType}`);
+    }
+
+    return data;
   }
 
   /**
