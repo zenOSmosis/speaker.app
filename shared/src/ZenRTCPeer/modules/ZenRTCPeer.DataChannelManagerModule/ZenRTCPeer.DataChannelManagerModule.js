@@ -80,7 +80,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
     // If data is larger than maxChunkSize, break into array of chunks, then
     // recursively return the packed (marshalled) string as an array
     if (DataChannelChunkBatch.getShouldBeChunked(data, maxChunkSize)) {
-      const chunkBatch = new ChunkBatch(data, maxChunkSize);
+      const chunkBatch = new ChunkBatch(data, { maxChunkSize, serialType });
 
       // Pack each chunk, where each chunk will be emit separately over the
       // WebRTC data channel

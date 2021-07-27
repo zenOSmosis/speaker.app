@@ -12,24 +12,29 @@ import getRoughSizeOfObject from "../../../number/getRoughSizeOfObject";
 const CHUNK_KEY_IS_CHUNK = "zChunk";
 
 /**
+ * @type {SERIAL_TYPE_STRING | SERIAL_TYPE_OBJECT | SERIAL_TYPE_INTEGER | SERIAL_TYPE_FLOAT} serialType
+ */
+const CHUNK_KEY_SERIAL_TYPE = "t";
+
+/**
  * @type {string | number} The serialized data.
- **/
+ */
 const CHUNK_KEY_DATA = "d";
 
 /**
  * @type {number} The chunk index, starting from 0.
- **/
+ */
 const CHUNK_KEY_INDEX = "i";
 
 /**
  * @type {number} The total number of chunks.
- **/
+ */
 const CHUNK_KEY_LEN_CHUNKS = "l";
 
 /**
  * @type {string} The batch code which corresponds to the short UUID of the
  * sender.
- **/
+ */
 const CHUNK_KEY_BATCH_CODE = "b";
 
 const _instances = {};
@@ -61,6 +66,7 @@ export default class ZenRTCPeerDataChannelChunkBatch extends PhantomCore {
       // TODO: Use constants
       [
         CHUNK_KEY_IS_CHUNK,
+        CHUNK_KEY_SERIAL_TYPE,
         CHUNK_KEY_DATA,
         CHUNK_KEY_INDEX,
         CHUNK_KEY_LEN_CHUNKS,
@@ -90,14 +96,21 @@ export default class ZenRTCPeerDataChannelChunkBatch extends PhantomCore {
     }
 
     const {
-      CHUNK_KEY_IS_CHUNK,
+      // CHUNK_KEY_IS_CHUNK,
+      CHUNK_KEY_SERIAL_TYPE: serialType,
       CHUNK_KEY_DATA: data,
       CHUNK_KEY_INDEX: idx,
       CHUNK_KEY_LEN_CHUNKS: lenChunks,
-      CHUNK_KEY_BATCH_CODE: chunkBatchNumber,
+      CHUNK_KEY_BATCH_CODE: batchCode,
     } = chunkData;
 
-    // TODO: Implement
+    return {
+      serialType,
+      data,
+      idx,
+      lenChunks,
+      batchCode,
+    };
   }
 
   // TODO: Document
@@ -120,6 +133,7 @@ export default class ZenRTCPeerDataChannelChunkBatch extends PhantomCore {
     const DEFAULT_OPTIONS = {
       maxChunkSize: 1024 * 62,
       batchCode: null,
+      serialType: null,
     };
 
     super(options, PhantomCore.mergeOptions(DEFAULT_OPTIONS, userOptions));
@@ -139,6 +153,8 @@ export default class ZenRTCPeerDataChannelChunkBatch extends PhantomCore {
 
     this._batchCode = this._options.batchCode || this.getShortUUID();
 
+    this._serialType = this._options.serialType;
+
     _instances[this._batchCode] = this;
   }
 
@@ -155,9 +171,28 @@ export default class ZenRTCPeerDataChannelChunkBatch extends PhantomCore {
    * TODO: Document
    */
   addChunk(chunk) {
+    // TODO: Don't allow to run if we're the sender (i.e. there is default data)
+
     // IMPORTANT: This automatically performs type coercion to string in order to concatenate on top of it
     // this._data = this._data.toString() + chunk;
     // TODO: If data is complete, return fully read data
+
+    const { serialType, data, idx, lenChunks, batchCode } =
+      ZenRTCPeerDataChannelChunkBatch.readChunkData(chunk);
+
+    this._serialType = serialType;
+  }
+
+  /**
+   * Returns the original data, as an array of strings
+   *
+   * @return {string[]}
+   */
+  getChunks() {
+    return fastChunkString(data, {
+      size: this._options.maxChunkSize,
+      unicodeAware: true,
+    });
   }
 
   /**
@@ -171,18 +206,6 @@ export default class ZenRTCPeerDataChannelChunkBatch extends PhantomCore {
     const roughSize = getRoughSizeOfObject(this._data);
 
     return Math.ceil(roughSize / this._maxChunkSize);
-  }
-
-  /**
-   * Returns the original data, as an array of strings
-   *
-   * @return {string[]}
-   */
-  getChunks() {
-    return fastChunkString(data, {
-      size: this._options.maxChunkSize,
-      unicodeAware: true,
-    });
   }
 
   /**
