@@ -40,12 +40,12 @@ const _instances = {};
 /**
  * Provides serialized data channel chunking operations for ZenRTCPeer.DataChannelManagerModule.
  */
-export default class ZenRTCPeerDataChannelChunkBatchCore extends PhantomCore {
+export default class DataChannelChunkBatchCore extends PhantomCore {
   /**
    * Retrieves the batch instance with the given batch code, if one is present.
    *
    * @param {string} batchCode
-   * @return {ZenRTCPeerDataChannelChunkBatch | void}
+   * @return {DataChannelChunkBatch | void}
    */
   static getBatchWithCode(batchCode) {
     return _instances[batchCode];

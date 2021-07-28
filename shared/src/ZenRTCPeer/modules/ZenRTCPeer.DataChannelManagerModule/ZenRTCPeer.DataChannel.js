@@ -10,7 +10,7 @@ import { EVT_DATA_RECEIVED } from "./constants";
  *
  * The bulk of the work is handled via DataChannelManagerModule.
  */
-export default class ZenRTCPeerDataChannel extends PhantomCore {
+export default class DataChannel extends PhantomCore {
   // static doesChannelExistForOtherManager(dataChannel, dataChannelManager) {}
 
   constructor(dataChannelManagerModule, channelName) {

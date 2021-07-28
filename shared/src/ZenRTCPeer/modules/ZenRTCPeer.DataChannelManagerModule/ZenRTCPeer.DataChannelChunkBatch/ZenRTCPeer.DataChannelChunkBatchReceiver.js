@@ -1,6 +1,6 @@
-import ZenRTCPeerDataChannelChunkBatchCore from "./_ZenRTCPeer.DataChannelChunkBatchCore";
+import DataChannelChunkBatchCore from "./_ZenRTCPeer.DataChannelChunkBatchCore";
 
-export default class ZenRTCPeerDataChannelChunkBatchReceiver extends ZenRTCPeerDataChannelChunkBatchCore {
+export default class DataChannelChunkBatchReceiver extends DataChannelChunkBatchCore {
   /**
    * Adds a chunk to the batch.
    *
@@ -14,7 +14,7 @@ export default class ZenRTCPeerDataChannelChunkBatchReceiver extends ZenRTCPeerD
     // TODO: If data is complete, return fully read data
 
     const { serialType, data, idx, lenChunks, batchCode } =
-      ZenRTCPeerDataChannelChunkBatch.readChunkData(chunk);
+      DataChannelChunkBatch.readChunkData(chunk);
 
     if (batchCode && batchCode !== this._batchCode) {
       throw new TypeError(

@@ -3,8 +3,8 @@ import DataChannel from "./ZenRTCPeer.DataChannel";
 import { logger } from "phantom-core";
 
 import {
-  ZenRTCPeerDataChannelChunkBatchSender,
-  ZenRTCPeerDataChannelChunkBatchReceiver,
+  DataChannelChunkBatchSender,
+  DataChannelChunkBatchReceiver,
 } from "./ZenRTCPeer.DataChannelChunkBatch";
 
 import {
@@ -28,7 +28,7 @@ const SERIAL_TYPE_FLOAT = "f";
  * IMPORTANT: At this time, binary transfers are not directly supported in this
  * module.  It has mostly been designed with syncing JSON data in mind.
  */
-export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
+export default class DataChannelManagerModule extends BaseModule {
   /**
    * Retrieves custom serial type for the given data.
    *
@@ -73,7 +73,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       throw new TypeError("channelName must be a string");
     }
 
-    const serialType = ZenRTCPeerDataChannelManagerModule.getSerialType(data);
+    const serialType = DataChannelManagerModule.getSerialType(data);
 
     // Serialize JS objects as JSON
     if (serialType === SERIAL_TYPE_OBJECT) {
@@ -82,12 +82,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
 
     // If data is larger than maxChunkSize, break into array of chunks, then
     // recursively return the packed (marshalled) string as an array
-    if (
-      ZenRTCPeerDataChannelChunkBatchSender.getShouldBeChunked(
-        data,
-        maxChunkSize
-      )
-    ) {
+    if (DataChannelChunkBatchSender.getShouldBeChunked(data, maxChunkSize)) {
       const chunkBatch = new ChunkBatch(data, { maxChunkSize, serialType });
 
       // Pack each chunk, where each chunk will be emit separately over the
@@ -95,11 +90,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       const serialChunks = chunkBatch
         .getChunks()
         .map(chunk =>
-          ZenRTCPeerDataChannelManagerModule.pack(
-            channelName,
-            chunk,
-            maxChunkSize
-          )
+          DataChannelManagerModule.pack(channelName, chunk, maxChunkSize)
         );
 
       chunkBatch.destroy();
@@ -167,7 +158,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
           rawData = rawData.substr(i + 3);
 
           // Turn data type into original before serialization
-          data = ZenRTCPeerDataChannelManagerModule.coerceReceivedDataType(
+          data = DataChannelManagerModule.coerceReceivedDataType(
             rawData,
             serialType
           );
@@ -178,7 +169,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       } while (true);
 
       // If matches internal chunk structure, await batch
-      // if (ZenRTCPeerDataChannelChunkBatchReceiver.getIsChunked(data)) {
+      // if (DataChannelChunkBatchReceiver.getIsChunked(data)) {
       // TODO: Provide unchunking ability, buffering (and not returning) until the inbound message is complete
       // TODO: If incomplete batch, return void
       // } else {
@@ -237,9 +228,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
        */
       const _handleDataReceived = async rawData => {
         /** @type {Array<string, any> | void} */
-        const unpacked = await ZenRTCPeerDataChannelManagerModule.unpack(
-          rawData
-        );
+        const unpacked = await DataChannelManagerModule.unpack(rawData);
 
         if (unpacked) {
           const [channelName, channelData] = unpacked;
@@ -267,7 +256,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
    * @return {void}
    */
   sendChannelData(channel, data) {
-    const packed = ZenRTCPeerDataChannelManagerModule.pack(
+    const packed = DataChannelManagerModule.pack(
       channel.getChannelName(),
       data
     );

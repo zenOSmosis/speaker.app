@@ -1,4 +1,4 @@
-import ZenRTCPeerDataChannelChunkBatchCore, {
+import DataChannelChunkBatchCore, {
   CHUNK_KEY_IS_CHUNK,
   CHUNK_KEY_DATA,
   CHUNK_KEY_INDEX,
@@ -8,7 +8,7 @@ import ZenRTCPeerDataChannelChunkBatchCore, {
 
 import fastChunkString from "@shelf/fast-chunk-string";
 
-export default class ZenRTCPeerDataChannelChunkBatchSender extends ZenRTCPeerDataChannelChunkBatchCore {
+export default class DataChannelChunkBatchSender extends DataChannelChunkBatchCore {
   /**
    * Returns the original data, as an array of strings
    *
