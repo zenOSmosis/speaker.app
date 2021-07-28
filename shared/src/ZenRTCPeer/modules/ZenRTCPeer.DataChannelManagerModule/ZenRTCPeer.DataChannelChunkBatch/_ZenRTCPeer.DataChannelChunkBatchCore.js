@@ -6,39 +6,43 @@ import getRoughSizeOfObject from "../../../../number/getRoughSizeOfObject";
 
 /**
  * @type {boolean} Set to true to identify a chunk.
- **/
-export const CHUNK_KEY_IS_CHUNK = "zChunk";
+ */
+export const META_CHUNK_KEY_IS_CHUNK = "zChunk";
 
 /**
  * @type {SERIAL_TYPE_STRING | SERIAL_TYPE_OBJECT | SERIAL_TYPE_INTEGER | SERIAL_TYPE_FLOAT} serialType
  */
-export const CHUNK_KEY_SERIAL_TYPE = "t";
+export const META_CHUNK_KEY_SERIAL_TYPE = "t";
 
 /**
  * @type {string | number} The serialized data.
  */
-export const CHUNK_KEY_DATA = "d";
+export const META_CHUNK_KEY_DATA = "d";
 
 /**
  * @type {number} The chunk index, starting from 0.
  */
-export const CHUNK_KEY_INDEX = "i";
+export const META_CHUNK_KEY_INDEX = "i";
 
 /**
  * @type {number} The total number of chunks.
  */
-export const CHUNK_KEY_LEN_CHUNKS = "l";
+export const META_CHUNK_KEY_LEN_CHUNKS = "l";
 
 /**
  * @type {string} The batch code which corresponds to the short UUID of the
  * sender.
  */
-export const CHUNK_KEY_BATCH_CODE = "b";
+export const META_CHUNK_KEY_BATCH_CODE = "b";
 
 const _instances = {};
 
 /**
- * Provides serialized data channel chunking operations for ZenRTCPeer.DataChannelManagerModule.
+ * Provides serialized data channel chunking operations for
+ * ZenRTCPeer.DataChannelManagerModule.
+ *
+ * IMPORTANT: This class should not be utilized directly.  The associated
+ * sender and receiver classes should be utilized instead.
  */
 export default class DataChannelChunkBatchCore extends PhantomCore {
   /**
@@ -48,7 +52,13 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
    * @return {DataChannelChunkBatch | void}
    */
   static getBatchWithCode(batchCode) {
-    return _instances[batchCode];
+    const batch = _instances[batchCode];
+
+    if (!batch) {
+      logger.warn(`Unknown batch with code: ${batchCode}`);
+    }
+
+    return batch;
   }
 
   /**
@@ -63,24 +73,25 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
   }
 
   /**
-   * Determines if the given data is chunked data.
+   * Determines if the given data is chunked data (assuming the passed data is
+   * a meta chunk).
    *
    * @param {any} data
-   * @return {boolean} Whether or not the given data is chunked
+   * @return {boolean} Whether or not the given data is chunked.
    */
   static getIsChunked(data) {
     if (
       typeof data === "object" &&
       // TODO: Use constants
       [
-        CHUNK_KEY_IS_CHUNK,
-        CHUNK_KEY_SERIAL_TYPE,
-        CHUNK_KEY_DATA,
-        CHUNK_KEY_INDEX,
-        CHUNK_KEY_LEN_CHUNKS,
-        CHUNK_KEY_BATCH_CODE,
+        META_CHUNK_KEY_IS_CHUNK,
+        META_CHUNK_KEY_SERIAL_TYPE,
+        META_CHUNK_KEY_DATA,
+        META_CHUNK_KEY_INDEX,
+        META_CHUNK_KEY_LEN_CHUNKS,
+        META_CHUNK_KEY_BATCH_CODE,
       ].every(key => data.hasOwnProperty(key)) &&
-      data[CHUNK_KEY_IS_CHUNK] === true
+      data[META_CHUNK_KEY_IS_CHUNK] === true
     ) {
       return true;
     } else {
@@ -90,11 +101,11 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
 
   /**
    * @param {Object | string} chunkData
-   * @return // TODO: Document
+   * @return {Object} // TODO: Document
    */
-  static readChunkData(chunkData) {
+  static readMetaChunk(chunkData) {
     // Silently ignore if not a real chunk
-    if (!DataChannelChunkBatch.getIsChunked(chunk)) {
+    if (!DataChannelChunkBatchCore.getIsChunked(chunkData)) {
       logger.warn("chunkData is not a DataChannelChunkBatch chunk", chunkData);
 
       return;
@@ -105,12 +116,12 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
     }
 
     const {
-      // CHUNK_KEY_IS_CHUNK,
-      CHUNK_KEY_SERIAL_TYPE: serialType,
-      CHUNK_KEY_DATA: data,
-      CHUNK_KEY_INDEX: idx,
-      CHUNK_KEY_LEN_CHUNKS: lenChunks,
-      CHUNK_KEY_BATCH_CODE: batchCode,
+      // META_CHUNK_KEY_IS_CHUNK,
+      META_CHUNK_KEY_SERIAL_TYPE: serialType,
+      META_CHUNK_KEY_DATA: data,
+      META_CHUNK_KEY_INDEX: idx,
+      META_CHUNK_KEY_LEN_CHUNKS: lenChunks,
+      META_CHUNK_KEY_BATCH_CODE: batchCode,
     } = chunkData;
 
     return {
@@ -123,32 +134,30 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
   }
 
   /**
-   * IMPORTANT: This module expects chunks to have a known length (known total
-   * number of chunks).
-   *
-   * When defaultData is present, this instance is assumed to be the sender.
-   *
-   * NOTE: maxChunkSize option defaults to 63488. This number was chosen
-   * because Safari (14) data channels only support a maximum of 65536 bytes
-   * being transmitted, and this allows a buffer for meta data padding.
-   *
-   * @param {any} defaultData Data as it is meant to be consumed on the other
-   * side (no meta-data added).
-   * @param {Object} options? TODO: Document
+   * @param {Object} options TODO: Document
    */
-  constructor(defaultData = null, userOptions = {}) {
+  constructor(options = {}) {
     const DEFAULT_OPTIONS = {
+      originalData: "",
       maxChunkSize: 1024 * 62,
       batchCode: null,
       serialType: null,
     };
 
-    super(options, PhantomCore.mergeOptions(DEFAULT_OPTIONS, userOptions));
+    const mergedOptions = PhantomCore.mergeOptions(DEFAULT_OPTIONS, options);
+
+    // At this time, this class only supports strings for original data (it's
+    // mostly intended to work w/ large JSON structures)
+    if (typeof mergedOptions.originalData !== "string") {
+      throw new TypeError("originalData must be a string");
+    }
+
+    super(mergedOptions);
 
     // No default data is assumed to be the receiver, in which case we must
     // also have a corresponding batch code in order to correlate received data
     // chunks to this instance
-    if (!defaultData && !this._batchCode) {
+    if (!this._options.originalData && !this._batchCode) {
       throw new Error(
         "batchCode must be present when there is no default data"
       );
@@ -156,7 +165,7 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
 
     // Data as it is meant to be consumed on the other side (no meta-data
     // added)
-    this._data = defaultData;
+    this._data = this._options.originalData;
 
     this._maxChunkSize = this._options.maxChunkSize;
 
