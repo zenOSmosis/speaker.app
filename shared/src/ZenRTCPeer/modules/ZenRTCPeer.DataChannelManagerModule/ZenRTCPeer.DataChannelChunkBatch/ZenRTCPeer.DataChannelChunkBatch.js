@@ -4,7 +4,7 @@ import fastChunkString from "@shelf/fast-chunk-string";
 
 // IMPORTANT: Module aliases are not currently supported w/ shared modules,
 // hence the full relative path
-import getRoughSizeOfObject from "../../../number/getRoughSizeOfObject";
+import getRoughSizeOfObject from "../../../../number/getRoughSizeOfObject";
 
 /**
  * @type {boolean} Set to true to identify a chunk.
@@ -44,6 +44,16 @@ const _instances = {};
  */
 export default class ZenRTCPeerDataChannelChunkBatch extends PhantomCore {
   /**
+   * Retrieves the batch instance with the given batch code, if one is present.
+   *
+   * @param {string} batchCode
+   * @return {ZenRTCPeerDataChannelChunkBatch | void}
+   */
+  static getBatchWithCode(batchCode) {
+    return _instances[batchCode];
+  }
+
+  /**
    * Determines if the given data should be chunked.
    *
    * @param {any} data
@@ -71,7 +81,8 @@ export default class ZenRTCPeerDataChannelChunkBatch extends PhantomCore {
         CHUNK_KEY_INDEX,
         CHUNK_KEY_LEN_CHUNKS,
         CHUNK_KEY_BATCH_CODE,
-      ].every(key => data.hasOwnProperty(key))
+      ].every(key => data.hasOwnProperty(key)) &&
+      data[CHUNK_KEY_IS_CHUNK] === true
     ) {
       return true;
     } else {
@@ -112,9 +123,6 @@ export default class ZenRTCPeerDataChannelChunkBatch extends PhantomCore {
       batchCode,
     };
   }
-
-  // TODO: Document
-  // static getOrCreateChunkBatchFromData(data) {}
 
   /**
    * IMPORTANT: This module expects chunks to have a known length (known total
@@ -180,7 +188,21 @@ export default class ZenRTCPeerDataChannelChunkBatch extends PhantomCore {
     const { serialType, data, idx, lenChunks, batchCode } =
       ZenRTCPeerDataChannelChunkBatch.readChunkData(chunk);
 
-    this._serialType = serialType;
+    if (batchCode && batchCode !== this._batchCode) {
+      throw new TypeError(
+        `Cannot add chunk with batchCode "${batchCode}" to batch "${batchCode}"`
+      );
+    }
+
+    if (serialType) {
+      this._serialType = serialType;
+    }
+
+    if (lenChunks) {
+      this._lenChunks = lenChunks;
+    }
+
+    this._data += data;
   }
 
   /**
@@ -193,19 +215,6 @@ export default class ZenRTCPeerDataChannelChunkBatch extends PhantomCore {
       size: this._options.maxChunkSize,
       unicodeAware: true,
     });
-  }
-
-  /**
-   * Retrieves the number of chunks which make up this batch.
-   *
-   * @return {number}
-   */
-  getTotalChunks() {
-    // TODO: If this is the reader, obtain from first chunk
-
-    const roughSize = getRoughSizeOfObject(this._data);
-
-    return Math.ceil(roughSize / this._maxChunkSize);
   }
 
   /**
@@ -228,6 +237,22 @@ export default class ZenRTCPeerDataChannelChunkBatch extends PhantomCore {
       [CHUNK_KEY_LEN_CHUNKS]: lenChunks,
       [CHUNK_KEY_BATCH_CODE]: batchCode,
     }));
+  }
+
+  /**
+   * Retrieves the number of chunks which make up this batch.
+   *
+   * @return {number}
+   */
+  getTotalChunks() {
+    // If this is the reader, obtain from first chunk
+    if (this._lenChunks) {
+      return this._lenChunks;
+    } else {
+      const roughSize = getRoughSizeOfObject(this._data);
+
+      return Math.ceil(roughSize / this._maxChunkSize);
+    }
   }
 
   // TODO: Document
