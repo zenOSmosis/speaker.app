@@ -82,8 +82,9 @@ export default class DataChannelManagerModule extends BaseModule {
 
     // If data is larger than maxChunkSize, break into array of chunks, then
     // recursively return the packed (marshalled) string as an array
-    if (DataChannelChunkBatchSender.getShouldBeChunked(data, maxChunkSize)) {
-      const chunkBatch = new ChunkBatch(data, { maxChunkSize, serialType });
+    // if (DataChannelChunkBatchSender.getShouldBeChunked(data, maxChunkSize)) {
+    /*
+      const chunkBatch = new DataChannelChunkBatchSender(data);
 
       // Pack each chunk, where each chunk will be emit separately over the
       // WebRTC data channel
@@ -96,10 +97,11 @@ export default class DataChannelManagerModule extends BaseModule {
       chunkBatch.destroy();
 
       return serialChunks;
-    } else {
-      // Return the marshalled string
-      return `${MARSHALL_PREFIX}${channelName},${serialType},${data}${MARSHALL_SUFFIX}`;
-    }
+      */
+    // } else {
+    // Return the marshalled string
+    return `${MARSHALL_PREFIX}${channelName},${serialType},${data}${MARSHALL_SUFFIX}`;
+    // }
   }
 
   /**
