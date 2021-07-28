@@ -102,7 +102,7 @@ export default function SetupModalFooter() {
               style={{
                 fontSize: "3rem",
                 verticalAlign: "middle",
-                color: "inherit",
+                color: "red",
               }}
             />{" "}
             <span style={{ color: "orange" }}>speaker</span>.app
