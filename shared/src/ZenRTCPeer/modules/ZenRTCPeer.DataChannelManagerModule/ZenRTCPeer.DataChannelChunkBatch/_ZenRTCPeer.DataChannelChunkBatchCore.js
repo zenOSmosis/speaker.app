@@ -173,9 +173,11 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
 
     // At this time, this class only supports strings for original data (it's
     // mostly intended to work w/ large JSON structures)
+    /*
     if (typeof mergedOptions.originalData !== "string") {
       throw new TypeError("originalData must be a string");
     }
+    */
 
     super(mergedOptions);
 
@@ -205,6 +207,15 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
    */
   getBatchCode() {
     return this._batchCode;
+  }
+
+  /**
+   * TODO: Document
+   *
+   * @return {string}
+   */
+  getSerialType() {
+    return this._serialType;
   }
 
   // TODO: Document

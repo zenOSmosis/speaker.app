@@ -17,10 +17,10 @@ import {
 const MARSHALL_PREFIX = "<z:";
 const MARSHALL_SUFFIX = "/>";
 
-const SERIAL_TYPE_STRING = "s";
-const SERIAL_TYPE_OBJECT = "o";
-const SERIAL_TYPE_INTEGER = "i";
-const SERIAL_TYPE_FLOAT = "f";
+export const SERIAL_TYPE_STRING = "s";
+export const SERIAL_TYPE_OBJECT = "o";
+export const SERIAL_TYPE_INTEGER = "i";
+export const SERIAL_TYPE_FLOAT = "f";
 
 /**
  * Manages the creation, multiplexing / distribution, and chunking of data
@@ -61,6 +61,38 @@ export default class DataChannelManagerModule extends BaseModule {
   }
 
   /**
+   * Returns data of coerced type
+   *
+   * @param {string | Object | number} data
+   * @param {string} serialType
+   * @return {string | Object | number}
+   */
+  static coerceReceivedDataType(data, serialType) {
+    switch (serialType) {
+      case SERIAL_TYPE_STRING:
+        // Do nothing
+        break;
+
+      case SERIAL_TYPE_OBJECT:
+        data = JSON.parse(data);
+        break;
+
+      case SERIAL_TYPE_INTEGER:
+        data = parseInt(data);
+        break;
+
+      case SERIAL_TYPE_FLOAT:
+        data = parseFloat(data);
+        break;
+
+      default:
+        throw new TypeError(`Unknown serial type: ${serialType}`);
+    }
+
+    return data;
+  }
+
+  /**
    * Marshals data for transmission to other peer.
    *
    * @param {string} channelName
@@ -76,11 +108,6 @@ export default class DataChannelManagerModule extends BaseModule {
     }
 
     const serialType = DataChannelManagerModule.getSerialType(data);
-
-    // Serialize JS objects as JSON
-    if (serialType === SERIAL_TYPE_OBJECT) {
-      data = JSON.stringify(data);
-    }
 
     // If data is larger than maxChunkSize, break into array of chunks, then
     // recursively return the packed (marshalled) string as an array
@@ -106,6 +133,11 @@ export default class DataChannelManagerModule extends BaseModule {
 
       return serialChunks;
     } else {
+      // Serialize JS objects as JSON
+      if (serialType === SERIAL_TYPE_OBJECT) {
+        data = JSON.stringify(data);
+      }
+
       // Return the marshalled string
       return `${MARSHALL_PREFIX}${channelName},${serialType},${data}${MARSHALL_SUFFIX}`;
     }
@@ -192,9 +224,7 @@ export default class DataChannelManagerModule extends BaseModule {
         });
 
         if (batch.getIsComplete()) {
-          // TODO: Use type coercion of data channel manager instead
-          // data = batch.read();
-          data = JSON.parse(batch.read());
+          data = batch.read();
 
           batch.destroy();
 
@@ -204,38 +234,6 @@ export default class DataChannelManagerModule extends BaseModule {
         return [channelName, data];
       }
     }
-  }
-
-  /**
-   * Returns data of coerced type
-   *
-   * @param {string | Object | number} data
-   * @param {string} serialType
-   * @return {string | Object | number}
-   */
-  static coerceReceivedDataType(data, serialType) {
-    switch (serialType) {
-      case SERIAL_TYPE_STRING:
-        // Do nothing
-        break;
-
-      case SERIAL_TYPE_OBJECT:
-        data = JSON.parse(data);
-        break;
-
-      case SERIAL_TYPE_INTEGER:
-        data = parseInt(data);
-        break;
-
-      case SERIAL_TYPE_FLOAT:
-        data = parseFloat(data);
-        break;
-
-      default:
-        throw new TypeError(`Unknown serial type: ${serialType}`);
-    }
-
-    return data;
   }
 
   /**

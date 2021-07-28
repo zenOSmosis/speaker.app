@@ -9,6 +9,8 @@ import {
 import DataChannelChunkBatchSender from "./ZenRTCPeer.DataChannelChunkBatchSender";
 import DataChannelChunkBatchReceiver from "./ZenRTCPeer.DataChannelChunkBatchReceiver";
 
+import { SERIAL_TYPE_STRING } from "../ZenRTCPeer.DataChannelManagerModule";
+
 const LARGE_MOCK_JSON = JSON.stringify({
   a: 123,
   b: "456",
@@ -111,6 +113,8 @@ describe("data chunking", () => {
     // Receiver's short code should match sender's after meta chunks have been
     // received
     expect(receiver.getBatchCode()).toEqual(sender.getBatchCode());
+
+    expect(receiver.getSerialType()).toEqual(SERIAL_TYPE_STRING);
 
     expect(receiver.read()).toEqual(LARGE_MOCK_JSON);
   });

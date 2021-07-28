@@ -8,6 +8,8 @@ import DataChannelChunkBatchCore, {
   META_CHUNK_KEY_BATCH_CODE,
 } from "./_ZenRTCPeer.DataChannelChunkBatchCore";
 
+import DataChannelManagerModule from "../ZenRTCPeer.DataChannelManagerModule";
+
 import fastChunkString from "@shelf/fast-chunk-string";
 
 // IMPORTANT: Module aliases are not currently supported w/ shared modules,
@@ -26,6 +28,8 @@ export default class DataChannelChunkBatchSender extends DataChannelChunkBatchCo
     });
 
     this._batchCode = this.getShortUUID();
+
+    this._serialType = DataChannelManagerModule.getSerialType(originalData);
   }
 
   /**
@@ -38,6 +42,12 @@ export default class DataChannelChunkBatchSender extends DataChannelChunkBatchCo
   getChunks() {
     if (this._cachedChunks.length) {
       return this._cachedChunks;
+    }
+
+    // Coerce object to string (the receiver's read function should change this
+    // back into an object)
+    if (typeof this._data === "object") {
+      this._data = JSON.stringify(this._data);
     }
 
     // NOTE: This size calculation is based on the assumption that the data

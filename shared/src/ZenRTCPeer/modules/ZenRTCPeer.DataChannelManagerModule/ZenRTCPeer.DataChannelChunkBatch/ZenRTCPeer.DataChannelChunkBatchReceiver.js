@@ -1,8 +1,8 @@
 import { logger } from "phantom-core";
 
-import DataChannelChunkBatchCore, {
-  META_CHUNK_KEY_BATCH_CODE,
-} from "./_ZenRTCPeer.DataChannelChunkBatchCore";
+import DataChannelChunkBatchCore from "./_ZenRTCPeer.DataChannelChunkBatchCore";
+
+import DataChannelManagerModule from "../ZenRTCPeer.DataChannelManagerModule";
 
 import getUnsortedArrayLength from "../../../../number/getUnsortedArrayLength";
 
@@ -102,13 +102,21 @@ export default class DataChannelChunkBatchReceiver extends DataChannelChunkBatch
       throw new Error("Cannot read before complete");
     }
 
-    let ret = "";
+    let data = "";
 
     for (let i = 0; i < this._lenChunks; i++) {
-      ret += this._cachedChunks[i];
+      data += this._cachedChunks[i];
     }
 
-    return ret;
+    // TODO: Remove
+    console.log({
+      serialType: this._serialType,
+    });
+
+    return DataChannelManagerModule.coerceReceivedDataType(
+      data,
+      this._serialType
+    );
   }
 
   /**
