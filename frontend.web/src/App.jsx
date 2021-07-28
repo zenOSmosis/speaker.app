@@ -10,6 +10,10 @@ import { useLocation } from "react-router";
 import SocketProvider from "@providers/SocketProvider";
 import ClientDeviceProvider from "@providers/ClientDeviceProvider";
 
+import useDocumentTitle from "@hooks/useDocumentTitle";
+
+import getIsDevelopmentMode from "@utils/getIsDevelopmentMode";
+
 import "./css";
 
 /**
@@ -38,6 +42,13 @@ export default function SplitApp() {
 }
 
 function SplitAppView() {
+  // Add "[dev]" prefix to development mode page title
+  const defaultDocumentTitle = useMemo(
+    () => (getIsDevelopmentMode() ? `[dev] ${document.title}` : null),
+    []
+  );
+  useDocumentTitle(null, defaultDocumentTitle);
+
   const location = useLocation();
 
   const MainApp = useMemo(

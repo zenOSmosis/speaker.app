@@ -11,6 +11,7 @@
   "__NOTE:devDependencies": "These are intentionally only used during development as the shared directory gets copied into the backend, frontend, etc. during build time",
   "devDependencies": {
     "@babel/preset-env": "^7.14.2",
+    "@shelf/fast-chunk-string": "^1.1.1",
     "eth-crypto": "^1.9.0",
     "flat": "^5.0.2",
     "jest": "^27.0.1",

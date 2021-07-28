@@ -27,7 +27,7 @@ import NetworkController from "./NetworkController";
  * @see https://stackoverflow.com/questions/45395369/how-to-get-console-log-line-numbers-shown-in-nodejs/60305881#60305881
  */
 (() => {
-  ["debug", "log", "warn", "error"].forEach((methodName) => {
+  ["debug", "log", "warn", "error"].forEach(methodName => {
     const originalLoggingMethod = console[methodName];
     console[methodName] = (firstArgument, ...otherArguments) => {
       const originalPrepareStackTrace = Error.prepareStackTrace;
@@ -147,11 +147,7 @@ if (cluster.isMaster) {
 
   const { CPU_NO } = process.env;
 
-  // Worker thread
   console.log(`Hello from CPU # ${CPU_NO}`);
-
-  // const { CPU_NO } = process.env;
-  // console.log(`Hello from worker ${CPU_NO}`);
 
   // This must be included at the beginning of the stack in order to properly
   // detect the Node.js uptime
@@ -219,7 +215,7 @@ if (cluster.isMaster) {
     const FRONTEND_PROXY_URL = process.env.FRONTEND_PROXY_URL;
 
     app.get("/*", (req, res) => {
-      proxyServer.web(req, res, { target: FRONTEND_PROXY_URL }, (err) => {
+      proxyServer.web(req, res, { target: FRONTEND_PROXY_URL }, err => {
         // TODO: Implement better frontend server error handling
         console.error(err);
 

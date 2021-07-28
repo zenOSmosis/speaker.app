@@ -6,13 +6,14 @@ let DEFAULT_DOCUMENT_TITLE = ROOT_DOCUMENT_TITLE;
 /**
  * @param {string | null} documentTitle
  * @param {string | null} defaultDocumentTitle? [optional] If defined, changes
- * are persistent across re-renders
+ * are persistent across updates
  */
 export default function useDocumentTitle(
   documentTitle,
   defaultDocumentTitle = null
 ) {
   useEffect(() => {
+    // Override previous default document title if a new one is set
     if (defaultDocumentTitle) {
       DEFAULT_DOCUMENT_TITLE = defaultDocumentTitle;
     }

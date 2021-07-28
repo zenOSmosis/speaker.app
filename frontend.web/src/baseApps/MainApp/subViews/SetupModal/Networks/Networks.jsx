@@ -33,12 +33,8 @@ import styles from "./Networks.module.css";
 export default function Networks() {
   const { isConnected: isSocketConnected } = useSocketContext();
   const { networks } = useNetworksQuery();
-  const {
-    disconnect,
-    realmId,
-    channelId,
-    isConnected,
-  } = useWebPhantomSessionContext();
+  const { disconnect, realmId, channelId, isConnected } =
+    useWebPhantomSessionContext();
 
   const { openRoute } = useAppRoutesContext();
   const closeModal = useCallback(() => openRoute(ROUTE_HOME), [openRoute]);
@@ -108,16 +104,6 @@ export default function Networks() {
               </Center>
             ) : (
               <Center canOverflow={true}>
-                {/*
-          <Section>
-            <button
-              onClick={() => alert("TODO: Implement private network connection")}
-            >
-              Connect to a private Network
-            </button>
-            </Section>
-            */}
-
                 <div>
                   {networks.map(network => {
                     // TODO: Highlight active network, if currently connected to it
@@ -143,13 +129,7 @@ export default function Networks() {
                         className={styles["network"]}
                         onClick={() =>
                           !isConnected
-                            ? /*connect({
-                            // TODO: Navigate to network URL
-                            realmId: network.realmId,
-                            channelId: network.channelId,
-                          }).then(() => closeModal())
-                          */
-                              openRoute(ROUTE_CALL_URL, {
+                            ? openRoute(ROUTE_CALL_URL, {
                                 realmId: network.realmId,
                                 channelId: network.channelId,
                               })
