@@ -17,7 +17,7 @@ export default class DataChannelChunkBatchReceiver extends DataChannelChunkBatch
       DataChannelChunkBatch.readChunkData(chunk);
 
     if (batchCode && batchCode !== this._batchCode) {
-      throw new TypeError(
+      throw new ReferenceError(
         `Cannot add chunk with batchCode "${batchCode}" to batch "${batchCode}"`
       );
     }
