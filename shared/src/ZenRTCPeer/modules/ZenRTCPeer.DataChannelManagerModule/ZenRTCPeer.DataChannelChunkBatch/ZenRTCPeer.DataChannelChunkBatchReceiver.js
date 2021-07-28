@@ -1,25 +1,37 @@
 import DataChannelChunkBatchCore from "./_ZenRTCPeer.DataChannelChunkBatchCore";
 
+import getUnsortedArrayLength from "../../../../number/getUnsortedArrayLength";
+
 export default class DataChannelChunkBatchReceiver extends DataChannelChunkBatchCore {
+  constructor(...args) {
+    super(...args);
+
+    if (this._options.originalData) {
+      throw new ReferenceError(
+        `${this.getClassName()} should not contain "originalData" because it is the receiver, and the data must be supplied in chunks`
+      );
+    }
+
+    this._lenChunks = null;
+  }
+
   /**
-   * Adds a chunk to the batch.
+   * Adds a meta chunk to the batch.
    *
    * TODO: Document
    */
-  addChunk(chunk) {
-    // TODO: Don't allow to run if we're the sender (i.e. there is default data)
-
-    // IMPORTANT: This automatically performs type coercion to string in order to concatenate on top of it
-    // this._data = this._data.toString() + chunk;
-    // TODO: If data is complete, return fully read data
-
+  addMetaChunk(metaChunk) {
     const { serialType, data, idx, lenChunks, batchCode } =
-      DataChannelChunkBatch.readChunkData(chunk);
+      DataChannelChunkBatchCore.readMetaChunk(metaChunk);
 
-    if (batchCode && batchCode !== this._batchCode) {
+    if (this._batchCode && batchCode !== this._batchCode) {
       throw new ReferenceError(
-        `Cannot add chunk with batchCode "${batchCode}" to batch "${batchCode}"`
+        `Cannot add chunk with batchCode "${batchCode}" to batch "${this._batchCode}"`
       );
+    }
+
+    if (batchCode && this._batchCode) {
+      this._batchCode = batchCode;
     }
 
     if (serialType) {
@@ -30,11 +42,49 @@ export default class DataChannelChunkBatchReceiver extends DataChannelChunkBatch
       this._lenChunks = lenChunks;
     }
 
-    this._data += data;
+    this._cachedChunks[idx] = data;
+  }
+
+  /**
+   * Determines whether or not this class has received all meta chunks from the
+   * sender.
+   *
+   * @return {boolean}
+   */
+  getIsComplete() {
+    return Boolean(
+      this._lenChunks &&
+        getUnsortedArrayLength(this._cachedChunks) === this._lenChunks
+    );
+  }
+
+  /**
+   * Returns the original data that was passed from the sender, regardless of
+   * chunk order.
+   *
+   * IMPORTANT: this.getIsComplete() must return true before this will work.
+   *
+   * @return {string}
+   */
+  read() {
+    if (!this.getIsComplete()) {
+      throw new Error("Cannot read before complete");
+    }
+
+    let ret = "";
+
+    for (let i = 0; i < this._lenChunks; i++) {
+      ret += this._cachedChunks[i];
+    }
+
+    return ret;
   }
 
   /**
    * Retrieves the number of chunks which make up this batch.
+   *
+   * NOTE: This method is intentionally differed from the sender class
+   * implementation.
    *
    * @return {number}
    */

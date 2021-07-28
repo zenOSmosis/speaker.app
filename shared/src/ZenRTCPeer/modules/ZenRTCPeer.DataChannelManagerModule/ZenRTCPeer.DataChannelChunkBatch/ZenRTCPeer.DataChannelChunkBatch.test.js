@@ -77,13 +77,45 @@ describe("data chunking", () => {
     });
   });
 
+  it("reassimilates data chunks", () => {
+    // Random ordered chunks
+    const metaChunks = sender
+      .getMetaChunks()
+      .sort((a, b) => 0.5 - Math.random());
+
+    // Ensure chunks are randomized
+    const str = metaChunks
+      .map(({ [META_CHUNK_KEY_DATA]: data }) => data)
+      .join("");
+    expect(typeof str).toBe("string");
+    expect(str.length).toEqual(LARGE_MOCK_JSON.length);
+    expect(str).not.toBe(LARGE_MOCK_JSON);
+
+    const receiver = new DataChannelChunkBatchReceiver();
+
+    metaChunks.forEach((metaChunk, idx) => {
+      receiver.addMetaChunk(metaChunk);
+
+      const isComplete = idx === metaChunks.length - 1 ? true : false;
+
+      expect(receiver.getIsComplete()).toBe(isComplete);
+    });
+
+    // Receiver's short code should match sender's after meta chunks have been
+    // received
+    expect(receiver.getBatchCode()).toEqual(sender.getBatchCode());
+
+    expect(receiver.read()).toEqual(LARGE_MOCK_JSON);
+  });
+
+  // Test destruct; should come last
   it("sender empties data on destruct", async () => {
     expect(sender._data.length).toBeGreaterThan(0);
-    expect(sender._chunks.length).toBeGreaterThan(0);
+    expect(sender._cachedChunks.length).toBeGreaterThan(0);
 
     await sender.destroy();
 
     expect(sender._data).toEqual("");
-    expect(sender._chunks.length).toEqual(0);
+    expect(sender._cachedChunks.length).toEqual(0);
   });
 });

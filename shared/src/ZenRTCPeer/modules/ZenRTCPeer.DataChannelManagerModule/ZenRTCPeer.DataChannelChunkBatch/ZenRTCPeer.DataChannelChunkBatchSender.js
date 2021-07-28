@@ -1,4 +1,5 @@
 import DataChannelChunkBatchCore, {
+  DEFAULT_MAX_CHUNK_SIZE,
   META_CHUNK_KEY_IS_CHUNK,
   META_CHUNK_KEY_SERIAL_TYPE,
   META_CHUNK_KEY_DATA,
@@ -15,28 +16,16 @@ import getRoughSizeOfObject from "../../../../number/getRoughSizeOfObject";
 
 export default class DataChannelChunkBatchSender extends DataChannelChunkBatchCore {
   /**
-   * NOTE: maxChunkSize option defaults to 63488. This number was chosen
-   * because Safari (14) data channels only support a maximum of 65536 bytes
-   * being transmitted, and this allows a buffer for meta data padding.
-   *
    * @param {string} originalData
-   * @param {number} maxChunkSize? [default = 63488] Max number of bytes per
-   * chunk.
+   * @param {number} maxChunkSize? [default = DEFAULT_MAX_CHUNK_SIZE]
    */
-  constructor(originalData, maxChunkSize = 1024 * 62) {
+  constructor(originalData, maxChunkSize = DEFAULT_MAX_CHUNK_SIZE) {
     super({
       originalData,
       maxChunkSize,
     });
 
-    // Cache for this.getChunks(); it shouldn't be utilized directly
-    this._chunks = [];
-  }
-
-  empty() {
-    this._chunks = [];
-
-    super.empty();
+    this._batchCode = this.getShortUUID();
   }
 
   /**
@@ -47,8 +36,8 @@ export default class DataChannelChunkBatchSender extends DataChannelChunkBatchCo
    * @return {string[]}
    */
   getChunks() {
-    if (this._chunks.length) {
-      return this._chunks;
+    if (this._cachedChunks.length) {
+      return this._cachedChunks;
     }
 
     // NOTE: This size calculation is based on the assumption that the data
@@ -69,7 +58,9 @@ export default class DataChannelChunkBatchSender extends DataChannelChunkBatchCo
     });
 
     // Memoize for future use
-    this._chunks = chunks;
+    this._cachedChunks = chunks;
+
+    // IMPORTANT: Intentionally not extending super.getChunks()
 
     return chunks;
   }
@@ -101,6 +92,9 @@ export default class DataChannelChunkBatchSender extends DataChannelChunkBatchCo
    * Retrieves the number of chunks which make up this batch.
    *
    * This method returns the number of actual chunks.
+   *
+   * NOTE: This method is intentionally differed from the receiver class
+   * implementation.
    *
    * @return {number}
    */

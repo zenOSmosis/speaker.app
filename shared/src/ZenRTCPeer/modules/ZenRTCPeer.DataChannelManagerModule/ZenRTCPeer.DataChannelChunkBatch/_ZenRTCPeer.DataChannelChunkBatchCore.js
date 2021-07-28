@@ -5,6 +5,14 @@ import PhantomCore, { logger } from "phantom-core";
 import getRoughSizeOfObject from "../../../../number/getRoughSizeOfObject";
 
 /**
+ * NOTE: maxChunkSize option defaults to 63488 (62 kiB). This number was chosen
+ * because Safari (14) data channels only support a maximum of 65536 bytes
+ * being transmitted, and this allows a buffer for meta data padding (for chunk
+ * batch reassimilation on the receiver end).
+ */
+export const DEFAULT_MAX_CHUNK_SIZE = 1024 * 62;
+
+/**
  * @type {boolean} Set to true to identify a chunk.
  */
 export const META_CHUNK_KEY_IS_CHUNK = "zChunk";
@@ -43,6 +51,10 @@ const _instances = {};
  *
  * IMPORTANT: This class should not be utilized directly.  The associated
  * sender and receiver classes should be utilized instead.
+ *
+ * TODO: Document chunks vs batches, etc. (chunks are smaller data sets within
+ * a batch; meta chunks contain metadata in order to assimilate the chunk to
+ * the relevant batch, in the correct order)
  */
 export default class DataChannelChunkBatchCore extends PhantomCore {
   /**
@@ -116,12 +128,12 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
     }
 
     const {
-      // META_CHUNK_KEY_IS_CHUNK,
-      META_CHUNK_KEY_SERIAL_TYPE: serialType,
-      META_CHUNK_KEY_DATA: data,
-      META_CHUNK_KEY_INDEX: idx,
-      META_CHUNK_KEY_LEN_CHUNKS: lenChunks,
-      META_CHUNK_KEY_BATCH_CODE: batchCode,
+      // [META_CHUNK_KEY_IS_CHUNK],
+      [META_CHUNK_KEY_SERIAL_TYPE]: serialType,
+      [META_CHUNK_KEY_DATA]: data,
+      [META_CHUNK_KEY_INDEX]: idx,
+      [META_CHUNK_KEY_LEN_CHUNKS]: lenChunks,
+      [META_CHUNK_KEY_BATCH_CODE]: batchCode,
     } = chunkData;
 
     return {
@@ -134,13 +146,12 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
   }
 
   /**
-   * @param {Object} options TODO: Document
+   * @param {Object} options? TODO: Document
    */
   constructor(options = {}) {
     const DEFAULT_OPTIONS = {
       originalData: "",
-      maxChunkSize: 1024 * 62,
-      batchCode: null,
+      maxChunkSize: DEFAULT_MAX_CHUNK_SIZE,
       serialType: null,
     };
 
@@ -154,31 +165,48 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
 
     super(mergedOptions);
 
-    // No default data is assumed to be the receiver, in which case we must
-    // also have a corresponding batch code in order to correlate received data
-    // chunks to this instance
-    if (!this._options.originalData && !this._batchCode) {
-      throw new Error(
-        "batchCode must be present when there is no default data"
-      );
-    }
-
     // Data as it is meant to be consumed on the other side (no meta-data
     // added)
     this._data = this._options.originalData;
 
     this._maxChunkSize = this._options.maxChunkSize;
 
-    this._batchCode = this._options.batchCode || this.getShortUUID();
+    this._batchCode = null;
 
     this._serialType = this._options.serialType;
 
-    // Add to registered instances, for batch code retrieval when adding new
-    // chunks to the batch (by the receiver)
-    _instances[this._batchCode] = this;
+    // IMPORTANT: This shouldn't be utilized directly, and instead should rely
+    // on chunk helper operations within extension class methods (i.e. chunks
+    // could be out of order, etc.)
+    this._cachedChunks = [];
+
+    this._batchCode = null;
   }
 
   /**
+   * Internally called when batch code is set to automatically handle instance
+   * registration once set.
+   */
+  set _batchCode(batchCode) {
+    if (this._batchCode) {
+      throw new ReferenceError("batchCode is already set");
+    }
+
+    this._registerInstance(batchCode);
+
+    return batchCode;
+  }
+
+  _registerInstance(batchCode) {
+    // Add to registered instances, for batch code retrieval when adding new
+    // chunks to the batch (by the receiver)
+    _instances[batchCode] = this;
+  }
+
+  /**
+   * Obtains the batch code of the class instance in order to relate a meta
+   * chunk to the class.
+   *
    * @return {string}
    */
   getBatchCode() {
@@ -188,6 +216,8 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
   // TODO: Document
   empty() {
     this._data = "";
+
+    this._cachedChunks = [];
   }
 
   /**
