@@ -2,7 +2,10 @@ import BaseModule, { EVT_DESTROYED } from "../ZenRTCPeer.BaseModule";
 import DataChannel from "./ZenRTCPeer.DataChannel";
 import { logger } from "phantom-core";
 
-import DataChannelChunkBatch from "./ZenRTCPeer.DataChannelChunkBatch";
+import {
+  ZenRTCPeerDataChannelChunkBatchSender,
+  ZenRTCPeerDataChannelChunkBatchReceiver,
+} from "./ZenRTCPeer.DataChannelChunkBatch";
 
 import {
   EVT_DATA_CHANNEL_OPENED,
@@ -79,7 +82,12 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
 
     // If data is larger than maxChunkSize, break into array of chunks, then
     // recursively return the packed (marshalled) string as an array
-    if (DataChannelChunkBatch.getShouldBeChunked(data, maxChunkSize)) {
+    if (
+      ZenRTCPeerDataChannelChunkBatchSender.getShouldBeChunked(
+        data,
+        maxChunkSize
+      )
+    ) {
       const chunkBatch = new ChunkBatch(data, { maxChunkSize, serialType });
 
       // Pack each chunk, where each chunk will be emit separately over the
@@ -170,7 +178,7 @@ export default class ZenRTCPeerDataChannelManagerModule extends BaseModule {
       } while (true);
 
       // If matches internal chunk structure, await batch
-      // if (DataChannelChunkBatch.getIsChunked(data)) {
+      // if (ZenRTCPeerDataChannelChunkBatchReceiver.getIsChunked(data)) {
       // TODO: Provide unchunking ability, buffering (and not returning) until the inbound message is complete
       // TODO: If incomplete batch, return void
       // } else {

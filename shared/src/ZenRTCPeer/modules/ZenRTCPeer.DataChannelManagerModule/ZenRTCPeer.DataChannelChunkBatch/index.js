@@ -1,3 +1,7 @@
-import ZenRTCPeerDataChannelChunkBatch from "./ZenRTCPeer.DataChannelChunkBatch";
+import ZenRTCPeerDataChannelChunkBatchSender from "./ZenRTCPeer.DataChannelChunkBatchSender";
+import ZenRTCPeerDataChannelChunkBatchReceiver from "./ZenRTCPeer.DataChannelChunkBatchReceiver";
 
-export default ZenRTCPeerDataChannelChunkBatch;
+export {
+  ZenRTCPeerDataChannelChunkBatchSender,
+  ZenRTCPeerDataChannelChunkBatchReceiver,
+};
