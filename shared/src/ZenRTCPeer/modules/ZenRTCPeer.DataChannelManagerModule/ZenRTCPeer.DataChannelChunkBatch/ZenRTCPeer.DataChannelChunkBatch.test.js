@@ -91,10 +91,17 @@ describe("data chunking", () => {
     expect(str.length).toEqual(LARGE_MOCK_JSON.length);
     expect(str).not.toBe(LARGE_MOCK_JSON);
 
-    const receiver = new DataChannelChunkBatchReceiver();
+    let receiver = null;
 
     metaChunks.forEach((metaChunk, idx) => {
-      receiver.addMetaChunk(metaChunk);
+      const newReceiver =
+        DataChannelChunkBatchReceiver.importMetaChunk(metaChunk);
+
+      if (receiver) {
+        expect(newReceiver).toBe(receiver);
+      } else {
+        receiver = newReceiver;
+      }
 
       const isComplete = idx === metaChunks.length - 1 ? true : false;
 
