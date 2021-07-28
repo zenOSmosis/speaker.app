@@ -35,13 +35,11 @@ export default class DataChannelChunkBatchReceiver extends DataChannelChunkBatch
   constructor(batchCode) {
     if (typeof batchCode === "undefined") {
       throw new TypeError(
-        "batchCode must be defined during class construction"
+        "batchCode must be defined during receiver class construction"
       );
     }
 
-    super();
-
-    this._batchCode = batchCode;
+    super({ batchCode });
 
     if (this._options.originalData) {
       throw new ReferenceError(

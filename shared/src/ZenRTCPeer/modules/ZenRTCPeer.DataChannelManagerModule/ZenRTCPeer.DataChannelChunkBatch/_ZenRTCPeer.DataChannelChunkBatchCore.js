@@ -166,6 +166,7 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
       originalData: "",
       maxChunkSize: DEFAULT_MAX_CHUNK_SIZE,
       serialType: null,
+      batchCode: null,
     };
 
     const mergedOptions = PhantomCore.mergeOptions(DEFAULT_OPTIONS, options);
@@ -184,7 +185,7 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
 
     this._maxChunkSize = this._options.maxChunkSize;
 
-    this._batchCode = null;
+    this._batchCode = this._options.batchCode;
 
     this._serialType = null;
 
@@ -193,35 +194,7 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
     // could be out of order, etc.)
     this._cachedChunks = [];
 
-    // Managed by setter (use this._batchCode for setting / getting)
-    this.__batchCode__ = null;
-  }
-
-  // TODO: Document
-  _registerInstance(batchCode) {
-    // Add to registered instances, for batch code retrieval when adding new
-    // chunks to the batch (by the receiver)
-    _instances[batchCode] = this;
-  }
-
-  /**
-   * Internally called when batch code is set to automatically handle instance
-   * registration once set.
-   */
-  set _batchCode(batchCode) {
-    if (this.__batchCode__) {
-      throw new ReferenceError("batchCode is already set");
-    }
-
-    this._registerInstance(batchCode);
-
-    this.__batchCode__ = batchCode;
-
-    return batchCode;
-  }
-
-  get _batchCode() {
-    return this.__batchCode__;
+    _instances[this._batchCode] = this;
   }
 
   /**
