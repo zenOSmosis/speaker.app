@@ -64,24 +64,21 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
    * @return {DataChannelChunkBatch | void}
    */
   static getBatchWithCode(batchCode) {
-    const batch = _instances[batchCode];
-
-    if (!batch) {
-      logger.warn(`Unknown batch with code: ${batchCode}`);
-    }
-
-    return batch;
+    return _instances[batchCode];
   }
 
   /**
    * Determines if the given data should be chunked.
    *
    * @param {any} data
-   * @param {number} maxChunkSize? [default = 62kiB]
+   * @param {number} maxChunkSize? [default = DEFAULT_MAX_CHUNK_SIZE]
    * @return {boolean}
    */
-  static getShouldBeChunked(data, maxChunkSize = 1024 * 62) {
-    return getRoughSizeOfObject(data) > maxChunkSize;
+  static getShouldBeChunked(data, maxChunkSize = DEFAULT_MAX_CHUNK_SIZE) {
+    return (
+      !DataChannelChunkBatchCore.getIsChunked() &&
+      getRoughSizeOfObject(data) > maxChunkSize
+    );
   }
 
   /**
@@ -92,9 +89,19 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
    * @return {boolean} Whether or not the given data is chunked.
    */
   static getIsChunked(data) {
+    try {
+      // Coerce to object, if a string
+      if (typeof data === "string") {
+        data = JSON.parse(data);
+      }
+    } catch (err) {
+      // Silently ignore
+
+      return false;
+    }
+
     if (
       typeof data === "object" &&
-      // TODO: Use constants
       [
         META_CHUNK_KEY_IS_CHUNK,
         META_CHUNK_KEY_SERIAL_TYPE,
@@ -105,8 +112,14 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
       ].every(key => data.hasOwnProperty(key)) &&
       data[META_CHUNK_KEY_IS_CHUNK] === true
     ) {
+      // TODO: Remove
+      // console.warn("CHUNKED", data);
+
       return true;
     } else {
+      // TODO: Remove
+      // console.warn("NOT CHUNKED", data);
+
       return false;
     }
   }
@@ -173,14 +186,22 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
 
     this._batchCode = null;
 
-    this._serialType = this._options.serialType;
+    this._serialType = null;
 
     // IMPORTANT: This shouldn't be utilized directly, and instead should rely
     // on chunk helper operations within extension class methods (i.e. chunks
     // could be out of order, etc.)
     this._cachedChunks = [];
 
-    this._batchCode = null;
+    // Managed by setter (use this._batchCode for setting / getting)
+    this.__batchCode__ = null;
+  }
+
+  // TODO: Document
+  _registerInstance(batchCode) {
+    // Add to registered instances, for batch code retrieval when adding new
+    // chunks to the batch (by the receiver)
+    _instances[batchCode] = this;
   }
 
   /**
@@ -188,19 +209,19 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
    * registration once set.
    */
   set _batchCode(batchCode) {
-    if (this._batchCode) {
+    if (this.__batchCode__) {
       throw new ReferenceError("batchCode is already set");
     }
 
     this._registerInstance(batchCode);
 
+    this.__batchCode__ = batchCode;
+
     return batchCode;
   }
 
-  _registerInstance(batchCode) {
-    // Add to registered instances, for batch code retrieval when adding new
-    // chunks to the batch (by the receiver)
-    _instances[batchCode] = this;
+  get _batchCode() {
+    return this.__batchCode__;
   }
 
   /**

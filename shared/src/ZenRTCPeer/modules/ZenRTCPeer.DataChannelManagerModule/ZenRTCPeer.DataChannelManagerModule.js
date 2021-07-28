@@ -1,6 +1,7 @@
 import BaseModule, { EVT_DESTROYED } from "../ZenRTCPeer.BaseModule";
 import DataChannel from "./ZenRTCPeer.DataChannel";
 import { logger } from "phantom-core";
+import sleep from "../../../sleep";
 
 import {
   DataChannelChunkBatchSender,
@@ -64,11 +65,12 @@ export default class DataChannelManagerModule extends BaseModule {
    *
    * @param {string} channelName
    * @param {number | string | Object | Array} data
-   * @param {number} maxChunkSize? [default = 62kiB]
+   * @param {boolean} areSubChunksAllowed? [default = true] Whether or not
+   * chunks can be made of the packed data.
    * @return {string | string[]} Returns a string or an array of serialized
    * chunks intended to be transmitted to the other peer.
    */
-  static pack(channelName, data, maxChunkSize = 1024 * 62) {
+  static pack(channelName, data, areSubChunksAllowed = true) {
     if (typeof channelName !== "string") {
       throw new TypeError("channelName must be a string");
     }
@@ -82,26 +84,31 @@ export default class DataChannelManagerModule extends BaseModule {
 
     // If data is larger than maxChunkSize, break into array of chunks, then
     // recursively return the packed (marshalled) string as an array
-    // if (DataChannelChunkBatchSender.getShouldBeChunked(data, maxChunkSize)) {
-    /*
+    if (
+      areSubChunksAllowed &&
+      DataChannelChunkBatchSender.getShouldBeChunked(data)
+    ) {
       const chunkBatch = new DataChannelChunkBatchSender(data);
 
       // Pack each chunk, where each chunk will be emit separately over the
       // WebRTC data channel
-      const serialChunks = chunkBatch
-        .getChunks()
-        .map(chunk =>
-          DataChannelManagerModule.pack(channelName, chunk, maxChunkSize)
-        );
+      const serialChunks = chunkBatch.getMetaChunks().map(chunk => {
+        return DataChannelManagerModule.pack(channelName, chunk, false);
+      });
 
+      // No longer need this, as we have the meta data from the batch
       chunkBatch.destroy();
 
+      // TODO: Remove
+      console.log({
+        serialChunks,
+      });
+
       return serialChunks;
-      */
-    // } else {
-    // Return the marshalled string
-    return `${MARSHALL_PREFIX}${channelName},${serialType},${data}${MARSHALL_SUFFIX}`;
-    // }
+    } else {
+      // Return the marshalled string
+      return `${MARSHALL_PREFIX}${channelName},${serialType},${data}${MARSHALL_SUFFIX}`;
+    }
   }
 
   /**
@@ -171,12 +178,31 @@ export default class DataChannelManagerModule extends BaseModule {
       } while (true);
 
       // If matches internal chunk structure, await batch
-      // if (DataChannelChunkBatchReceiver.getIsChunked(data)) {
-      // TODO: Provide unchunking ability, buffering (and not returning) until the inbound message is complete
-      // TODO: If incomplete batch, return void
-      // } else {
-      return [channelName, data];
-      // }
+      if (DataChannelChunkBatchReceiver.getIsChunked(data)) {
+        // TODO: Remove
+        console.warn("CHUNKED", data);
+
+        const batch = DataChannelChunkBatchReceiver.importMetaChunk(data);
+
+        // TODO: Remove
+        console.log({
+          batch,
+          batchCode: batch.getBatchCode(),
+          complete: batch.getIsComplete(),
+        });
+
+        if (batch.getIsComplete()) {
+          // TODO: Use type coercion of data channel manager instead
+          // data = batch.read();
+          data = JSON.parse(batch.read());
+
+          batch.destroy();
+
+          return [channelName, data];
+        }
+      } else {
+        return [channelName, data];
+      }
     }
   }
 
@@ -257,18 +283,20 @@ export default class DataChannelManagerModule extends BaseModule {
    * @param {any} data
    * @return {void}
    */
-  sendChannelData(channel, data) {
+  async sendChannelData(channel, data) {
     const packed = DataChannelManagerModule.pack(
       channel.getChannelName(),
       data
     );
 
     if (Array.isArray(packed)) {
-      // NOTE: Each chunk is sent via a resolved promise to enable potential
-      // interleaving of other requests to prevent them from being blocked
-      packed.forEach(
-        chunk => new Promise.resolve(() => this._zenRTCPeer.send(chunk))
-      );
+      // NOTE: Each chunk is sent async to enable potential interleaving of
+      // other send requests in order to prevent them from being blocked
+      for (const chunk of packed) {
+        this._zenRTCPeer.send(chunk);
+
+        // await sleep(50);
+      }
     } else {
       this._zenRTCPeer.send(packed);
     }

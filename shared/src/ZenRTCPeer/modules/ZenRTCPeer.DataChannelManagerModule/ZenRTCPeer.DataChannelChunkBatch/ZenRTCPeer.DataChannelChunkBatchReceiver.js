@@ -1,10 +1,47 @@
-import DataChannelChunkBatchCore from "./_ZenRTCPeer.DataChannelChunkBatchCore";
+import { logger } from "phantom-core";
+
+import DataChannelChunkBatchCore, {
+  META_CHUNK_KEY_BATCH_CODE,
+} from "./_ZenRTCPeer.DataChannelChunkBatchCore";
 
 import getUnsortedArrayLength from "../../../../number/getUnsortedArrayLength";
 
 export default class DataChannelChunkBatchReceiver extends DataChannelChunkBatchCore {
-  constructor(...args) {
-    super(...args);
+  // TODO: Document
+  static importMetaChunk(chunkData) {
+    const readData = DataChannelChunkBatchCore.readMetaChunk(chunkData);
+
+    if (!readData) {
+      logger.error("Invalid read data", { readData });
+
+      throw new Error("Could not import meta chunk");
+    } else {
+      const { batchCode } = readData;
+
+      if (!batchCode) {
+        throw new TypeError("Unable to parse batch code from readData");
+      }
+
+      const batch =
+        DataChannelChunkBatchReceiver.getBatchWithCode(batchCode) ||
+        new DataChannelChunkBatchReceiver(batchCode);
+
+      batch.addMetaChunk(chunkData);
+
+      return batch;
+    }
+  }
+
+  constructor(batchCode) {
+    if (typeof batchCode === "undefined") {
+      throw new TypeError(
+        "batchCode must be defined during class construction"
+      );
+    }
+
+    super();
+
+    this._batchCode = batchCode;
 
     if (this._options.originalData) {
       throw new ReferenceError(
@@ -28,10 +65,6 @@ export default class DataChannelChunkBatchReceiver extends DataChannelChunkBatch
       throw new ReferenceError(
         `Cannot add chunk with batchCode "${batchCode}" to batch "${this._batchCode}"`
       );
-    }
-
-    if (batchCode && this._batchCode) {
-      this._batchCode = batchCode;
     }
 
     if (serialType) {
