@@ -10,6 +10,8 @@ import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
 import useViewportSize from "@hooks/useViewportSize";
 import useSocketContext from "@hooks/useSocketContext";
 
+import getIsDevelopmentMode from "@utils/getIsDevelopmentMode";
+
 import { EVT_SDP_OFFERED, EVT_SDP_ANSWERED } from "@src/WebZenRTCPeer";
 
 export default function DebugView() {
@@ -106,7 +108,7 @@ export default function DebugView() {
         </Section>
       </Section>
 
-      {process.env.NODE_ENV === "development" && (
+      {getIsDevelopmentMode() && (
         <Section>
           <h2>Misc.</h2>
 

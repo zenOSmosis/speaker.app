@@ -14,6 +14,8 @@ import SetupModal, {
   ABOUT_TAB,
 } from "./subViews/SetupModal";
 
+import getIsDevelopmentMode from "@utils/getIsDevelopmentMode";
+
 export const ROUTE_SETUP_PROFILE = {
   path: "/setup/profile",
   modalView: () => <SetupModal selectedTab={PROFILE_TAB} />,
@@ -102,7 +104,7 @@ export const getCallURL = ({ realmId, channelId }) => {
   // Host name without port number
   let dynamicHost = hostname;
 
-  if (process.env.NODE_ENV === "development") {
+  if (getIsDevelopmentMode()) {
     // Host name with port number
     dynamicHost = host;
   }

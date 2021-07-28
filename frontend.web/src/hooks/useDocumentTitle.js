@@ -13,6 +13,7 @@ export default function useDocumentTitle(
   defaultDocumentTitle = null
 ) {
   useEffect(() => {
+    // Override previous default document title if a new one is set
     if (defaultDocumentTitle) {
       DEFAULT_DOCUMENT_TITLE = defaultDocumentTitle;
     }
