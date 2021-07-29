@@ -1,7 +1,6 @@
 import BaseModule, { EVT_DESTROYED } from "../ZenRTCPeer.BaseModule";
 import DataChannel from "./ZenRTCPeer.DataChannel";
 import { logger } from "phantom-core";
-import sleep from "../../../sleep";
 
 import {
   DataChannelChunkBatchSender,
@@ -291,9 +290,7 @@ export default class DataChannelManagerModule extends BaseModule {
       // NOTE: Each chunk is sent async to enable potential interleaving of
       // other send requests in order to prevent them from being blocked
       for (const chunk of packed) {
-        this._zenRTCPeer.send(chunk);
-
-        // await sleep(50);
+        Promise.resolve().then(() => this._zenRTCPeer.send(chunk));
       }
     } else {
       this._zenRTCPeer.send(packed);
