@@ -52,9 +52,10 @@ const _instances = {};
  * IMPORTANT: This class should not be utilized directly.  The associated
  * sender and receiver classes should be utilized instead.
  *
- * TODO: Document chunks vs batches, etc. (chunks are smaller data sets within
- * a batch; meta chunks contain metadata in order to assimilate the chunk to
- * the relevant batch, in the correct order)
+ * Terminology:
+ *    - Chunk: Portion of a given dataset
+ *    - Meta Chunk: Chunk with added meta data for batch assimilation
+ *    - Batch: A collection of unordered [meta & regular] chunks
  */
 export default class DataChannelChunkBatchCore extends PhantomCore {
   /**
@@ -112,32 +113,32 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
       ].every(key => data.hasOwnProperty(key)) &&
       data[META_CHUNK_KEY_IS_CHUNK] === true
     ) {
-      // TODO: Remove
-      // console.warn("CHUNKED", data);
-
       return true;
     } else {
-      // TODO: Remove
-      // console.warn("NOT CHUNKED", data);
-
       return false;
     }
   }
 
   /**
-   * @param {Object | string} chunkData
+   * Parses the given meta chunk and rekeys it.
+   *
+   * While this method is pretty "light" in what it does, it performs
+   * additional checking that the meta chunk is valid, and converts JSON chunks
+   * into object form.
+   *
+   * @param {Object | string} metaChunk
    * @return {Object} // TODO: Document
    */
-  static readMetaChunk(chunkData) {
+  static readMetaChunk(metaChunk) {
     // Silently ignore if not a real chunk
-    if (!DataChannelChunkBatchCore.getIsChunked(chunkData)) {
-      logger.warn("chunkData is not a DataChannelChunkBatch chunk", chunkData);
+    if (!DataChannelChunkBatchCore.getIsChunked(metaChunk)) {
+      logger.warn("metaChunk is not a DataChannelChunkBatch chunk", metaChunk);
 
       return;
     }
 
-    if (typeof chunkData === "string") {
-      chunkData = JSON.parse(chunkData);
+    if (typeof metaChunk === "string") {
+      metaChunk = JSON.parse(metaChunk);
     }
 
     const {
@@ -147,7 +148,7 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
       [META_CHUNK_KEY_INDEX]: idx,
       [META_CHUNK_KEY_LEN_CHUNKS]: lenChunks,
       [META_CHUNK_KEY_BATCH_CODE]: batchCode,
-    } = chunkData;
+    } = metaChunk;
 
     return {
       serialType,
@@ -170,14 +171,6 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
     };
 
     const mergedOptions = PhantomCore.mergeOptions(DEFAULT_OPTIONS, options);
-
-    // At this time, this class only supports strings for original data (it's
-    // mostly intended to work w/ large JSON structures)
-    /*
-    if (typeof mergedOptions.originalData !== "string") {
-      throw new TypeError("originalData must be a string");
-    }
-    */
 
     super(mergedOptions);
 
@@ -210,7 +203,7 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
   }
 
   /**
-   * TODO: Document
+   * Retrieves the serial type, as determined by DataChannelManagerModule.
    *
    * @return {string}
    */
@@ -218,7 +211,11 @@ export default class DataChannelChunkBatchCore extends PhantomCore {
     return this._serialType;
   }
 
-  // TODO: Document
+  /**
+   * Clears out the cached data in order to free up memory.
+   *
+   * @return {void}
+   */
   empty() {
     this._data = "";
 
