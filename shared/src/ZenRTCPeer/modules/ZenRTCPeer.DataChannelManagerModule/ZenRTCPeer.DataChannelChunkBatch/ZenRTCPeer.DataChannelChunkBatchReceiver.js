@@ -7,9 +7,19 @@ import DataChannelManagerModule from "../ZenRTCPeer.DataChannelManagerModule";
 import getUnsortedArrayLength from "../../../../number/getUnsortedArrayLength";
 
 export default class DataChannelChunkBatchReceiver extends DataChannelChunkBatchCore {
-  // TODO: Document
-  static importMetaChunk(chunkData) {
-    const readData = DataChannelChunkBatchCore.readMetaChunk(chunkData);
+  /**
+   * Reads a meta chunk and reassimilates it with the included batch
+   * descriptor.
+   *
+   * If the receiver batch is not already instantiated locally, it will
+   * instantiate it, otherwise it will locate the existing batch and add the
+   * eta chunk to it.
+   *
+   * @param {Object} metaChunk Chunk with meta data for batch reassimilation.
+   * @return {DataChannelChunkBatchReceiver}
+   */
+  static importMetaChunk(metaChunk) {
+    const readData = DataChannelChunkBatchCore.readMetaChunk(metaChunk);
 
     if (!readData) {
       logger.error("Invalid read data", { readData });
@@ -26,12 +36,15 @@ export default class DataChannelChunkBatchReceiver extends DataChannelChunkBatch
         DataChannelChunkBatchReceiver.getBatchWithCode(batchCode) ||
         new DataChannelChunkBatchReceiver(batchCode);
 
-      batch.addMetaChunk(chunkData);
+      batch.addMetaChunk(metaChunk);
 
       return batch;
     }
   }
 
+  /**
+   * @param {string} batchCode
+   */
   constructor(batchCode) {
     if (typeof batchCode === "undefined") {
       throw new TypeError(
@@ -53,7 +66,7 @@ export default class DataChannelChunkBatchReceiver extends DataChannelChunkBatch
   /**
    * Adds a meta chunk to the batch.
    *
-   * TODO: Document
+   * @param {Object | string} metaChunk
    */
   addMetaChunk(metaChunk) {
     const { serialType, data, idx, lenChunks, batchCode } =
@@ -107,11 +120,6 @@ export default class DataChannelChunkBatchReceiver extends DataChannelChunkBatch
     for (let i = 0; i < this._lenChunks; i++) {
       data += this._cachedChunks[i];
     }
-
-    // TODO: Remove
-    console.log({
-      serialType: this._serialType,
-    });
 
     return DataChannelManagerModule.coerceReceivedDataType(
       data,
