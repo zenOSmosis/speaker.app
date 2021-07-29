@@ -74,6 +74,8 @@ export default function DebugView() {
           Origin Agent Cluster:{" "}
           {Boolean(window.originAgentCluster) ? "Yes" : "No"}
         </div>
+
+        <div>Build: {process.env.REACT_APP_GIT_HASH}</div>
       </Section>
 
       <Section>
