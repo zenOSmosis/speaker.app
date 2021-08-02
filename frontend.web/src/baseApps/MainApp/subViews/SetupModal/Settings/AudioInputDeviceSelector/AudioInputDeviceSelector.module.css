@@ -1,5 +1,6 @@
 .audio-input-device-selector .button-wrap {
   border: 1px #ccc solid;
+  border-radius: 5px;
   display: inline-block;
   vertical-align: middle;
   width: 200px;
@@ -8,8 +9,13 @@
   margin: 4px;
 }
 
+.audio-input-device-selector .button-wrap.selected {
+  background-color: rgba(0, 255, 0, 0.1);
+  border-color: #00ff00;
+}
+
 /** @see http://apps.eky.hk/css-triangle-generator */
-.selected-triangle {
+.audio-input-device-selector .selected-triangle {
   width: 0;
   height: 0;
   border-style: solid;

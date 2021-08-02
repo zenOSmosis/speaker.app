@@ -7,6 +7,7 @@ import Full from "@components/Full";
 
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 
+import classNames from "classnames";
 import styles from "./AudioInputDeviceSelector.module.css";
 
 export default function AudioInputDeviceSelector() {
@@ -57,34 +58,42 @@ export default function AudioInputDeviceSelector() {
           <div style={{ textAlign: "left" }}>
             <h1>Default Audio Input Device</h1>
             <p>Choose default audio device when starting new calls.</p>
-            <p>
-              Default audio device selection may not persist accurately when
-              starting new sessions.
+            <p className="note">
+              NOTE: Default audio device selection may not persist accurately
+              when starting new sessions.
             </p>
           </div>
 
           <div className={styles["audio-input-device-selector"]}>
-            {mediaDevices.map((device, idx) => (
-              <div key={idx} className={styles["button-wrap"]}>
-                <ButtonTransparent
-                  style={{ width: "100%", height: "100%" }}
-                  onClick={() => setDefaultAudioInputDevice(device)}
-                >
-                  <div>Kind: {device.kind}</div>
+            {mediaDevices.map((device, idx) => {
+              const isSelected =
+                (!defaultAudioInputDevice && idx === 0) ||
+                (defaultAudioInputDevice &&
+                  defaultAudioInputDevice.deviceId === device.deviceId);
 
-                  <div>Label: {device.label}</div>
-
-                  {!defaultAudioInputDevice && idx === 0 ? (
-                    <div className={styles["selected-triangle"]} />
-                  ) : (
-                    defaultAudioInputDevice &&
-                    defaultAudioInputDevice.deviceId === device.deviceId && (
-                      <div className={styles["selected-triangle"]} />
-                    )
+              return (
+                <div
+                  key={idx}
+                  className={classNames(
+                    styles["button-wrap"],
+                    isSelected ? styles["selected"] : null
                   )}
-                </ButtonTransparent>
-              </div>
-            ))}
+                >
+                  <ButtonTransparent
+                    style={{ width: "100%", height: "100%" }}
+                    onClick={() => setDefaultAudioInputDevice(device)}
+                  >
+                    <div>Kind: {device.kind}</div>
+
+                    <div>Label: {device.label}</div>
+
+                    {isSelected && (
+                      <div className={styles["selected-triangle"]} />
+                    )}
+                  </ButtonTransparent>
+                </div>
+              );
+            })}
           </div>
         </Content>
         <Footer style={{ backgroundColor: "rgba(0,0,0,.2)" }}>
