@@ -52,7 +52,9 @@ export default function AudioInputDevice({
         borderRadius: 4,
         overflow: "auto",
         position: "relative",
-        backgroundColor: "rgba(0,0,0,.1)",
+        backgroundColor: !isSelected
+          ? "rgba(0,0,0,.1)"
+          : "rgba(255,255,255,.1)",
         color: "#bcb",
         cursor: "pointer",
       }}
