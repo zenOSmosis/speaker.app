@@ -4,10 +4,11 @@ import Center from "@components/Center";
 import Layout, { Content, Footer } from "@components/Layout";
 import LabeledSwitch from "@components/labeled/LabeledSwitch";
 import Full from "@components/Full";
-
-import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
+import StaggeredWaveLoading from "@components/StaggeredWaveLoading/StaggeredWaveLoading";
 
 import AudioInputDevice from "./AudioInputDevice";
+
+import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 
 import classNames from "classnames";
 import styles from "./AudioInputDeviceSelector.module.css";
@@ -15,6 +16,8 @@ import styles from "./AudioInputDeviceSelector.module.css";
 // TODO: Show audio meter for selected audio device
 
 export default function AudioInputDeviceSelector() {
+  const [isFetchingInputMediaDevices, setIsFetchingInputMediaDevices] =
+    useState(false);
   const [inputMediaDevices, setInputMediaDevices] = useState([]);
   const [inputMediaDevicesError, setInputMediaDevicesError] = useState(null);
 
@@ -31,6 +34,8 @@ export default function AudioInputDeviceSelector() {
   } = useInputMediaDevicesContext();
 
   useEffect(() => {
+    setIsFetchingInputMediaDevices(true);
+
     fetchMediaInputDevices()
       .then(inputMediaDevices =>
         setInputMediaDevices(
@@ -41,6 +46,9 @@ export default function AudioInputDeviceSelector() {
         console.error(err);
 
         setInputMediaDevicesError(err);
+      })
+      .finally(() => {
+        setIsFetchingInputMediaDevices(false);
       });
   }, [fetchMediaInputDevices]);
 
@@ -68,63 +76,72 @@ export default function AudioInputDeviceSelector() {
             */}
           </div>
 
-          <div className={styles["audio-input-device-selector"]}>
-            {inputMediaDevices.map((device, idx) => {
-              return <AudioInputDevice key={idx} device={device} />;
-              /*
-              const isSelected =
-                (!defaultAudioInputDevice && idx === 0) ||
-                (defaultAudioInputDevice &&
-                  defaultAudioInputDevice.deviceId === device.deviceId);
-
-              return (
-                <div
-                  key={idx}
-                  className={classNames(
-                    styles["button-wrap"],
-                    isSelected ? styles["selected"] : null
-                  )}
-                >
-                  <ButtonTransparent
-                    style={{ width: "100%", height: "100%" }}
-                    onClick={() => setDefaultAudioInputDevice(device)}
-                  >
-                    <div>Kind: {device.kind}</div>
-
-                    <div>Label: {device.label}</div>
-
-                    {isSelected && (
-                      <div className={styles["selected-triangle"]} />
+          {isFetchingInputMediaDevices ? (
+            <StaggeredWaveLoading />
+          ) : (
+            <div className={styles["audio-input-device-selector"]}>
+              {inputMediaDevices.map((device, idx) => {
+                return <AudioInputDevice key={idx} device={device} />;
+                /*
+                const isSelected =
+                  (!defaultAudioInputDevice && idx === 0) ||
+                  (defaultAudioInputDevice &&
+                    defaultAudioInputDevice.deviceId === device.deviceId);
+  
+                return (
+                  <div
+                    key={idx}
+                    className={classNames(
+                      styles["button-wrap"],
+                      isSelected ? styles["selected"] : null
                     )}
-                  </ButtonTransparent>
-                </div>
-              );
-              */
-            })}
-          </div>
-        </Content>
-        <Footer style={{ backgroundColor: "rgba(0,0,0,.2)" }}>
-          <div style={{ display: "inline-block" }}>
-            <div className="note" style={{ marginBottom: 8 }}>
-              Audio quality adjustments
+                  >
+                    <ButtonTransparent
+                      style={{ width: "100%", height: "100%" }}
+                      onClick={() => setDefaultAudioInputDevice(device)}
+                    >
+                      <div>Kind: {device.kind}</div>
+  
+                      <div>Label: {device.label}</div>
+  
+                      {isSelected && (
+                        <div className={styles["selected-triangle"]} />
+                      )}
+                    </ButtonTransparent>
+                  </div>
+                );
+                */
+              })}
             </div>
-            <LabeledSwitch
-              masterLabel="Noise Suppression"
-              isOn={defaultAudioNoiseSuppression}
-              onChange={setDefaultAudioNoiseSuppression}
-            />
-            <LabeledSwitch
-              masterLabel="Echo Cancellation"
-              isOn={defaultAudioEchoCancellation}
-              onChange={setDefaultAudioEchoCancellation}
-            />
-            <LabeledSwitch
-              masterLabel="Auto Gain Control"
-              isOn={defaultAudioAutoGainControl}
-              onChange={setDefaultAudioAutoGainControl}
-            />
-          </div>
-        </Footer>
+          )}
+        </Content>
+        {
+          // TODO: Re-capture / re-publish existing captured devices when changing settings
+          !isFetchingInputMediaDevices && (
+            <Footer style={{ backgroundColor: "rgba(0,0,0,.2)" }}>
+              <div style={{ display: "inline-block" }}>
+                <div className="note" style={{ marginBottom: 8 }}>
+                  Input audio quality adjustments
+                </div>
+                <LabeledSwitch
+                  masterLabel="Noise Suppression"
+                  isOn={defaultAudioNoiseSuppression}
+                  onChange={setDefaultAudioNoiseSuppression}
+                />
+                <LabeledSwitch
+                  masterLabel="Echo Cancellation"
+                  isOn={defaultAudioEchoCancellation}
+                  onChange={setDefaultAudioEchoCancellation}
+                />
+                <LabeledSwitch
+                  masterLabel="Auto Gain Control"
+                  isOn={defaultAudioAutoGainControl}
+                  onChange={setDefaultAudioAutoGainControl}
+                />
+              </div>
+            </Footer>
+          )
+        }
       </Layout>
     </Full>
   );
