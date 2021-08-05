@@ -47,7 +47,7 @@ export default function AudioInputDevice({
       style={{
         textAlign: "left",
         padding: 8,
-        margin: "2px 8px",
+        margin: "2px auto",
         border: "1px rgba(255,255,255,.2) solid",
         borderRadius: 4,
         overflow: "auto",
@@ -57,6 +57,7 @@ export default function AudioInputDevice({
           : "rgba(255,255,255,.1)",
         color: "#bcb",
         cursor: "pointer",
+        maxWidth: 720,
       }}
       // Fake button
       onClick={onSelect}
