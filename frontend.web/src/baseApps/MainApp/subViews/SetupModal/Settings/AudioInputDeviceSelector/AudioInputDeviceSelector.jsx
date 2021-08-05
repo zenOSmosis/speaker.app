@@ -115,8 +115,11 @@ export default function AudioInputDeviceSelector() {
                     key={idx}
                     device={device}
                     isSelected={isSelected}
-                    onSelect={() =>
-                      setDefaultAudioInputDevice(isSelected ? null : device)
+                    onSelect={
+                      () =>
+                        // TODO: Implement toggle of active media device, if clicked again
+                        setDefaultAudioInputDevice(device)
+                      // setDefaultAudioInputDevice(isSelected ? null : device)
                     }
                     isTesting={isTesting}
                     onTest={() =>
