@@ -99,7 +99,12 @@ export default function AudioInputDeviceSelector() {
           </div>
 
           {isFetchingInputMediaDevices ? (
-            <StaggeredWaveLoading />
+            <Center>
+              <div>Fetching audio input devices</div>
+              <div>
+                <StaggeredWaveLoading />
+              </div>
+            </Center>
           ) : (
             <div>
               {inputMediaDevices.map((device, idx) => {
