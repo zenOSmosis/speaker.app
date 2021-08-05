@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Center from "@components/Center";
 import Layout, { Content, Footer } from "@components/Layout";
+import Section from "@components/Section";
 import LabeledSwitch from "@components/labeled/LabeledSwitch";
 import Full from "@components/Full";
 import StaggeredWaveLoading from "@components/StaggeredWaveLoading/StaggeredWaveLoading";
@@ -81,61 +82,63 @@ export default function AudioInputDeviceSelector() {
             overflow: !isFetchingInputMediaDevices ? "auto" : "inherit",
           }}
         >
-          <div style={{ textAlign: "left" }}>
-            <button
-              onClick={handleFetchMediaInputDevices}
-              style={{ float: "right" }}
-            >
-              Refresh <ReloadIcon />
-            </button>
-            <h1>Audio Input Device</h1>
-            {/*
+          <Section>
+            <div style={{ textAlign: "left" }}>
+              <button
+                onClick={handleFetchMediaInputDevices}
+                style={{ float: "right" }}
+              >
+                Refresh <ReloadIcon />
+              </button>
+              <h1>Audio Input Device</h1>
+              {/*
               <p>Choose default audio device when starting new calls.</p>
               <p className="note">
                 NOTE: Default audio device selection may not persist accurately
                 when starting new sessions.
               </p>
             */}
-          </div>
-
-          {isFetchingInputMediaDevices ? (
-            <Center>
-              <div>Fetching audio input devices</div>
-              <div>
-                <StaggeredWaveLoading />
-              </div>
-            </Center>
-          ) : (
-            <div>
-              {inputMediaDevices.map((device, idx) => {
-                const isSelected = Boolean(
-                  defaultAudioInputDevice &&
-                    defaultAudioInputDevice.deviceId === device.deviceId
-                );
-
-                const isTesting = Object.is(device, testInputMediaDevice);
-
-                return (
-                  <AudioInputDevice
-                    key={idx}
-                    device={device}
-                    isSelected={isSelected}
-                    onSelect={
-                      () =>
-                        // TODO: Implement toggle of active media device, if clicked again
-                        setDefaultAudioInputDevice(device)
-                      // setDefaultAudioInputDevice(isSelected ? null : device)
-                    }
-                    isTesting={isTesting}
-                    onTest={() =>
-                      // Toggle testing
-                      setTestInputMediaDevice(isTesting ? null : device)
-                    }
-                  />
-                );
-              })}
             </div>
-          )}
+
+            {isFetchingInputMediaDevices ? (
+              <Center>
+                <div>Fetching audio input devices</div>
+                <div>
+                  <StaggeredWaveLoading />
+                </div>
+              </Center>
+            ) : (
+              <div>
+                {inputMediaDevices.map((device, idx) => {
+                  const isSelected = Boolean(
+                    defaultAudioInputDevice &&
+                      defaultAudioInputDevice.deviceId === device.deviceId
+                  );
+
+                  const isTesting = Object.is(device, testInputMediaDevice);
+
+                  return (
+                    <AudioInputDevice
+                      key={idx}
+                      device={device}
+                      isSelected={isSelected}
+                      onSelect={
+                        () =>
+                          // TODO: Implement toggle of active media device, if clicked again
+                          setDefaultAudioInputDevice(device)
+                        // setDefaultAudioInputDevice(isSelected ? null : device)
+                      }
+                      isTesting={isTesting}
+                      onTest={() =>
+                        // Toggle testing
+                        setTestInputMediaDevice(isTesting ? null : device)
+                      }
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </Section>
         </Content>
         {
           // TODO: Re-capture / re-publish existing captured devices when changing settings
