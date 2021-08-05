@@ -7,12 +7,16 @@ import Full from "@components/Full";
 
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 
+import AudioInputDevice from "./AudioInputDevice";
+
 import classNames from "classnames";
 import styles from "./AudioInputDeviceSelector.module.css";
 
+// TODO: Show audio meter for selected audio device
+
 export default function AudioInputDeviceSelector() {
-  const [mediaDevices, setMediaDevices] = useState([]);
-  const [mediaDevicesError, setMediaDevicesError] = useState(null);
+  const [inputMediaDevices, setInputMediaDevices] = useState([]);
+  const [inputMediaDevicesError, setInputMediaDevicesError] = useState(null);
 
   const {
     fetchMediaInputDevices,
@@ -28,21 +32,19 @@ export default function AudioInputDeviceSelector() {
 
   useEffect(() => {
     fetchMediaInputDevices()
-      .then(mediaDevices =>
-        setMediaDevices(
-          mediaDevices.filter(({ kind }) => kind === "audioinput")
+      .then(inputMediaDevices =>
+        setInputMediaDevices(
+          inputMediaDevices.filter(({ kind }) => kind === "audioinput")
         )
       )
       .catch(err => {
         console.error(err);
 
-        setMediaDevicesError(err);
+        setInputMediaDevicesError(err);
       });
   }, [fetchMediaInputDevices]);
 
-  // TODO: After clicking on button, show view where echo cancellation / noise reduction can be used
-
-  if (mediaDevicesError) {
+  if (inputMediaDevicesError) {
     return (
       <Center style={{ fontWeight: "bold" }}>
         Cannot obtain media devices. Do you have permissions blocked to access
@@ -56,16 +58,20 @@ export default function AudioInputDeviceSelector() {
       <Layout>
         <Content style={{ overflow: "auto" }}>
           <div style={{ textAlign: "left" }}>
-            <h1>Default Audio Input Device</h1>
-            <p>Choose default audio device when starting new calls.</p>
-            <p className="note">
-              NOTE: Default audio device selection may not persist accurately
-              when starting new sessions.
-            </p>
+            <h1>Audio Input Device Selector</h1>
+            {/*
+              <p>Choose default audio device when starting new calls.</p>
+              <p className="note">
+                NOTE: Default audio device selection may not persist accurately
+                when starting new sessions.
+              </p>
+            */}
           </div>
 
           <div className={styles["audio-input-device-selector"]}>
-            {mediaDevices.map((device, idx) => {
+            {inputMediaDevices.map((device, idx) => {
+              return <AudioInputDevice key={idx} device={device} />;
+              /*
               const isSelected =
                 (!defaultAudioInputDevice && idx === 0) ||
                 (defaultAudioInputDevice &&
@@ -93,6 +99,7 @@ export default function AudioInputDeviceSelector() {
                   </ButtonTransparent>
                 </div>
               );
+              */
             })}
           </div>
         </Content>
