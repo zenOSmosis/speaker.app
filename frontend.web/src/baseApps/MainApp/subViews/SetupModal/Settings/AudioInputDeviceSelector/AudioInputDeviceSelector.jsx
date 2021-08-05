@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
-import ButtonTransparent from "@components/ButtonTransparent";
+import React, { useCallback, useEffect, useState } from "react";
 import Center from "@components/Center";
 import Layout, { Content, Footer } from "@components/Layout";
 import LabeledSwitch from "@components/labeled/LabeledSwitch";
 import Full from "@components/Full";
 import StaggeredWaveLoading from "@components/StaggeredWaveLoading/StaggeredWaveLoading";
 
+import ReloadIcon from "@icons/ReloadIcon";
+
 import AudioInputDevice from "./AudioInputDevice";
 
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
-
-import classNames from "classnames";
-import styles from "./AudioInputDeviceSelector.module.css";
 
 // TODO: Show audio meter for selected audio device
 
@@ -20,6 +18,7 @@ export default function AudioInputDeviceSelector() {
     useState(false);
   const [inputMediaDevices, setInputMediaDevices] = useState([]);
   const [inputMediaDevicesError, setInputMediaDevicesError] = useState(null);
+  const [testInputMediaDevice, setTestInputMediaDevice] = useState(null);
 
   const {
     fetchMediaInputDevices,
@@ -33,7 +32,7 @@ export default function AudioInputDeviceSelector() {
     setDefaultAudioAutoGainControl,
   } = useInputMediaDevicesContext();
 
-  useEffect(() => {
+  const handleFetchMediaInputDevices = useCallback(() => {
     setIsFetchingInputMediaDevices(true);
 
     fetchMediaInputDevices()
@@ -52,6 +51,18 @@ export default function AudioInputDeviceSelector() {
       });
   }, [fetchMediaInputDevices]);
 
+  // Automatically fetch input media devices
+  useEffect(() => {
+    handleFetchMediaInputDevices();
+  }, [handleFetchMediaInputDevices]);
+
+  // Automatically select default audio input device
+  useEffect(() => {
+    if (!defaultAudioInputDevice && inputMediaDevices.length) {
+      setDefaultAudioInputDevice(inputMediaDevices[0]);
+    }
+  }, [inputMediaDevices, defaultAudioInputDevice, setDefaultAudioInputDevice]);
+
   if (inputMediaDevicesError) {
     return (
       <Center style={{ fontWeight: "bold" }}>
@@ -64,9 +75,20 @@ export default function AudioInputDeviceSelector() {
   return (
     <Full>
       <Layout>
-        <Content style={{ overflow: "auto" }}>
+        <Content
+          style={{
+            // Don't show scrollbar when fetching
+            overflow: !isFetchingInputMediaDevices ? "auto" : "inherit",
+          }}
+        >
           <div style={{ textAlign: "left" }}>
-            <h1>Audio Input Device Selector</h1>
+            <button
+              onClick={handleFetchMediaInputDevices}
+              style={{ float: "right" }}
+            >
+              Refresh <ReloadIcon />
+            </button>
+            <h1>Audio Input Device</h1>
             {/*
               <p>Choose default audio device when starting new calls.</p>
               <p className="note">
@@ -79,38 +101,30 @@ export default function AudioInputDeviceSelector() {
           {isFetchingInputMediaDevices ? (
             <StaggeredWaveLoading />
           ) : (
-            <div className={styles["audio-input-device-selector"]}>
+            <div>
               {inputMediaDevices.map((device, idx) => {
-                return <AudioInputDevice key={idx} device={device} />;
-                /*
-                const isSelected =
-                  (!defaultAudioInputDevice && idx === 0) ||
-                  (defaultAudioInputDevice &&
-                    defaultAudioInputDevice.deviceId === device.deviceId);
-  
-                return (
-                  <div
-                    key={idx}
-                    className={classNames(
-                      styles["button-wrap"],
-                      isSelected ? styles["selected"] : null
-                    )}
-                  >
-                    <ButtonTransparent
-                      style={{ width: "100%", height: "100%" }}
-                      onClick={() => setDefaultAudioInputDevice(device)}
-                    >
-                      <div>Kind: {device.kind}</div>
-  
-                      <div>Label: {device.label}</div>
-  
-                      {isSelected && (
-                        <div className={styles["selected-triangle"]} />
-                      )}
-                    </ButtonTransparent>
-                  </div>
+                const isSelected = Boolean(
+                  defaultAudioInputDevice &&
+                    defaultAudioInputDevice.deviceId === device.deviceId
                 );
-                */
+
+                const isTesting = Object.is(device, testInputMediaDevice);
+
+                return (
+                  <AudioInputDevice
+                    key={idx}
+                    device={device}
+                    isSelected={isSelected}
+                    onSelect={() =>
+                      setDefaultAudioInputDevice(isSelected ? null : device)
+                    }
+                    isTesting={isTesting}
+                    onTest={() =>
+                      // Toggle testing
+                      setTestInputMediaDevice(isTesting ? null : device)
+                    }
+                  />
+                );
               })}
             </div>
           )}

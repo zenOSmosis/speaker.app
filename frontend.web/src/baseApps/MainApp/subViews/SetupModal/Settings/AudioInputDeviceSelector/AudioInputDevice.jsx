@@ -2,7 +2,38 @@ import React, { useEffect } from "react";
 import { AudioMediaStreamTrackLevelMeter } from "@components/AudioLevelMeter";
 import LED from "@components/LED";
 
-export default function AudioInputDevice({ device }) {
+import PropTypes from "prop-types";
+
+AudioInputDevice.propTypes = {
+  /**
+   * The input audio device, as captured by the DOM.
+   *
+   * TODO: Use explicit type; improve doc
+   */
+  device: PropTypes.object.isRequired,
+
+  isSelected: PropTypes.bool.isRequired,
+
+  /**
+   * Called when the user selects the device.
+   */
+  onSelect: PropTypes.func.isRequired,
+
+  isTesting: PropTypes.bool.isRequired,
+
+  /**
+   * Called when the user wishes to test the audio input device.
+   */
+  onTest: PropTypes.func.isRequired,
+};
+
+export default function AudioInputDevice({
+  device,
+  isSelected,
+  onSelect,
+  isTesting,
+  onTest,
+}) {
   useEffect(() => {
     if (device.kind !== "audioinput") {
       throw new TypeError(
@@ -23,11 +54,31 @@ export default function AudioInputDevice({ device }) {
         position: "relative",
         backgroundColor: "rgba(0,0,0,.1)",
         color: "#bcb",
+        cursor: "pointer",
       }}
+      // Fake button
+      onClick={onSelect}
     >
       <div style={{ float: "right", display: "flex" }}>
-        <button>Select</button>
-        <button>Test</button>
+        <button
+          onClick={onSelect}
+          style={{ backgroundColor: isSelected ? "green" : "inherit" }}
+          title="Use this device for your audio input"
+        >
+          Select
+        </button>
+        <button
+          onClick={evt => {
+            // Prevent device from being selected when clicking on test button
+            evt.stopPropagation();
+
+            onTest();
+          }}
+          style={{ backgroundColor: isTesting ? "green" : "inherit" }}
+          title="Check the audio levels of this device to determine if it is the audio input device you want to use"
+        >
+          Test
+        </button>
         <AudioMediaStreamTrackLevelMeter style={{ height: 50 }} />
       </div>
       <div style={{ fontWeight: "bold" }}>
@@ -37,10 +88,7 @@ export default function AudioInputDevice({ device }) {
           )}
         </div>
         <div style={{ position: "absolute", bottom: 4 }}>
-          {
-            // TODO: Dynamically apply gray / green coloring
-          }
-          <LED color="gray" />
+          <LED color={isSelected ? "green" : "gray"} />
         </div>
       </div>
     </div>
