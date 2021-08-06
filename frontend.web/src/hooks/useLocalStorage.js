@@ -18,6 +18,9 @@ export default function useLocalStorage() {
     const _createSLS = () =>
       // TODO: Implement encrypted namespaces (https://github.com/softvar/secure-ls/issues/44)
       // i.e. new SecureLS({ encryptionNamespace: "private", encryptionSecret: "secret1" });
+      //
+      // TODO: The aes algorithm seems to lock up when setting large local
+      // storage state Firefox; consider a different implementation
       new SecureLS({
         encodingType: "aes",
         isCompression: true,
@@ -60,7 +63,7 @@ export default function useLocalStorage() {
    * @return {any}
    */
   const getItem = useCallback(
-    (key) => {
+    key => {
       try {
         return sls.get(key);
       } catch (err) {
@@ -71,7 +74,7 @@ export default function useLocalStorage() {
   );
 
   const removeItem = useCallback(
-    (key) => {
+    key => {
       sls.remove(key);
 
       // Update local UI
