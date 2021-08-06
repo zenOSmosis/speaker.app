@@ -62,8 +62,14 @@ export default function WebPhantomSessionProvider({ children }) {
     }
   }, [isConnected]);
 
-  const [isMuted, setIsMuted] = useState(true);
+  // IMPORTANT: This session state directly only reflects the local muting
+  // state and does not directly manipulate the outgoing audio controllers
+  const [isMuted, setIsMuted] = useState(false);
 
+  // NOTE: This useRef is to memoize the getIsMuted() function so a new
+  // reference is not required for each pass
+  //
+  // This fixes an issue where this hook was excessively rendered
   const refIsMuted = useRef(isMuted);
   refIsMuted.current = isMuted;
   const getIsMuted = useCallback(() => refIsMuted.current, []);
@@ -76,7 +82,7 @@ export default function WebPhantomSessionProvider({ children }) {
     }
   }, [writableSyncObject, isMuted]);
 
-  // TODO: If connected and profile is updated, sync the profile w/ the host
+  // If connected and profile is updated, sync the profile w/ the host
   // transcoder
   useEffect(() => {
     if (
