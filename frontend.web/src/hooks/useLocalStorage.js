@@ -94,9 +94,9 @@ export default function useLocalStorage() {
   }, [sls, forceUpdate]);
 
   /**
-   * Force the UI to update when local storage has been modified
+   * Force the UI to update when local storage has been modified.
    *
-   * Note: All connected browser windows / tabs will be affected by this
+   * Note: All connected browser windows / tabs will be affected by this.
    *
    * This probably won't execute on the local window (force update is utilized
    * when setting local storage locally).
