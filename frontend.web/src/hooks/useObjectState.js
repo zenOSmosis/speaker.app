@@ -1,5 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 
+// TODO: Use PhantomCore.mergeOptions for deep-merge, instead?
+
 /**
  * Applies a shallow-merge strategy to object updates so that setState() calls
  * don't completely overwrite previous object state.
