@@ -149,7 +149,7 @@ export default function WebPhantomSessionProvider({ children }) {
   // TODO: Refactor
   useEffect(() => {
     if (zenRTCPeer) {
-      const handleBeingKicked = ({ eventName }) => {
+      const handleKickDetection = ({ eventName }) => {
         if (eventName === SYNC_EVT_KICK) {
           console.warn("You have been kicked!");
 
@@ -166,10 +166,10 @@ export default function WebPhantomSessionProvider({ children }) {
         }
       };
 
-      zenRTCPeer.on(EVT_SYNC_EVT_RECEIVED, handleBeingKicked);
+      zenRTCPeer.on(EVT_SYNC_EVT_RECEIVED, handleKickDetection);
 
       return function unmount() {
-        zenRTCPeer.off(EVT_SYNC_EVT_RECEIVED, handleBeingKicked);
+        zenRTCPeer.off(EVT_SYNC_EVT_RECEIVED, handleKickDetection);
       };
     }
   }, [zenRTCPeer]);
