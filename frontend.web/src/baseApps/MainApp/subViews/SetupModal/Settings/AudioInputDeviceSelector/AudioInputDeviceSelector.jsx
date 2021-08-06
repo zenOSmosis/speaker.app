@@ -22,7 +22,7 @@ export default function AudioInputDeviceSelector() {
   const [testInputMediaDevice, setTestInputMediaDevice] = useState(null);
 
   const {
-    fetchMediaInputDevices,
+    fetchInputMediaDevices,
     defaultAudioInputDevice,
     setDefaultAudioInputDevice,
     defaultAudioNoiseSuppression,
@@ -33,10 +33,10 @@ export default function AudioInputDeviceSelector() {
     setDefaultAudioAutoGainControl,
   } = useInputMediaDevicesContext();
 
-  const handleFetchMediaInputDevices = useCallback(() => {
+  const handleFetchInputMediaDevices = useCallback(() => {
     setIsFetchingInputMediaDevices(true);
 
-    fetchMediaInputDevices()
+    fetchInputMediaDevices()
       .then(inputMediaDevices =>
         setInputMediaDevices(
           inputMediaDevices.filter(({ kind }) => kind === "audioinput")
@@ -50,12 +50,12 @@ export default function AudioInputDeviceSelector() {
       .finally(() => {
         setIsFetchingInputMediaDevices(false);
       });
-  }, [fetchMediaInputDevices]);
+  }, [fetchInputMediaDevices]);
 
   // Automatically fetch input media devices
   useEffect(() => {
-    handleFetchMediaInputDevices();
-  }, [handleFetchMediaInputDevices]);
+    handleFetchInputMediaDevices();
+  }, [handleFetchInputMediaDevices]);
 
   // Automatically select default audio input device
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function AudioInputDeviceSelector() {
           <Section>
             <div style={{ textAlign: "left" }}>
               <button
-                onClick={handleFetchMediaInputDevices}
+                onClick={handleFetchInputMediaDevices}
                 style={{ float: "right" }}
               >
                 Refresh <ReloadIcon />

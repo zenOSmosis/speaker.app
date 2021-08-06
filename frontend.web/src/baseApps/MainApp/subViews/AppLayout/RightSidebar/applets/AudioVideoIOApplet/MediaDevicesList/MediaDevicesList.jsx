@@ -30,7 +30,7 @@ export default function MediaDevicesList({ displayFilterType, prefixLabel }) {
   } = useWebPhantomSessionContext();
 
   const {
-    fetchMediaInputDevices,
+    fetchInputMediaDevices,
     toggleCaptureAudioMedia,
     getAudioControllerWithDeviceId,
   } = useInputMediaDevicesContext();
@@ -38,7 +38,7 @@ export default function MediaDevicesList({ displayFilterType, prefixLabel }) {
   // TODO: Use io context here
   const fetchMediaDevices = useCallback(() => {
     setIsFetchingMediaDevices(true);
-    fetchMediaInputDevices().then(mediaDevices => {
+    fetchInputMediaDevices().then(mediaDevices => {
       // Filtered to displayFilterType
       const filteredMediaDevices = [];
 
@@ -67,7 +67,7 @@ export default function MediaDevicesList({ displayFilterType, prefixLabel }) {
       setMediaDevices(filteredMediaDevices);
       setIsFetchingMediaDevices(false);
     });
-  }, [fetchMediaInputDevices, displayFilterType]);
+  }, [fetchInputMediaDevices, displayFilterType]);
 
   // TODO: Refactor into WebZenRTCPeer, or similar
   const virtualMediaDevices = useMemo(() => {

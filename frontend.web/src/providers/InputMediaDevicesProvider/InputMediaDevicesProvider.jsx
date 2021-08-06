@@ -81,12 +81,20 @@ export default function InputMediaDevicesProvider({ children }) {
         setHasUIMicPermission,
         micAudioController,
         setMicAudioController,
-        fetchMediaInputDevices: utils.fetchMediaDevices,
+
+        fetchInputMediaDevices: utils.fetchMediaDevices.fetchInputMediaDevices,
+
+        /**
+         * @param {Object} constraints? [optional; default = {}]
+         * @param {Object} factoryOptions? [optional; default = {}]
+         * @return {Promise<MediaStreamTrackControllerFactory>}
+         */
+        captureDeviceMedia: utils.captureDeviceMedia,
+        getIsDeviceMediaCaptureSupported:
+          utils.getIsDeviceMediaCaptureSupported,
 
         // TODO: Reimplement
         // getAudioControllerWithDeviceId,
-        // toggleCaptureAudioMedia,
-        // captureAudioMedia,
         // getMonitoringMediaStreamAudioTracks,
 
         isScreenSharingSupported,
