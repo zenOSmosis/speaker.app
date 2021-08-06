@@ -1,14 +1,3 @@
-import getUnixTime from "./getUnixTime";
+import { getUptime } from "phantom-core";
 
-const startTime = getUnixTime();
-
-/**
- * Returns the number of seconds since this module started.
- *
- * @return {number}
- */
-export default function getUptime() {
-  const now = getUnixTime();
-
-  return now - startTime;
-}
+export default getUptime;
