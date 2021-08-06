@@ -33,7 +33,7 @@ import { parseUserAgent } from "./device";
  * @param {Object} socket
  */
 export default function initSocketAPI(io, socket) {
-  console.log(`Initializing socket API with socket id: ${socket.id}`);
+  console.log(`HELLO to socket id: ${socket.id}`);
 
   /**
    * Wrapper around inbound Socket.io events which provides a common interface
@@ -90,7 +90,7 @@ export default function initSocketAPI(io, socket) {
   };
 
   // Loopback - Whatever is sent is returned
-  addSocketAPIRoute(SOCKET_API_ROUTE_LOOPBACK, (data) => {
+  addSocketAPIRoute(SOCKET_API_ROUTE_LOOPBACK, data => {
     return data;
   });
 
@@ -138,6 +138,6 @@ export default function initSocketAPI(io, socket) {
   addSocketAPIRoute(SOCKET_API_ROUTE_FETCH_DEVICE_DETECTION, parseUserAgent);
 
   socket.on("disconnect", () => {
-    console.log(`De-initializing socket API with socket id: ${socket.id}`);
+    console.log(`BYE to socket id: ${socket.id}`);
   });
 }
