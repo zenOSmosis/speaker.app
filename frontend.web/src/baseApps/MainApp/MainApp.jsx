@@ -174,9 +174,9 @@ function useTieIns() {
   } = useWebPhantomSessionContext();
 
   const {
-    hasUIMicPermission,
-    micAudioController,
-    startMic,
+    // hasUIMicPermission,
+    // micAudioController,
+    // startMic,
     screenCaptureMediaStreams,
     stopScreenCapture,
   } = useInputMediaDevicesContext();
@@ -207,6 +207,7 @@ function useTieIns() {
   // TODO: Move somewhere else?
   useEffect(() => {
     WebZenRTCPeer.beforeConnect = async zenRTCPeer => {
+      // TODO: Rework this section
       try {
         if (!hasUIMicPermission) {
           return null;
@@ -268,9 +269,9 @@ function useTieIns() {
       }
     };
   }, [
-    hasUIMicPermission,
-    micAudioController,
-    startMic,
+    // hasUIMicPermission,
+    // micAudioController,
+    // startMic,
     setIsMuted,
     getIsMuted,
   ]);

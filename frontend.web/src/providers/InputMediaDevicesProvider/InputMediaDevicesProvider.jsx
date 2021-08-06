@@ -1,24 +1,31 @@
 import React, { createContext } from "react";
 
 import useAudioDeviceDefaults from "./useAudioDeviceDefaults";
-import useMic from "./useMic";
+// import useMic from "./useMic";
 import useScreenCapture from "./useScreenCapture";
 import { utils } from "media-stream-track-controller";
 
 export const InputMediaDevicesContext = createContext({});
 
+// TODO: Implement ability to retain previously selected audio input devices
+
 export default function InputMediaDevicesProvider({ children }) {
   const {
     defaultAudioInputDevice,
     setDefaultAudioInputDevice,
+
     defaultAudioNoiseSuppression,
     setDefaultAudioNoiseSuppression,
+
     defaultAudioEchoCancellation,
     setDefaultAudioEchoCancellation,
+
     defaultAudioAutoGainControl,
     setDefaultAudioAutoGainControl,
   } = useAudioDeviceDefaults();
 
+  // TODO: Change or remove
+  /*
   const {
     startMic,
     stopMic,
@@ -33,6 +40,7 @@ export default function InputMediaDevicesProvider({ children }) {
     defaultAudioEchoCancellation,
     defaultAudioAutoGainControl,
   });
+  */
 
   const {
     isScreenSharingSupported,
@@ -74,6 +82,9 @@ export default function InputMediaDevicesProvider({ children }) {
         setDefaultAudioEchoCancellation,
         defaultAudioAutoGainControl,
         setDefaultAudioAutoGainControl,
+
+        // TODO: Change or remove
+        /*
         startMic,
         stopMic,
         isMicStarted,
@@ -81,6 +92,7 @@ export default function InputMediaDevicesProvider({ children }) {
         setHasUIMicPermission,
         micAudioController,
         setMicAudioController,
+        */
 
         fetchInputMediaDevices: utils.fetchMediaDevices.fetchInputMediaDevices,
 

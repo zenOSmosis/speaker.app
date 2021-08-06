@@ -12,8 +12,6 @@ import AudioInputDevice from "./AudioInputDevice";
 
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 
-// TODO: Show audio meter for selected audio device
-
 export default function AudioInputDeviceSelector() {
   const [isFetchingInputMediaDevices, setIsFetchingInputMediaDevices] =
     useState(false);
