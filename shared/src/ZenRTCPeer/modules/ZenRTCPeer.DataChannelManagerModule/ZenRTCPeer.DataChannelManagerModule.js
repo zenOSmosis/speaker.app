@@ -278,7 +278,7 @@ export default class DataChannelManagerModule extends BaseModule {
    *
    * @param {DataChannel} channel
    * @param {any} data
-   * @return {void}
+   * @return {Promise<void>}
    */
   async sendChannelData(channel, data) {
     const packed = DataChannelManagerModule.pack(
@@ -290,7 +290,7 @@ export default class DataChannelManagerModule extends BaseModule {
       // NOTE: Each chunk is sent async to enable potential interleaving of
       // other send requests in order to prevent them from being blocked
       for (const chunk of packed) {
-        Promise.resolve().then(() => this._zenRTCPeer.send(chunk));
+        await Promise.resolve().then(() => this._zenRTCPeer.send(chunk));
       }
     } else {
       this._zenRTCPeer.send(packed);
