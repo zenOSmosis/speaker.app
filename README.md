@@ -206,7 +206,11 @@ At this time, testing is not fully automated.  Several internal utilities are te
 
 ## Contributing / Forking
 
-Source-code contributions and forks are welcome. [Open an issue](https://github.com/zenOSmosis/speaker.app/issues) if something needs to be addressed.
+Source-code contributions and forks are welcome.  [Open an issue](https://github.com/zenOSmosis/speaker.app/issues) if you find something that needs to be addressed that you aren't going to address yourself.
+
+For ideas of what to contribute, take a look at our [open issues](https://github.com/zenOSmosis/speaker.app/issues).
+
+To contribute, fork the repository, create a new branch, add some code or documentation updates, then submit a PR.
 
 ## Troubleshooting / Miscellaneous
 
