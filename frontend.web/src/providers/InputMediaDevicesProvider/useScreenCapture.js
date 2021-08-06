@@ -54,7 +54,9 @@ export default function useScreenCapture() {
         null,
         // Dynamically give the factory an alias based on the number of the
         // index it will be in the state array
-        `captureScreen-${screenCaptureControllerFactories.length}`
+        {
+          title: `captureScreen-${screenCaptureControllerFactories.length}`,
+        }
       );
     } catch (err) {
       console.warn("Caught", err);
