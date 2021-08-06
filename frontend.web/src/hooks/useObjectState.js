@@ -21,7 +21,7 @@ export default function useObjectState(defaultState = {}) {
    * @param {Object | string} updatedState If passed as a string, it will try
    * to JSON parse into an object.
    */
-  const setState = useCallback((updatedState) => {
+  const setState = useCallback(updatedState => {
     switch (typeof updatedState) {
       case "string":
         updatedState = JSON.parse(updatedState);
@@ -32,10 +32,13 @@ export default function useObjectState(defaultState = {}) {
         break;
 
       default:
+        // TODO: Eventually throw this error once we know it doesn't raise a
+        // bunch of warnings in the app as it is (August 6, 2021)
+        console.warn(`Unhandled updatedState type: ${typeof updatedState}`);
         break;
     }
 
-    return _setMergedState((prevState) => ({ ...prevState, ...updatedState }));
+    return _setMergedState(prevState => ({ ...prevState, ...updatedState }));
   }, []);
 
   return [state, setState];
