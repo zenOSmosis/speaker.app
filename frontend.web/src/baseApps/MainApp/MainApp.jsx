@@ -30,6 +30,7 @@ import TranscoderSandboxProvider from "./subProviders/TranscoderSandboxProvider"
 
 import useZenRTCContext from "@hooks/useZenRTCContext";
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
+import useScreenCaptureContext from "@hooks/useScreenCaptureContext";
 import useLocalProfileContext from "@hooks/useLocalProfileContext";
 import useNotificationsContext from "@hooks/useNotificationsContext";
 import useAppLayoutContext from "@hooks/useAppLayoutContext";
@@ -180,9 +181,10 @@ function useTieIns() {
     // hasUIMicPermission,
     // micAudioController,
     // startMic,
-    screenCaptureMediaStreams,
-    stopScreenCapture,
   } = useInputMediaDevicesContext();
+
+  const { screenCaptureMediaStreams, stopScreenCapture } =
+    useScreenCaptureContext();
 
   const { avatarURL, name, description, isDirty } = useLocalProfileContext();
 
