@@ -20,7 +20,10 @@ export default function AudioInputDeviceSelector() {
   const [testInputMediaDevice, setTestInputMediaDevice] = useState(null);
 
   const {
-    fetchInputMediaDevices,
+    fetchAudioInputDevices,
+
+    // TODO: Clean up unused props
+    /*
     defaultAudioInputDevice,
     setDefaultAudioInputDevice,
     defaultAudioNoiseSuppression,
@@ -29,12 +32,13 @@ export default function AudioInputDeviceSelector() {
     setDefaultAudioEchoCancellation,
     defaultAudioAutoGainControl,
     setDefaultAudioAutoGainControl,
+    */
   } = useInputMediaDevicesContext();
 
   const handleFetchInputMediaDevices = useCallback(() => {
     setIsFetchingInputMediaDevices(true);
 
-    fetchInputMediaDevices()
+    fetchAudioInputDevices()
       .then(inputMediaDevices =>
         setInputMediaDevices(
           inputMediaDevices.filter(({ kind }) => kind === "audioinput")
@@ -48,19 +52,22 @@ export default function AudioInputDeviceSelector() {
       .finally(() => {
         setIsFetchingInputMediaDevices(false);
       });
-  }, [fetchInputMediaDevices]);
+  }, [fetchAudioInputDevices]);
 
   // Automatically fetch input media devices
   useEffect(() => {
     handleFetchInputMediaDevices();
   }, [handleFetchInputMediaDevices]);
 
+  // TODO: Reimplement
   // Automatically select default audio input device
+  /*
   useEffect(() => {
     if (!defaultAudioInputDevice && inputMediaDevices.length) {
       setDefaultAudioInputDevice(inputMediaDevices[0]);
     }
   }, [inputMediaDevices, defaultAudioInputDevice, setDefaultAudioInputDevice]);
+  */
 
   if (inputMediaDevicesError) {
     return (
@@ -108,10 +115,8 @@ export default function AudioInputDeviceSelector() {
             ) : (
               <div>
                 {inputMediaDevices.map((device, idx) => {
-                  const isSelected = Boolean(
-                    defaultAudioInputDevice &&
-                      defaultAudioInputDevice.deviceId === device.deviceId
-                  );
+                  // TODO: Rework this
+                  const isSelected = false;
 
                   const isTesting = Object.is(device, testInputMediaDevice);
 
@@ -121,9 +126,10 @@ export default function AudioInputDeviceSelector() {
                       device={device}
                       isSelected={isSelected}
                       onSelect={
-                        () =>
-                          // TODO: Implement toggle of active media device, if clicked again
-                          setDefaultAudioInputDevice(device)
+                        // TODO: Rework
+                        () => null
+                        // TODO: Implement toggle of active media device, if clicked again
+                        // setDefaultAudioInputDevice(device)
                         // setDefaultAudioInputDevice(isSelected ? null : device)
                       }
                       isTesting={isTesting}
@@ -140,6 +146,8 @@ export default function AudioInputDeviceSelector() {
         </Content>
         {
           // TODO: Re-capture / re-publish existing captured devices when changing settings
+          // TODO: Re-obtain for each selected device
+          // TODO: Rework this UI, if necessary
           !isFetchingInputMediaDevices && (
             <Footer style={{ backgroundColor: "rgba(0,0,0,.2)" }}>
               <div style={{ display: "inline-block" }}>
@@ -148,18 +156,18 @@ export default function AudioInputDeviceSelector() {
                 </div>
                 <LabeledSwitch
                   masterLabel="Noise Suppression"
-                  isOn={defaultAudioNoiseSuppression}
-                  onChange={setDefaultAudioNoiseSuppression}
+                  // isOn={defaultAudioNoiseSuppression}
+                  // onChange={setDefaultAudioNoiseSuppression}
                 />
                 <LabeledSwitch
                   masterLabel="Echo Cancellation"
-                  isOn={defaultAudioEchoCancellation}
-                  onChange={setDefaultAudioEchoCancellation}
+                  // isOn={defaultAudioEchoCancellation}
+                  // onChange={setDefaultAudioEchoCancellation}
                 />
                 <LabeledSwitch
                   masterLabel="Auto Gain Control"
-                  isOn={defaultAudioAutoGainControl}
-                  onChange={setDefaultAudioAutoGainControl}
+                  // isOn={defaultAudioAutoGainControl}
+                  // onChange={setDefaultAudioAutoGainControl}
                 />
               </div>
             </Footer>
