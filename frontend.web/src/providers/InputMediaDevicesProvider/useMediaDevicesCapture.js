@@ -4,6 +4,9 @@ import { useCallback, useMemo, useState } from "react";
 import { utils } from "media-stream-track-controller";
 
 // TODO: Document
+/**
+ * IMPORTANT: This hook should be treated as a singleton (provider based).
+ */
 export default function useMediaDevicesCapture() {
   const [
     _mediaDeviceCaptureControllerFactories,

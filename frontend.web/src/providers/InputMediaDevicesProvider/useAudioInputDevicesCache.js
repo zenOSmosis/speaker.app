@@ -8,6 +8,8 @@ import { utils } from "media-stream-track-controller";
 import useLocalStorage from "@hooks/useLocalStorage";
 
 /**
+ * IMPORTANT: This hook should be treated as a singleton (provider based).
+ *
  * @typedef {Object} AudioInputDevicesCacheProps
  * @property {MediaDeviceInfo[]} audioInputDevices
  */
