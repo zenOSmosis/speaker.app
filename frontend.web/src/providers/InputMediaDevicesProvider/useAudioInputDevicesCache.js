@@ -3,6 +3,8 @@ import useObjectState from "@hooks/useObjectState";
 
 import { KEY_LOCAL_AUDIO_INPUT_DEVICES_CACHE } from "@local/localStorageKeys";
 
+import { utils } from "media-stream-track-controller";
+
 import useLocalStorage from "@hooks/useLocalStorage";
 
 /**
@@ -24,45 +26,107 @@ export default function useAudioInputDevicesCache({ audioInputDevices }) {
   const [objectState, setObjectState] = useObjectState(
     // Read from local storage or set cache defaults
     getLocalStorageItem(KEY_LOCAL_AUDIO_INPUT_DEVICES_CACHE) || {
+      // audioInputDevices will not be populated on first run, so this will
+      // have to default to an empty array
       allAudioInputDevicesProperties: [],
+
+      hasUserAudioPermission: false,
+
+      hasUserVideoPermission: false,
     }
   );
 
-  /*
-  useEffect(() => {
-    // TODO: Match cachedDefaults defaultAudioInputDevice with defaultAudioInputDevice
-  }, [audioInputDevices]);
-  */
+  const {
+    allAudioInputDevicesProperties,
+    hasUserAudioPermission,
+    hasUserVideoPermission,
+  } = useMemo(() => objectState, [objectState]);
 
   // Cache all updates to objectState back to local storage
   useEffect(() => {
     setLocalStorageItem(KEY_LOCAL_AUDIO_INPUT_DEVICES_CACHE, objectState);
   }, [setLocalStorageItem, objectState]);
 
-  const { allAudioInputDevicesProperties } = useMemo(
-    () => objectState,
-    [objectState]
-  );
-
+  // TODO: Document
   const _setAudioInputDeviceProperties = useCallback(
     (mediaDeviceInfo, properties) => {
-      // TODO: Look up existing device in _allAudioInputDevicesProperties
-      // TODO: If not already set, add it
-      // TODO: Update with new properties
+      setObjectState(objectState => {
+        // Look up existing device in _allAudioInputDevicesProperties
+        // TODO: Rename to clarify single device
+        let cachedDeviceProps = objectState.allAudioInputDevicesProperties.find(
+          // TODO: Rename deviceCache to clarify single device
+          deviceCache =>
+            utils.getMediaDeviceMatch.getAudioInputDeviceMatch(
+              deviceCache.mediaDeviceInfo,
+              audioInputDevices
+            )
+        );
+
+        if (cachedDeviceProps) {
+          // Temporarily remove from state array
+          objectState.allAudioInputDevicesProperties.filter(
+            // TODO: Rename deviceCache to clarify single device
+            deviceCache => !Object.is(cachedDeviceProps, deviceCache)
+          );
+        } else {
+          // Create cached device props
+          // TODO: Refactor creation into separate function
+          cachedDeviceProps = {
+            mediaDeviceInfo,
+
+            defaultConstraints: {},
+
+            isDefaultDevice: false,
+          };
+        }
+
+        objectState.allAudioInputDevicesProperties.AudioInputDevicesCacheProps(
+          cachedDeviceProps
+        );
+
+        return { ...objectState };
+      });
     },
-    []
+    [audioInputDevices, setObjectState]
   );
 
+  const setHasUserAudioPermission = useState(
+    hasUserAudioPermission => {
+      setObjectState({
+        hasUserAudioPermission,
+      });
+    },
+    [setObjectState]
+  );
+
+  const setHasUserVideoPermission = useState(
+    hasUserVideoPermission => {
+      setObjectState({
+        hasUserVideoPermission,
+      });
+    },
+    [setObjectState]
+  );
+
+  // TODO: Document
   const setDefaultAudioInputDevices = useCallback(
-    defaultAudioInputDevices =>
+    defaultAudioInputDevices => {
+      if (!Array.isArray(defaultAudioInputDevices)) {
+        throw new TypeError("defaultAudioInputDevices must be an array");
+      }
+
+      // TODO: Add additional check for MediaDeviceInfo type?
+
       defaultAudioInputDevices.forEach(device =>
         _setAudioInputDeviceProperties(device, {
           isDefaultDevice: true,
         })
-      ),
+      );
+    },
     [_setAudioInputDeviceProperties]
   );
 
+  // TODO: Document
   const setAudioInputDeviceConstraints = useCallback(
     (audioInputDevice, defaultConstraints) =>
       _setAudioInputDeviceProperties(audioInputDevice, {
@@ -71,10 +135,12 @@ export default function useAudioInputDevicesCache({ audioInputDevices }) {
     [_setAudioInputDeviceProperties]
   );
 
+  // TODO: Document
   const getAudioInputDeviceConstraints = useCallback(audioInputDevice => {
     // TODO: Implement
   }, []);
 
+  // TODO: Document
   const defaultAudioInputDevices = useMemo(
     () =>
       allAudioInputDevicesProperties
@@ -84,6 +150,14 @@ export default function useAudioInputDevicesCache({ audioInputDevices }) {
   );
 
   return {
+    // *** Permissions
+    hasUserAudioPermission,
+    setHasUserAudioPermission,
+
+    hasUserVideoPermission,
+    setHasUserVideoPermission,
+    // *** /Permissions
+
     defaultAudioInputDevices,
     setDefaultAudioInputDevices,
 
