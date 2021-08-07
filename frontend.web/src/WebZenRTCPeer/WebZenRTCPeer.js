@@ -38,13 +38,18 @@ export {
 // IMPORTANT: Not to be used w/ transcoder peer
 export default class WebZenRTCPeer extends ZenRTCPeer {
   /**
-   * Called by instance before connecting.
+   * Called by instance before connecting, in order to externally set
+   * MediaStream upon connection.
    *
-   * @param {WebZenRTCPeer} zenRTCPeer
+   * TODO: Consider either removing this method or include a fail handler
+   * should the peer fail to connect.
+   *
+   * @param {WebZenRTCPeer} zenRTCPeer Passed to the function body from the
+   * calling instance.
    * @return {Promise<MediaStream | void>}
    */
   static async beforeConnect(zenRTCPeer) {
-    throw new Error("beforeConnect must be overridden");
+    console.warn("beforeConnect was not overridden");
   }
 
   constructor({ realmId, channelId, socket, ...rest }) {
