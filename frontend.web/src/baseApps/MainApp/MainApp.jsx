@@ -206,8 +206,10 @@ function useTieIns() {
   //
   // TODO: Move somewhere else?
   useEffect(() => {
+    // TODO: Rework this
+    /*
     WebZenRTCPeer.beforeConnect = async zenRTCPeer => {
-      // TODO: Rework this section
+      
       try {
         if (!hasUIMicPermission) {
           return null;
@@ -226,19 +228,17 @@ function useTieIns() {
           controller.on(EVT_UPDATED, () => {
             const newMuted = controller.getIsMuted();
 
-            /**
-             * TODO: Fix this
-             *
-             * For some reason, this is being called twice, rapidly, with the
-             * first value being undefined. When debugging the controller
-             * itself, it doesn't seem to be emitting EVT_UPDATED rapidly
-             * twice, so I'm not sure how this is being called. Furthermore,
-             * I've also checked the underlying controller._isMuted property
-             * and uuid, and the _isMuted property shows undefined on the first
-             * round as well and includes the same uuid.
-             *
-             * This entire block needs refactoring so maybe that will fix it.
-             */
+             // * TODO: Fix this
+             // *
+             // * For some reason, this is being called twice, rapidly, with the
+             // * first value being undefined. When debugging the controller
+             // * itself, it doesn't seem to be emitting EVT_UPDATED rapidly
+             // * twice, so I'm not sure how this is being called. Furthermore,
+             // * I've also checked the underlying controller._isMuted property
+             // * and uuid, and the _isMuted property shows undefined on the first
+             // * round as well and includes the same uuid.
+             // *
+             // * This entire block needs refactoring so maybe that will fix it.
             if (newMuted === undefined) {
               return;
             }
@@ -268,6 +268,7 @@ function useTieIns() {
         console.warn("Caught", err);
       }
     };
+    */
   }, [
     // hasUIMicPermission,
     // micAudioController,

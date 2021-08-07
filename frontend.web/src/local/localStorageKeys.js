@@ -22,7 +22,7 @@ export const KEY_LOCAL_PROFILE = "p0";
  *
  * @type {Object}
  */
-export const KEY_LOCAL_AUDIO_DEFAULTS = "ad0";
+export const KEY_LOCAL_AUDIO_INPUT_DEVICES_CACHE = "ac0";
 
 /**
  * Contains client address and keys.  Should not be shared directly with other

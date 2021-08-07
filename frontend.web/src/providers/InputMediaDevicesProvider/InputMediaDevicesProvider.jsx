@@ -1,6 +1,6 @@
-import React, { createContext } from "react";
+import React, { createContext, useCallback, useEffect, useState } from "react";
 
-import useAudioDeviceDefaults from "./useAudioDeviceDefaults";
+import useAudioInputMediaDevicesCache from "./useAudioInputMediaDevicesCache";
 // import useMic from "./useMic";
 import useScreenCapture from "./useScreenCapture";
 import { utils } from "media-stream-track-controller";
@@ -10,9 +10,30 @@ export const InputMediaDevicesContext = createContext({});
 // TODO: Implement ability to retain previously selected audio input devices
 
 export default function InputMediaDevicesProvider({ children }) {
+  const [audioInputMediaDevices, _setAudioInputMediaDevices] = useState([]);
+
+  /**
+   * Obtains list of available audio input media devices and sets internal hook
+   * state.
+   *
+   * @param {boolean} isAggressive? [default = true]
+   * @return {Promise{MediaDeviceInfo[]}}
+   */
+  const fetchAudioInputMediaDevices = useCallback(
+    async (isAggressive = true) => {
+      const audioInputMediaDevices =
+        await utils.fetchMediaDevices.fetchAudioInputMediaDevices(isAggressive);
+
+      _setAudioInputMediaDevices(audioInputMediaDevices);
+
+      return audioInputMediaDevices;
+    },
+    []
+  );
+
   const {
-    defaultAudioInputDevice,
-    setDefaultAudioInputDevice,
+    defaultAudioInputMediaDevice,
+    setDefaultAudioInputMediaDevice,
 
     defaultAudioNoiseSuppression,
     setDefaultAudioNoiseSuppression,
@@ -22,7 +43,7 @@ export default function InputMediaDevicesProvider({ children }) {
 
     defaultAudioAutoGainControl,
     setDefaultAudioAutoGainControl,
-  } = useAudioDeviceDefaults();
+  } = useAudioInputMediaDevicesCache({ audioInputMediaDevices });
 
   // TODO: Change or remove
   /*
@@ -74,14 +95,31 @@ export default function InputMediaDevicesProvider({ children }) {
   return (
     <InputMediaDevicesContext.Provider
       value={{
-        defaultAudioInputDevice,
-        setDefaultAudioInputDevice,
+        // Start audio quality settings
         defaultAudioNoiseSuppression,
         setDefaultAudioNoiseSuppression,
+
         defaultAudioEchoCancellation,
         setDefaultAudioEchoCancellation,
+
         defaultAudioAutoGainControl,
         setDefaultAudioAutoGainControl,
+        // End audio quality settings
+
+        fetchAudioInputMediaDevices,
+        audioInputMediaDevices,
+
+        defaultAudioInputMediaDevice,
+        setDefaultAudioInputMediaDevice,
+
+        // startDefaultAudioInputMediaDevice,
+        // stopDefaultAudioInputMediaDevice,
+        // isDefaultAudioInputMediaDeviceStarted,
+
+        hasAudioInputPermission,
+        setHasAudioInputPermission,
+
+        inputAudioDeviceControllers,
 
         // TODO: Change or remove
         /*
@@ -94,7 +132,8 @@ export default function InputMediaDevicesProvider({ children }) {
         setMicAudioController,
         */
 
-        fetchInputMediaDevices: utils.fetchMediaDevices.fetchInputMediaDevices,
+        fetchAudioInputMediaDevices:
+          utils.fetchMediaDevices.fetchAudioInputMediaDevices,
 
         /**
          * @param {Object} constraints? [optional; default = {}]
