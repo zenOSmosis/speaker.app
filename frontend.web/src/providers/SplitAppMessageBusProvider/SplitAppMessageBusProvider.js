@@ -23,10 +23,12 @@ SplitAppMessageBus.propTypes = {
   },
 };
 
+// TODO: Document
 export default function SplitAppMessageBusProvider({ role, children }) {
-  const splitAppMessageBus = useMemo(() => new SplitAppMessageBus(role), [
-    role,
-  ]);
+  const splitAppMessageBus = useMemo(
+    () => new SplitAppMessageBus(role),
+    [role]
+  );
 
   useEffect(() => {
     return function unmount() {

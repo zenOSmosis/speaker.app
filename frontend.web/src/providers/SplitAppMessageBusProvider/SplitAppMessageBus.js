@@ -19,6 +19,9 @@ let _instance = null;
  *
  * It is currently only designed for communication with a single transcoder
  * app thread from the main app.
+ *
+ * IMPORTANT: This relies on out-of-process message passing and future
+ * refactoring should take that into consideration.
  */
 export default class SplitAppMessageBus extends PhantomCore {
   constructor(role) {
