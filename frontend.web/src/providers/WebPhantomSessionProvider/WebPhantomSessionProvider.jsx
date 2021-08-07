@@ -27,6 +27,7 @@ import { getCallURL } from "@baseApps/MainApp/routes";
 export const WebPhantomSessionContext = createContext({});
 
 // IMPORTANT: Only available to mainApp context (not transcoderApp)
+// TODO: Move to MainApp
 export default function WebPhantomSessionProvider({ children }) {
   const {
     realmId,
