@@ -3,7 +3,7 @@ import React, { useEffect, useMemo } from "react";
 import SplitAppMessageBus, {
   ROLE_MAIN_APP,
   ROLE_TRANSCODER_APP,
-} from "./SplitAppMessageBus";
+} from "./classes/SplitAppMessageBus";
 
 export const SplitAppMessageBusContext = React.createContext({});
 
