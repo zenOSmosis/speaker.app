@@ -51,11 +51,13 @@ export default function useScreenCapture() {
   /**
    * NOTE: Calling this multiple times will allow parallel screen captures.
    *
+   * @see https://github.com/zenOSmosis/media-stream-track-controller/blob/main/src/utils/captureScreen.js
+   *
    * @param {Object} factoryOptions
    * @return {Promise<MediaStreamTrackControllerFactory}
    */
   const startScreenCapture = useCallback(
-    async ({ factoryOptions = {} }) => {
+    async (constraints = {}, factoryOptions = {}) => {
       let screenCaptureControllerFactory;
 
       try {
@@ -64,7 +66,7 @@ export default function useScreenCapture() {
         };
 
         screenCaptureControllerFactory = await utils.captureScreen(
-          null,
+          constraints,
           // Dynamically give the factory an alias based on the number of the
           // index it will be in the state array
           PhantomCore.mergeOptions(DEFAULT_FACTORY_OPTIONS, factoryOptions)
@@ -105,9 +107,9 @@ export default function useScreenCapture() {
   );
 
   /**
-   * @param {MediaStreamTrackControllerFactory} mediaStreamTrackControllerFactory?
-   * [optional] If nothing is passed, all existing screen capture factories
-   * will be stopped.
+   * @param {MediaStreamTrackControllerFactory} screenCaptureControllerFactory?
+   * [default = null] If nothing is passed, all existing screen capture
+   * factories will be stopped.
    * @return {Promise<void>}
    */
   const stopScreenCapture = useCallback(
