@@ -7,7 +7,7 @@ import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
 
 export const AppRoutesContext = React.createContext({});
 
-// TODO: Move into MainApp (this class doesn't support virtual server app)
+// TODO: Move into MainApp (this provider doesn't support virtual server app)
 export default function AppRoutesProvider({ routes, children }) {
   const { realmId, channelId } = useWebPhantomSessionContext();
 
