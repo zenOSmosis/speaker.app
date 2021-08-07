@@ -19,6 +19,7 @@ import AppRoutesProvider from "@providers/AppRoutesProvider";
 import AppLayoutProvider from "@providers/AppLayoutProvider";
 import NotificationsProvider from "@providers/NotificationsProvider";
 import InputMediaDevicesProvider from "@providers/InputMediaDevicesProvider";
+import ScreenCaptureProvider from "@providers/ScreenCaptureProvider";
 import LocalProfileProvider from "@providers/LocalProfileProvider";
 import WebZenRTCProvider from "@providers/WebZenRTCProvider";
 import WebPhantomSessionProvider from "@providers/WebPhantomSessionProvider";
@@ -80,23 +81,25 @@ export default function MainApp() {
     <SplitAppMessageBusProvider role={ROLE_MAIN_APP}>
       <TranscoderSandboxProvider>
         <InputMediaDevicesProvider>
-          <LocalProfileProvider>
-            <WebZenRTCProvider>
-              <WebPhantomSessionProvider>
-                <SharedFilesProvider>
-                  <AppRoutesProvider routes={routes}>
-                    <AppLayoutProvider onOpenProfile={handleOpenProfile}>
-                      <NotificationsProvider>
-                        <ChatMessagesProvider>
-                          <MainAppView />
-                        </ChatMessagesProvider>
-                      </NotificationsProvider>
-                    </AppLayoutProvider>
-                  </AppRoutesProvider>
-                </SharedFilesProvider>
-              </WebPhantomSessionProvider>
-            </WebZenRTCProvider>
-          </LocalProfileProvider>
+          <ScreenCaptureProvider>
+            <LocalProfileProvider>
+              <WebZenRTCProvider>
+                <WebPhantomSessionProvider>
+                  <SharedFilesProvider>
+                    <AppRoutesProvider routes={routes}>
+                      <AppLayoutProvider onOpenProfile={handleOpenProfile}>
+                        <NotificationsProvider>
+                          <ChatMessagesProvider>
+                            <MainAppView />
+                          </ChatMessagesProvider>
+                        </NotificationsProvider>
+                      </AppLayoutProvider>
+                    </AppRoutesProvider>
+                  </SharedFilesProvider>
+                </WebPhantomSessionProvider>
+              </WebZenRTCProvider>
+            </LocalProfileProvider>
+          </ScreenCaptureProvider>
         </InputMediaDevicesProvider>
       </TranscoderSandboxProvider>
     </SplitAppMessageBusProvider>

@@ -53,6 +53,7 @@ import {
 // import useZenRTCContext from "@hooks/useZenRTCContext";
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
+import useScreenCaptureContext from "@hooks/useScreenCaptureContext";
 
 import { AudioMediaStreamTrackLevelMeter } from "@components/AudioLevelMeter";
 
@@ -93,12 +94,10 @@ export default function useAppMenuItems() {
   //
   // There might be an easier way of accomplishing this
 
-  const {
-    micAudioController,
-    isScreenSharingSupported,
-    isScreenSharing,
-    toggleScreenCapture,
-  } = useInputMediaDevicesContext();
+  const { micAudioController } = useInputMediaDevicesContext();
+
+  const { isScreenSharingSupported, isScreenSharing, toggleScreenCapture } =
+    useScreenCaptureContext();
 
   const menuItem__Profile = useMemo(
     () => ({

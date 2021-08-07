@@ -1,3 +1,4 @@
+import PhantomCore from "phantom-core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MediaStreamTrackControllerEvents,
@@ -8,6 +9,10 @@ const { EVT_DESTROYED } = MediaStreamTrackControllerEvents;
 
 /**
  * Supports concurrent screen capturing of multiple streams.
+ *
+ * IMPORTANT: This hook should be treated as a singleton (provider based).
+ *
+ * // TODO: Document
  */
 export default function useScreenCapture() {
   /** @type {MediaStreamTrackControllerFactory[]} */
@@ -44,52 +49,60 @@ export default function useScreenCapture() {
   );
 
   /**
+   * NOTE: Calling this multiple times will allow parallel screen captures.
+   *
+   * @param {Object} factoryOptions
    * @return {Promise<MediaStreamTrackControllerFactory}
    */
-  const startScreenCapture = useCallback(async () => {
-    let screenCaptureControllerFactory;
+  const startScreenCapture = useCallback(
+    async ({ factoryOptions = {} }) => {
+      let screenCaptureControllerFactory;
 
-    try {
-      screenCaptureControllerFactory = await utils.captureScreen(
-        null,
-        // Dynamically give the factory an alias based on the number of the
-        // index it will be in the state array
-        {
+      try {
+        const DEFAULT_FACTORY_OPTIONS = {
           title: `captureScreen-${screenCaptureControllerFactories.length}`,
-        }
-      );
-    } catch (err) {
-      console.warn("Caught", err);
+        };
 
-      // TODO: The following MAY be resolved; test it
-      //
-      // FIXME: Safari 14 (desktop / BrowserStack) throws "Unhandled Rejection
-      // (InvalidAccessError): getDisplayMedia must be called from a user
-      // gesture handler."
-      //
-      // This is likely caused by the multiple redirections from calling this
-      // directly in a hook.
-      if (
-        err.message ===
-        "getDisplayMedia must be called from a user gesture handler."
-      ) {
-        // TODO: Handle more gracefully
-        alert(
-          "There is currently an issue with trying to do screen sharing with Safari.  Please try from a different browser."
+        screenCaptureControllerFactory = await utils.captureScreen(
+          null,
+          // Dynamically give the factory an alias based on the number of the
+          // index it will be in the state array
+          PhantomCore.mergeOptions(DEFAULT_FACTORY_OPTIONS, factoryOptions)
         );
+      } catch (err) {
+        console.warn("Caught", err);
+
+        // TODO: The following MAY be resolved; test it
+        //
+        // FIXME: Safari 14 (desktop / BrowserStack) throws "Unhandled Rejection
+        // (InvalidAccessError): getDisplayMedia must be called from a user
+        // gesture handler."
+        //
+        // This is likely caused by the multiple redirections from calling this
+        // directly in a hook.
+        if (
+          err.message ===
+          "getDisplayMedia must be called from a user gesture handler."
+        ) {
+          // TODO: Handle more gracefully
+          alert(
+            "There is currently an issue with trying to do screen sharing with Safari.  Please try from a different browser."
+          );
+        }
+
+        return setIsScreenSharingSupported(false);
       }
 
-      return setIsScreenSharingSupported(false);
-    }
+      // Register screen capture w/ list of streams
+      setScreenCaptureControllerFactories(prev => [
+        ...prev,
+        screenCaptureControllerFactory,
+      ]);
 
-    // Register screen capture w/ list of streams
-    setScreenCaptureControllerFactories(prev => [
-      ...prev,
-      screenCaptureControllerFactory,
-    ]);
-
-    return screenCaptureControllerFactory;
-  }, [screenCaptureControllerFactories]);
+      return screenCaptureControllerFactory;
+    },
+    [screenCaptureControllerFactories]
+  );
 
   /**
    * @param {MediaStreamTrackControllerFactory} mediaStreamTrackControllerFactory?
