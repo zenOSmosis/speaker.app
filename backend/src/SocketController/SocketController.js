@@ -35,10 +35,16 @@ function _logCoreConnectionCount(suffix = "") {
 // the master process of the cluster
 if (process.env.CPU_NO !== undefined) {
   (() => {
-    setInterval(
-      () => _logCoreConnectionCount(` [interval-reporter]`),
-      10 * 1000
-    );
+    // Keep track of idx to help break up multiple reports running back to back
+    // (prevents the console from looking like a big infinite loop when nothing
+    // else is going on)
+    let idx = -1;
+
+    setInterval(() => {
+      ++idx;
+
+      _logCoreConnectionCount(` [interval-reporter-${idx}]`);
+    }, 10 * 1000);
   })();
 }
 
