@@ -1,4 +1,7 @@
 import path from "path";
+import dayjs from "dayjs";
+
+// TODO: Use global PhantomLogger instead
 
 /**
  * Node.js console debugger.
@@ -24,7 +27,7 @@ import path from "path";
     Error.prepareStackTrace = originalPrepareStackTrace;
     const relativeFileName = path.relative(process.cwd(), callee.getFileName());
 
-    const prefix = `${
+    const prefix = `${dayjs().format()}:${
       CPU_NO !== undefined ? `CPU(${CPU_NO}):` : ``
     }${relativeFileName}:${callee.getLineNumber()}:`;
 
