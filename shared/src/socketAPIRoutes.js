@@ -35,12 +35,12 @@ export const SOCKET_API_ROUTE_END_TRANSCODER_SESSION = "end-transcoder-session";
 // TODO: Document
 /** @type {Object} */
 export const SOCKET_API_ROUTE_SET_NETWORK_BACKGROUND_IMAGE =
-  "network-background-image";
+  "set-network-background-image";
 
 // TODO: Document
 /** @type {number} */
 export const SOCKET_API_ROUTE_CAPTURE_NETWORK_TOTAL_PARTICIPANTS =
-  "network-total-participants";
+  "fetch-network-total-participants";
 
 // TODO: Document
 /** @type {string} */
