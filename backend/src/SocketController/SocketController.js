@@ -19,22 +19,26 @@ const KEY_CLIENT_DEVICE_ADDRESS = "__clientDeviceAddress";
 // Number of active Socket connections on this CPU core
 let _coreConnectionCount = 0;
 
+function _logCoreConnectionCount(suffix = "") {
+  const totalConnections = SocketController.getCoreConnectionCount();
+
+  console.log(
+    `Socket.io connection count [CPU #${process.env.CPU_NO}]: ${totalConnections}` +
+      suffix
+  );
+}
+
 // Report how many active Socket.io connections there are on the current CPU core
 // once every interval cycle in the set internal setInterval
 //
 // NOTE: The CPU_NO condition at the beginning prevents this from running on
 // the master process of the cluster
-//
-// TODO: Move somewhere else?
 if (process.env.CPU_NO !== undefined) {
   (() => {
-    setInterval(() => {
-      const totalConnections = SocketController.getCoreConnectionCount();
-
-      console.log(
-        `Socket.io connection count [CPU #${process.env.CPU_NO}]: ${totalConnections}`
-      );
-    }, 10 * 1000);
+    setInterval(
+      () => _logCoreConnectionCount(" [interval-reporter]"),
+      10 * 1000
+    );
   })();
 }
 
@@ -59,8 +63,12 @@ export default class SocketController {
       // authorization is not a good time).
       ++_coreConnectionCount;
 
+      _logCoreConnectionCount();
+
       socket.on("disconnect", () => {
         --_coreConnectionCount;
+
+        _logCoreConnectionCount();
       });
 
       next();
