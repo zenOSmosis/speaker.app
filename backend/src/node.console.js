@@ -25,8 +25,8 @@ import path from "path";
     const relativeFileName = path.relative(process.cwd(), callee.getFileName());
 
     const prefix = `${
-      CPU_NO !== undefined ? `CPU(${CPU_NO})` : ``
-    }:${relativeFileName}:${callee.getLineNumber()}:`;
+      CPU_NO !== undefined ? `CPU(${CPU_NO}):` : ``
+    }${relativeFileName}:${callee.getLineNumber()}:`;
 
     if (typeof firstArgument === "string") {
       originalLoggingMethod(prefix + " " + firstArgument, ...otherArguments);
