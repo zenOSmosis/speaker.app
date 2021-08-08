@@ -70,7 +70,7 @@ export default function useAudioInputDevicesCache({ audioInputDevices }) {
         ],
       }));
     },
-    []
+    [setObjectState]
   );
 
   // TODO: Implement

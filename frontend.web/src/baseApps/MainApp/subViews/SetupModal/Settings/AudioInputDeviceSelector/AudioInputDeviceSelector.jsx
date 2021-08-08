@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import Center from "@components/Center";
 import Layout, { Content, Footer } from "@components/Layout";
 import Section from "@components/Section";
-import LabeledSwitch from "@components/labeled/LabeledSwitch";
 import Full from "@components/Full";
 import StaggeredWaveLoading from "@components/StaggeredWaveLoading/StaggeredWaveLoading";
 
@@ -92,10 +91,14 @@ export default function AudioInputDeviceSelector() {
               <button
                 onClick={handleFetchInputMediaDevices}
                 style={{ float: "right" }}
+                disabled={isFetchingInputMediaDevices}
               >
                 Refresh <ReloadIcon />
               </button>
-              <h1>Audio Input Device</h1>
+              <h1>Audio Input Devices</h1>
+              <div className="note" style={{ marginBottom: 8 }}>
+                Multiple devices can be streamed concurrently.
+              </div>
               {/*
               <p>Choose default audio device when starting new calls.</p>
               <p className="note">
@@ -105,7 +108,7 @@ export default function AudioInputDeviceSelector() {
             */}
             </div>
 
-            {isFetchingInputMediaDevices ? (
+            {isFetchingInputMediaDevices && !inputMediaDevices.length ? (
               <Center>
                 <div>Fetching audio input devices</div>
                 <div>
@@ -144,84 +147,23 @@ export default function AudioInputDeviceSelector() {
             )}
           </Section>
         </Content>
-        {
-          // TODO: Re-capture / re-publish existing captured devices when changing settings
-          // TODO: Re-obtain for each selected device
-          // TODO: Rework this UI, if necessary
-          !isFetchingInputMediaDevices && (
-            <Footer style={{ backgroundColor: "rgba(0,0,0,.2)" }}>
-              <div style={{ display: "inline-block" }}>
-                <div className="note" style={{ marginBottom: 8 }}>
-                  Input audio quality adjustments
-                </div>
-                <LabeledSwitch
-                  masterLabel="Noise Suppression"
-                  // isOn={defaultAudioNoiseSuppression}
-                  // onChange={setDefaultAudioNoiseSuppression}
-                />
-                <LabeledSwitch
-                  masterLabel="Echo Cancellation"
-                  // isOn={defaultAudioEchoCancellation}
-                  // onChange={setDefaultAudioEchoCancellation}
-                />
-                <LabeledSwitch
-                  masterLabel="Auto Gain Control"
-                  // isOn={defaultAudioAutoGainControl}
-                  // onChange={setDefaultAudioAutoGainControl}
-                />
-              </div>
-            </Footer>
-          )
-        }
+        <Footer style={{ backgroundColor: "rgba(0,0,0,.2)" }}>
+          {
+            // TODO: Use caution sign and only show if this is really true
+          }
+          <div>
+            {
+              // TODO: Change to "no input device available" if no audio devices are present
+            }
+            <div>No audio input device selected.</div>
+            <div>
+              <span className="note">
+                Other participants will not be able to hear you.
+              </span>
+            </div>
+          </div>
+        </Footer>
       </Layout>
     </Full>
   );
 }
-
-/*
-  return (
-    <Center canOverflow={true}>
-      <Section style={{ maxWidth: 320, display: "inline-block" }}>
-        <h1>Audio Capturing</h1>
-        <ul>
-          <li>TODO: Work on these controls</li>
-          <li>
-            TODO: Implement default mic audio controller (grid; w/ angled green
-            triangle representing default)
-          </li>
-        </ul>
-
-        <button onClick={() => startMic()}>Capture Mic</button>
-        <ul>
-          <li>
-            Echo Cancellation <Switch style={{ float: "right" }} isOn={true} />
-            <p className="note" style={{ fontWeight: "normal" }}>
-              Echo cancellation is a feature which attempts to prevent echo
-              effects on a two-way audio connection by attempting to reduce or
-              eliminate crosstalk between the user's output device and their
-              input device. For example, it might apply a filter that negates
-              the sound being produced on the speakers from being included in
-              the input track generated from the microphone.
-            </p>
-            <p>
-              <TextLink href="https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings/echoCancellation" />
-            </p>
-          </li>
-          <li>
-            Noise Suppression <Switch style={{ float: "right" }} isOn={true} />
-            <p className="note" style={{ fontWeight: "normal" }}>
-              Noise suppression automatically filters the audio to remove
-              background noise, hum caused by equipment, and the like from the
-              sound before delivering it to your code. This feature is typically
-              used on microphones, although it is technically possible it could
-              be provided by other input sources as well.
-            </p>
-            <p>
-              <TextLink href="https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings/noiseSuppression" />
-            </p>
-          </li>
-        </ul>
-      </Section>
-    </Center>
-  );
-  */
