@@ -36,7 +36,7 @@ function _logCoreConnectionCount(suffix = "") {
 if (process.env.CPU_NO !== undefined) {
   (() => {
     setInterval(
-      () => _logCoreConnectionCount(" [interval-reporter]"),
+      () => _logCoreConnectionCount(` [interval-reporter]`),
       10 * 1000
     );
   })();
