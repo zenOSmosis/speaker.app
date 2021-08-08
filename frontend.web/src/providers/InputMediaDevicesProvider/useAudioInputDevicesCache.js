@@ -8,6 +8,11 @@ import { utils } from "media-stream-track-controller";
 import useLocalStorage from "@hooks/useLocalStorage";
 
 /**
+ * Provides local storage caching session persistence for audio input devices.
+ *
+ * Functionality such as determining default devices and constraints per device
+ * are included here.
+ *
  * IMPORTANT: This hook should be treated as a singleton (provider based).
  *
  * TODO: Refactor this once video capture devices are used

@@ -3,8 +3,10 @@ import { useCallback, useMemo, useState } from "react";
 
 import { utils } from "media-stream-track-controller";
 
-// TODO: Document
 /**
+ * Provides direct interaction with media-stream-track-controller for hardware
+ * media device capturing.
+ *
  * IMPORTANT: This hook should be treated as a singleton (provider based).
  */
 export default function useMediaDevicesCapture() {
@@ -13,6 +15,13 @@ export default function useMediaDevicesCapture() {
     _setMediaDeviceControllerFactories,
   ] = useState([]);
 
+  /**
+   * Removes a MediaStreamTrackControllerFactory from the internal state of
+   * factories.
+   *
+   * @param {MediaStreamTrackControllerFactory}
+   * @return {void}
+   */
   const _removeControllerFactory = useCallback(controllerFactory => {
     _setMediaDeviceControllerFactories(prev =>
       prev.filter(
@@ -22,6 +31,13 @@ export default function useMediaDevicesCapture() {
     );
   }, []);
 
+  /**
+   * Adds a MediaStreamTrackControllerFactory to the internal state of
+   * factories.
+   *
+   * @param {MediaStreamTrackControllerFactory}
+   * @return {void}
+   */
   const _addControllerFactory = useCallback(
     controllerFactory => {
       // Remove controller factory from state once destroyed
