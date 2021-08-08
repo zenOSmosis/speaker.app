@@ -38,6 +38,9 @@ export default function initSocketAPI(io, socket) {
   // Per-socket SocketAPI task number
   let _taskNumberIdx = -1;
 
+  // Per-socket total number of running tasks
+  let totalRunningTasks = 0;
+
   /**
    * Wrapper around inbound Socket.io events which provides a common interface
    * for error handling and responses.
@@ -52,6 +55,8 @@ export default function initSocketAPI(io, socket) {
     socket.on(routeName, async (clientArgs = {}, ack) => {
       ++_taskNumberIdx;
 
+      ++totalRunningTasks;
+
       // Fix issue where same _taskNumberIdx was reported for concurrent tasks
       const taskNumber = _taskNumberIdx;
 
@@ -64,9 +69,8 @@ export default function initSocketAPI(io, socket) {
 
       try {
         console.log(
-          `"${socket.id}" SocketAPI task ${taskNumber} (${routeName}) started`
+          `"${socket.id}" SocketAPI task ${taskNumber} (${routeName}) started [${totalRunningTasks} concurrent]`
         );
-
         // Run the task associated w/ the API route
         resp = await routeHandler(clientArgs, {
           io,
@@ -93,10 +97,13 @@ export default function initSocketAPI(io, socket) {
         // TODO: Measure time spent performing task?
         // @see https://nodejs.org/api/perf_hooks.html#perf_hooks_performance_measurement_apis
 
+        // Deincrement total running tasks because this task has ended
+        --totalRunningTasks;
+
         console[!errMessage ? "log" : "error"](
           `"${socket.id}" SocketAPI task ${taskNumber} (${routeName}) ended ${
             !errMessage ? "successfully" : "unsuccessfully"
-          }`
+          } [${totalRunningTasks} remaining]`
         );
       }
     });
