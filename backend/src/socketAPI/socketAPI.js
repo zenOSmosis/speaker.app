@@ -87,10 +87,6 @@ export default function initSocketAPI(io, socket) {
         // Response w/ tuple-like, [error, response] signature
         ack([errMessage, resp]);
 
-        // TODO: SocketAPI error message is currently not included in the
-        // console for potential information leak and needs to be considered
-        // how to integrate.
-
         // TODO: Measure time spent performing task?
         // @see https://nodejs.org/api/perf_hooks.html#perf_hooks_performance_measurement_apis
 
