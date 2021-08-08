@@ -35,6 +35,9 @@ import { parseUserAgent } from "./device";
 export default function initSocketAPI(io, socket) {
   console.log(`HELLO to socket id: ${socket.id}`);
 
+  // Per-socket SocketAPI task number
+  let _taskNumber = -1;
+
   /**
    * Wrapper around inbound Socket.io events which provides a common interface
    * for error handling and responses.
@@ -47,6 +50,8 @@ export default function initSocketAPI(io, socket) {
     //
     // TODO: Use single socket event for all routes
     socket.on(routeName, async (clientArgs = {}, ack) => {
+      ++_taskNumber;
+
       if (!ack) {
         ack = () => null;
       }
@@ -56,7 +61,7 @@ export default function initSocketAPI(io, socket) {
 
       try {
         console.log(
-          `Started SocketAPI route "${routeName}" task with socket id "${socket.id}"`
+          `"${socket.id}" SocketAPI task ${_taskNumber} (${routeName}) started`
         );
 
         // Run the task associated w/ the API route
@@ -82,8 +87,17 @@ export default function initSocketAPI(io, socket) {
         // Response w/ tuple-like, [error, response] signature
         ack([errMessage, resp]);
 
-        console.log(
-          `Task completed for SocketAPI route "${routeName}" with socket id "${socket.id}"`
+        // TODO: SocketAPI error message is currently not included in the
+        // console for potential information leak and needs to be considered
+        // how to integrate.
+
+        // TODO: Measure time spent performing task?
+        // @see https://nodejs.org/api/perf_hooks.html#perf_hooks_performance_measurement_apis
+
+        console[!errMessage ? "log" : "error"](
+          `"${socket.id}" SocketAPI task ${_taskNumber} (${routeName}) ended ${
+            !errMessage ? "successfully" : "unsuccessfully"
+          }`
         );
       }
     });
