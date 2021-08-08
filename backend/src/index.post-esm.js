@@ -161,7 +161,11 @@ if (cluster.isMaster) {
     })();
   })();
 
-  // React frontend
+  // Proxy the React frontend through the backend
+  //
+  // NOTE: The development /sock-js wss route for hot reloading is handled via
+  // the dev_ssl_proxy nginx server (located in the /dev_ssl_proxy directory
+  // of the project)
   (() => {
     const proxyServer = httpProxy.createProxyServer();
 
