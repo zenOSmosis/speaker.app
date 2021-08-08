@@ -48,7 +48,7 @@ export default function initSocketAPI(io, socket) {
   const addSocketAPIRoute = (routeName, routeHandler) => {
     // Socket.io event from demo.frontend
     //
-    // TODO: Use single socket event for all routes
+    // TODO: Use single socket event for all SocketAPI routes
     socket.on(routeName, async (clientArgs = {}, ack) => {
       ++_taskNumberIdx;
 
