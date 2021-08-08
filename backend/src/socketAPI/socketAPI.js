@@ -36,7 +36,7 @@ export default function initSocketAPI(io, socket) {
   console.log(`HELLO to socket id: ${socket.id}`);
 
   // Per-socket SocketAPI task number
-  let _taskNumber = -1;
+  let _taskNumberIdx = -1;
 
   /**
    * Wrapper around inbound Socket.io events which provides a common interface
@@ -50,7 +50,10 @@ export default function initSocketAPI(io, socket) {
     //
     // TODO: Use single socket event for all routes
     socket.on(routeName, async (clientArgs = {}, ack) => {
-      ++_taskNumber;
+      ++_taskNumberIdx;
+
+      // Fix issue where same _taskNumberIdx was reported for concurrent tasks
+      const taskNumber = _taskNumberIdx;
 
       if (!ack) {
         ack = () => null;
@@ -61,7 +64,7 @@ export default function initSocketAPI(io, socket) {
 
       try {
         console.log(
-          `"${socket.id}" SocketAPI task ${_taskNumber} (${routeName}) started`
+          `"${socket.id}" SocketAPI task ${taskNumber} (${routeName}) started`
         );
 
         // Run the task associated w/ the API route
@@ -91,7 +94,7 @@ export default function initSocketAPI(io, socket) {
         // @see https://nodejs.org/api/perf_hooks.html#perf_hooks_performance_measurement_apis
 
         console[!errMessage ? "log" : "error"](
-          `"${socket.id}" SocketAPI task ${_taskNumber} (${routeName}) ended ${
+          `"${socket.id}" SocketAPI task ${taskNumber} (${routeName}) ended ${
             !errMessage ? "successfully" : "unsuccessfully"
           }`
         );
