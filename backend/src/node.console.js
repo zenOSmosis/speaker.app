@@ -24,9 +24,9 @@ import path from "path";
     Error.prepareStackTrace = originalPrepareStackTrace;
     const relativeFileName = path.relative(process.cwd(), callee.getFileName());
 
-    const prefix = `${relativeFileName}:${callee.getLineNumber()}:${
-      CPU_NO !== undefined ? `CPU(${CPU_NO}):` : ``
-    }`;
+    const prefix = `${
+      CPU_NO !== undefined ? `CPU(${CPU_NO})` : ``
+    }:${relativeFileName}:${callee.getLineNumber()}:`;
 
     if (typeof firstArgument === "string") {
       originalLoggingMethod(prefix + " " + firstArgument, ...otherArguments);
