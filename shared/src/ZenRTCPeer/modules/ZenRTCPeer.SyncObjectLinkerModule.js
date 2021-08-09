@@ -17,8 +17,9 @@ import SyncObject, {
 } from "sync-object";
 
 /**
- * Provides P2P access for SyncObject modules, using two SyncObjects, each
- * representative of outgoing (writable) and incoming (readOnly) scenarios.
+ * Provides P2P access for SyncObject modules, using one SyncObject to
+ * represent outgoing (writable) state, and another SyncObject to represent
+ * readable (incoming) state.
  */
 export default class ZenRTCPeerSyncObjectLinkerModule extends BaseModule {
   /**
