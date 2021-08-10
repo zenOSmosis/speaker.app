@@ -123,6 +123,9 @@ function MainAppView() {
   if (!isSocketIoConnected) {
     return (
       <FullViewport>
+        {
+          // TODO: Dynamically adjust message based on network connection state
+        }
         <Center>Awaiting socket connection...</Center>
       </FullViewport>
     );
