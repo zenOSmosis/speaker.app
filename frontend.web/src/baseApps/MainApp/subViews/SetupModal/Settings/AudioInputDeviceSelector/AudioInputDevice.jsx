@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { AudioMediaStreamTrackLevelMeter } from "@components/AudioLevelMeter";
 import LED from "@components/LED";
 import LabeledSwitch from "@components/labeled/LabeledSwitch";
@@ -18,23 +18,42 @@ AudioInputDevice.propTypes = {
   /**
    * Called when the user selects the device.
    */
-  onSelect: PropTypes.func.isRequired,
+  onToggleSelect: PropTypes.func.isRequired,
 
   isTesting: PropTypes.bool.isRequired,
 
   /**
    * Called when the user wishes to test the audio input device.
    */
-  onTest: PropTypes.func.isRequired,
+  onToggleTest: PropTypes.func.isRequired,
+
+  // TODO: Document
+  isAudioNoiseSuppression: PropTypes.bool.isRequired,
+  setIsAudioNoiseSuppression: PropTypes.func.isRequired,
+
+  // TODO: Document
+  isAudioEchoCancellation: PropTypes.bool.isRequired,
+  setIsAudioEchoCancellation: PropTypes.func.isRequired,
+
+  // TODO: Document
+  isAudioAutoGainControl: PropTypes.bool.isRequired,
+  setIsAudioAutoGainControl: PropTypes.bool.isRequired,
 };
 
 export default function AudioInputDevice({
   device,
   isSelected,
-  onSelect,
+  onToggleSelect,
   isTesting,
-  onTest,
+  onToggleTest,
+  isAudioNoiseSuppression,
+  setIsAudioNoiseSuppression,
+  isAudioEchoCancellation,
+  setIsAudioEchoCancellation,
+  isAudioAutoGainControl,
+  setIsAudioAutoGainControl,
 }) {
+  // Ensure device.kind is an audio input
   useEffect(() => {
     if (device.kind !== "audioinput") {
       throw new TypeError(
@@ -42,6 +61,14 @@ export default function AudioInputDevice({
       );
     }
   }, [device]);
+
+  /**
+   * @type {boolean} If true, the related audio stream is completely disabled.
+   */
+  const areAudioAdjustmentsDisabled = useMemo(
+    () => isSelected || !isTesting,
+    [isSelected, isTesting]
+  );
 
   return (
     <div
@@ -69,7 +96,7 @@ export default function AudioInputDevice({
         }}
       >
         <button
-          onClick={onSelect}
+          onClick={onToggleSelect}
           style={{ backgroundColor: isSelected ? "green" : "inherit" }}
           title="Use this device for your audio input"
         >
@@ -77,7 +104,7 @@ export default function AudioInputDevice({
         </button>
         &nbsp;
         <button
-          onClick={onTest}
+          onClick={onToggleTest}
           style={{ backgroundColor: isTesting ? "green" : "inherit" }}
           title="Check the audio levels of this device to determine if it is the audio input device you want to use"
         >
@@ -105,21 +132,21 @@ export default function AudioInputDevice({
       <div style={{ marginTop: 10, clear: "right", display: "inline-block" }}>
         <LabeledSwitch
           masterLabel="Noise Suppression"
-          // isOn={defaultAudioNoiseSuppression}
-          // onChange={setDefaultAudioNoiseSuppression}
-          disabled={!isSelected && !isTesting}
+          isOn={isAudioNoiseSuppression}
+          onChange={setIsAudioNoiseSuppression}
+          disabled={areAudioAdjustmentsDisabled}
         />
         <LabeledSwitch
           masterLabel="Echo Cancellation"
-          // isOn={defaultAudioEchoCancellation}
-          // onChange={setDefaultAudioEchoCancellation}
-          disabled={!isSelected && !isTesting}
+          isOn={isAudioEchoCancellation}
+          onChange={setIsAudioEchoCancellation}
+          disabled={areAudioAdjustmentsDisabled}
         />
         <LabeledSwitch
           masterLabel="Auto Gain Control"
-          // isOn={defaultAudioAutoGainControl}
-          // onChange={setDefaultAudioAutoGainControl}
-          disabled={!isSelected && !isTesting}
+          isOn={isAudioAutoGainControl}
+          onChange={setIsAudioAutoGainControl}
+          disabled={areAudioAdjustmentsDisabled}
         />
       </div>
     </div>

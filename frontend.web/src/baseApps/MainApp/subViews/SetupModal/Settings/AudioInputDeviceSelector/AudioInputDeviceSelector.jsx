@@ -20,6 +20,7 @@ export default function AudioInputDeviceSelector() {
 
   const {
     fetchAudioInputDevices,
+    captureSpecificMediaDevice,
 
     // TODO: Clean up unused props
     /*
@@ -128,18 +129,24 @@ export default function AudioInputDeviceSelector() {
                       key={idx}
                       device={device}
                       isSelected={isSelected}
-                      onSelect={
-                        // TODO: Rework
-                        () => null
-                        // TODO: Implement toggle of active media device, if clicked again
-                        // setDefaultAudioInputDevice(device)
-                        // setDefaultAudioInputDevice(isSelected ? null : device)
+                      onToggleSelect={() =>
+                        // TODO: Use callback function instead
+                        // TODO: Uncapture if currently capturing
+                        captureSpecificMediaDevice(device)
                       }
                       isTesting={isTesting}
-                      onTest={() =>
-                        // Toggle testing
+                      onToggleTest={() =>
+                        // TODO: Use callback function instead
                         setTestInputMediaDevice(isTesting ? null : device)
                       }
+
+                      // TODO: Implement
+                      // isAudioNoiseSuppression={isAudioNoiseSuppression}
+                      // setIsAudioNoiseSuppression={setIsAudioNoiseSuppression}
+                      // isAudioEchoCancellation={isAudioEchoCancellation}
+                      // setIsAudioEchoCancellation={setIsAudioEchoCancellation}
+                      // isAudioAutoGainControl={isAudioAutoGainControl}
+                      // setIsAudioAutoGainControl={setIsAudioAutoGainControl}
                     />
                   );
                 })}
