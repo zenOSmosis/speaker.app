@@ -70,13 +70,20 @@ export default function AudioInputDevice({
     [isSelected, isTesting]
   );
 
+  /**
+   * @type {string} The color of the LED and "broadcasting" state indicator
+   */
+  const activeStateColor = isSelected ? "green" : isTesting ? "yellow" : "gray";
+
   return (
     <div
       style={{
         textAlign: "left",
         padding: 8,
         margin: "2px auto",
-        border: "1px rgba(255,255,255,.2) solid",
+        border: `1px rgba(255,255,255,${
+          areAudioAdjustmentsDisabled ? ".2" : ".5"
+        }) solid`,
         borderRadius: 4,
         overflow: "auto",
         position: "relative",
@@ -119,8 +126,13 @@ export default function AudioInputDevice({
         <AudioMediaStreamTrackLevelMeter style={{ height: 50 }} />
       </div>
       <div>
-        <div style={{ fontWeight: "bold" }}>
-          <LED color={isSelected ? "green" : isTesting ? "yellow" : "gray"} />
+        <div
+          style={{
+            fontWeight: "bold",
+            color: areAudioAdjustmentsDisabled ? "gray" : "inherit",
+          }}
+        >
+          <LED color={activeStateColor} />
           <span style={{ marginLeft: 8 }}>
             {device.label || (
               <span className="note">Device label unavailable</span>
@@ -129,9 +141,17 @@ export default function AudioInputDevice({
         </div>
         <div
           className="note"
-          style={{ marginLeft: 20, display: "inline-block" }}
+          style={{
+            marginLeft: 20,
+            display: "inline-block",
+            color: activeStateColor,
+          }}
         >
-          {isSelected ? "Broadcasting" : "Not broadcasting"}
+          {areAudioAdjustmentsDisabled
+            ? "Not active"
+            : isSelected
+            ? "Broadcasting"
+            : "Not broadcasting"}
         </div>
       </div>
       <div style={{ marginTop: 10, clear: "right", display: "inline-block" }}>

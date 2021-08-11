@@ -157,7 +157,9 @@ export default function AudioInputDeviceSelector() {
             {
               // TODO: Change to "no input device available" if no audio devices are present
             }
-            <div>No audio input device selected.</div>
+            <div style={{ fontWeight: "bold", color: "yellow" }}>
+              No audio input device selected for broadcasting.
+            </div>
             <div>
               <span className="note">
                 Other participants will not be able to hear you.
