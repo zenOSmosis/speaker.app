@@ -130,7 +130,10 @@ export default function useAudioInputDevicesCache({ audioInputDevices }) {
           );
         } else {
           // Create cached device props
-          const { defaultConstraints, isDefaultDevice } = properties;
+          const {
+            [KEY_CAIDP_DEFAULT_CONSTRAINTS]: defaultConstraints,
+            [KEY_CAIDP_IS_DEFAULT_DEVICE]: isDefaultDevice,
+          } = properties;
           cachedDeviceProps = _createCachedDeviceProps(
             mediaDeviceInfo,
             defaultConstraints,
