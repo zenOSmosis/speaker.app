@@ -16,7 +16,27 @@ export default function AudioInputDeviceSelector() {
     useState(false);
   const [inputMediaDevices, setInputMediaDevices] = useState([]);
   const [inputMediaDevicesError, setInputMediaDevicesError] = useState(null);
-  const [testInputMediaDevice, setTestInputMediaDevice] = useState(null);
+  const [testInputMediaDevices, _setTestInputMediaDevices] = useState([]);
+
+  // TODO: Document
+  const _addTestInputMediaDevice = useCallback(mediaDeviceInfo => {
+    _setTestInputMediaDevices(prev => {
+      if (prev.includes(mediaDeviceInfo)) {
+        return prev;
+      } else {
+        const next = [...prev, mediaDeviceInfo];
+
+        return next;
+      }
+    });
+  }, []);
+
+  // TODO: Document
+  const _removeTestInputMediaDevice = useCallback(mediaDeviceInfo => {
+    _setTestInputMediaDevices(prev => [
+      ...prev.filter(testPrev => !Object.is(testPrev, mediaDeviceInfo)),
+    ]);
+  }, []);
 
   const {
     fetchAudioInputDevices,
@@ -92,7 +112,7 @@ export default function AudioInputDeviceSelector() {
               <h1>Audio Input Devices</h1>
               <div className="note" style={{ marginBottom: 8 }}>
                 Multiple devices can be streamed concurrently. If plugging in a
-                new audio input device and it does not display on this list,
+                new audio input device and it does not display in this list,
                 press{" "}
                 <button
                   onClick={handleFetchInputMediaDevices}
@@ -117,7 +137,7 @@ export default function AudioInputDeviceSelector() {
                   // TODO: Rework this
                   const isSelected = false;
 
-                  const isTesting = Object.is(device, testInputMediaDevice);
+                  const isTesting = testInputMediaDevices.includes(device);
 
                   return (
                     <AudioInputDevice
@@ -132,7 +152,9 @@ export default function AudioInputDeviceSelector() {
                       isTesting={isTesting}
                       onToggleTest={() =>
                         // TODO: Use callback function instead
-                        setTestInputMediaDevice(isTesting ? null : device)
+                        !isTesting
+                          ? _addTestInputMediaDevice(device)
+                          : _removeTestInputMediaDevice(device)
                       }
 
                       // TODO: Implement
