@@ -1,3 +1,4 @@
+import PhantomCore from "phantom-core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useObjectState from "@hooks/useObjectState";
 
@@ -6,6 +7,18 @@ import { KEY_LOCAL_AUDIO_INPUT_DEVICES_CACHE } from "@local/localStorageKeys";
 import { utils } from "media-stream-track-controller";
 
 import useLocalStorage from "@hooks/useLocalStorage";
+
+/**
+ * @typedef {Object} CachedAudioInputDeviceProps
+ * @property {Object} mediaDeviceInfo
+ * @property {Object} defaultConstraints
+ * @property {boolean} isDefaultDevice
+ */
+
+// Computed property names representing CachedAudioInputDeviceProps
+const KEY_CAIDP_MEDIA_DEVICE_INFO = "mediaDeviceInfo";
+const KEY_CAIDP_DEFAULT_CONSTRAINTS = "defaultConstraints";
+const KEY_CAIDP_IS_DEFAULT_DEVICE = "isDefaultDevice";
 
 /**
  * Provides local storage caching session persistence for audio input devices.
@@ -25,11 +38,6 @@ export default function useAudioInputDevicesCache({ audioInputDevices }) {
     useLocalStorage();
 
   /**
-   * @typedef {Object} CachedAudioInputDeviceProps
-   * @property {Object} mediaDeviceInfo
-   * @property {Object} defaultConstraints
-   * @property {boolean} isDefaultDevice
-   *
    * TODO: Document
    */
   const [objectState, setObjectState] = useObjectState(
@@ -59,14 +67,26 @@ export default function useAudioInputDevicesCache({ audioInputDevices }) {
   }, [setLocalStorageItem, objectState]);
 
   // TODO: Document
-  const _addCachedDevice = useCallback(
-    (mediaDeviceInfo, defaultConstraints = {}, isDefaultDevice = false) => {
+  /**
+   * Creates a new wrapping object for for caching of audio input device
+   * information, but does not actually cache the object itself.
+   *
+   */
+  const _createCachedDeviceProps = useCallback(
+    (mediaDeviceInfo, constraints = {}, isDefaultDevice = false) => {
+      // TODO: Bring in from media-stream-track-controller
+      const DEFAULT_CONSTRAINTS = {};
+
       const newCachedDeviceProps = {
-        mediaDeviceInfo,
-        defaultConstraints,
-        isDefaultDevice,
+        [KEY_CAIDP_MEDIA_DEVICE_INFO]: mediaDeviceInfo,
+        [KEY_CAIDP_DEFAULT_CONSTRAINTS]: PhantomCore.mergeOptions(
+          DEFAULT_CONSTRAINTS,
+          constraints
+        ),
+        [KEY_CAIDP_IS_DEFAULT_DEVICE]: isDefaultDevice,
       };
 
+      /*
       setObjectState(prev => ({
         ...prev,
         allAudioInputDevicesProperties: [
@@ -74,8 +94,11 @@ export default function useAudioInputDevicesCache({ audioInputDevices }) {
           newCachedDeviceProps,
         ],
       }));
+      */
+
+      return newCachedDeviceProps;
     },
-    [setObjectState]
+    []
   );
 
   // TODO: Implement
@@ -107,14 +130,12 @@ export default function useAudioInputDevicesCache({ audioInputDevices }) {
           );
         } else {
           // Create cached device props
-          // TODO: Refactor creation into separate function
-          cachedDeviceProps = {
+          const { defaultConstraints, isDefaultDevice } = properties;
+          cachedDeviceProps = _createCachedDeviceProps(
             mediaDeviceInfo,
-
-            defaultConstraints: {},
-
-            isDefaultDevice: false,
-          };
+            defaultConstraints,
+            isDefaultDevice
+          );
         }
 
         objectState.allAudioInputDevicesProperties.AudioInputDevicesCacheProps(
@@ -124,7 +145,7 @@ export default function useAudioInputDevicesCache({ audioInputDevices }) {
         return { ...objectState };
       });
     },
-    [audioInputDevices, setObjectState]
+    [_createCachedDeviceProps, audioInputDevices, setObjectState]
   );
 
   const setHasUserAudioPermission = useState(
@@ -190,6 +211,9 @@ export default function useAudioInputDevicesCache({ audioInputDevices }) {
     // TODO: Obtain matched cached device
     // TODO: Return matched cached device isDefault property
   }, []);
+
+  // TODO: Implement ability to set / remove device default constraints (individual)
+  // TODO: Implement ability to get per-device default constraints
 
   return {
     // *** Permissions
