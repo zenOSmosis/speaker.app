@@ -89,24 +89,19 @@ export default function AudioInputDeviceSelector() {
         >
           <Section>
             <div style={{ textAlign: "left" }}>
-              <button
-                onClick={handleFetchInputMediaDevices}
-                style={{ float: "right" }}
-                disabled={isFetchingInputMediaDevices}
-              >
-                Refresh <ReloadIcon />
-              </button>
               <h1>Audio Input Devices</h1>
               <div className="note" style={{ marginBottom: 8 }}>
-                Multiple devices can be streamed concurrently.
+                Multiple devices can be streamed concurrently. If plugging in a
+                new audio input device and it does not display on this list,
+                press{" "}
+                <button
+                  onClick={handleFetchInputMediaDevices}
+                  disabled={isFetchingInputMediaDevices}
+                >
+                  Refresh <ReloadIcon />
+                </button>
+                .
               </div>
-              {/*
-              <p>Choose default audio device when starting new calls.</p>
-              <p className="note">
-                NOTE: Default audio device selection may not persist accurately
-                when starting new sessions.
-              </p>
-            */}
             </div>
 
             {isFetchingInputMediaDevices && !inputMediaDevices.length ? (
