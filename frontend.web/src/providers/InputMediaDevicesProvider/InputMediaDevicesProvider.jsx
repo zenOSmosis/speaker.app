@@ -49,6 +49,7 @@ export default function InputMediaDevicesProvider({ children }) {
   const {
     captureMediaDevice,
     captureSpecificMediaDevice,
+    uncaptureSpecificMediaDevice,
 
     audioCaptureDeviceControllers,
     videoCaptureDeviceControllers,
@@ -76,6 +77,7 @@ export default function InputMediaDevicesProvider({ children }) {
 
         captureMediaDevice,
         captureSpecificMediaDevice,
+        uncaptureSpecificMediaDevice,
 
         audioCaptureDeviceControllers,
         videoCaptureDeviceControllers,

@@ -70,6 +70,9 @@ export default function useMediaDevicesCapture() {
 
   /**
    * @see https://github.com/zenOSmosis/media-stream-track-controller/blob/main/src/utils/captureMediaDevice.js
+   *
+   * TODO: Document params
+   *
    * @return {Promise<MediaStreamTrackControllerFactory>}
    */
   const captureSpecificMediaDevice = useCallback(
@@ -87,6 +90,18 @@ export default function useMediaDevicesCapture() {
     },
     [_addControllerFactory]
   );
+
+  /**
+   * Stops capturing the specific media device.
+   *
+   * @param {MediaDeviceInfo | Object} mediaDeviceInfo
+   * @return {Promise<void>}
+   */
+  const uncaptureSpecificMediaDevice = useCallback(async mediaDeviceInfo => {
+    await utils.captureMediaDevice.uncaptureSpecificMediaDevice(
+      mediaDeviceInfo
+    );
+  }, []);
 
   const { audioCaptureDeviceControllers, videoCaptureDeviceControllers } =
     useMemo(() => {
@@ -109,6 +124,7 @@ export default function useMediaDevicesCapture() {
   return {
     captureMediaDevice,
     captureSpecificMediaDevice,
+    uncaptureSpecificMediaDevice,
 
     audioCaptureDeviceControllers,
     videoCaptureDeviceControllers,

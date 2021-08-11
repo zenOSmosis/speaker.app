@@ -65,6 +65,7 @@ export default function AudioInputDeviceSelector() {
   const {
     fetchAudioInputDevices,
     captureSpecificMediaDevice,
+    uncaptureSpecificMediaDevice,
 
     // TODO: Clean up unused props
     /*
