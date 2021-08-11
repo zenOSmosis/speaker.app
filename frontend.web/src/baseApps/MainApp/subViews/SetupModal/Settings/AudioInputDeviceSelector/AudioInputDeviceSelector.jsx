@@ -16,7 +16,31 @@ export default function AudioInputDeviceSelector() {
     useState(false);
   const [inputMediaDevices, setInputMediaDevices] = useState([]);
   const [inputMediaDevicesError, setInputMediaDevicesError] = useState(null);
+
+  const [selectedInputMediaDevices, _setSelectedInputMediaDevices] = useState(
+    []
+  );
   const [testInputMediaDevices, _setTestInputMediaDevices] = useState([]);
+
+  // TODO: Document
+  const _addSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
+    _setSelectedInputMediaDevices(prev => {
+      if (prev.includes(mediaDeviceInfo)) {
+        return prev;
+      } else {
+        const next = [...prev, mediaDeviceInfo];
+
+        return next;
+      }
+    });
+  }, []);
+
+  // TODO: Document
+  const _removeSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
+    _setSelectedInputMediaDevices(prev => [
+      ...prev.filter(testPrev => !Object.is(testPrev, mediaDeviceInfo)),
+    ]);
+  }, []);
 
   // TODO: Document
   const _addTestInputMediaDevice = useCallback(mediaDeviceInfo => {
@@ -134,8 +158,7 @@ export default function AudioInputDeviceSelector() {
             ) : (
               <div>
                 {inputMediaDevices.map((device, idx) => {
-                  // TODO: Rework this
-                  const isSelected = false;
+                  const isSelected = selectedInputMediaDevices.includes(device);
 
                   const isTesting = testInputMediaDevices.includes(device);
 
@@ -146,8 +169,9 @@ export default function AudioInputDeviceSelector() {
                       isSelected={isSelected}
                       onToggleSelect={() =>
                         // TODO: Use callback function instead
-                        // TODO: Uncapture if currently capturing
-                        captureSpecificMediaDevice(device)
+                        !isSelected
+                          ? _addSelectedInputMediaDevice(device)
+                          : _removeSelectedInputMediaDevice(device)
                       }
                       isTesting={isTesting}
                       onToggleTest={() =>
