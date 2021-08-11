@@ -86,6 +86,11 @@ export default function AudioInputDevice({
         color: "#bcb",
         maxWidth: 720,
       }}
+      title={
+        areAudioAdjustmentsDisabled
+          ? `Press "Select" to broadcast or "Test" to monitor line input levels before broadcasting`
+          : null
+      }
     >
       <div
         style={{
