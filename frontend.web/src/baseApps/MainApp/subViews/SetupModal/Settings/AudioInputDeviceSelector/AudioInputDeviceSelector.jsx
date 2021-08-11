@@ -196,22 +196,24 @@ export default function AudioInputDeviceSelector() {
           </Section>
         </Content>
         <Footer style={{ backgroundColor: "rgba(0,0,0,.2)" }}>
-          {
-            // TODO: Use caution sign and only show if this is really true
-          }
-          <div>
-            {
-              // TODO: Change to "no input device available" if no audio devices are present
-            }
-            <div style={{ fontWeight: "bold", color: "yellow" }}>
-              No audio input device selected for broadcasting.
-            </div>
+          {!selectedInputMediaDevices.length && (
             <div>
-              <span className="note">
-                Other participants will not be able to hear you.
-              </span>
+              {
+                // TODO: Change to "no input device available" if no audio devices are present
+              }
+              <div style={{ fontWeight: "bold", color: "yellow" }}>
+                {
+                  // TODO: Use caution sign as well
+                }
+                No audio input device selected for broadcasting.
+              </div>
+              <div>
+                <span className="note">
+                  Other participants will not be able to hear you.
+                </span>
+              </div>
             </div>
-          </div>
+          )}
         </Footer>
       </Layout>
     </Full>
