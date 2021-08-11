@@ -154,6 +154,7 @@ export default function AudioInputDevice({
             {areAudioAdjustmentsDisabled ? (
               "Not active"
             ) : isSelected ? (
+              // TODO: Change string depending on whether currently connected to a network or not
               <>&nbsp;&nbsp;Broadcasting&nbsp;&nbsp;</>
             ) : (
               "Not broadcasting"
