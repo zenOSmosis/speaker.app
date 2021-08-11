@@ -66,7 +66,7 @@ export default function AudioInputDevice({
    * @type {boolean} If true, the related audio stream is completely disabled.
    */
   const areAudioAdjustmentsDisabled = useMemo(
-    () => isSelected || !isTesting,
+    () => !isSelected && !isTesting,
     [isSelected, isTesting]
   );
 
@@ -87,9 +87,7 @@ export default function AudioInputDevice({
         borderRadius: 4,
         overflow: "auto",
         position: "relative",
-        backgroundColor: !isSelected
-          ? "rgba(0,0,0,.1)"
-          : "rgba(255,255,255,.1)",
+        backgroundColor: "rgba(0,0,0,.1)",
         color: "#bcb",
         maxWidth: 720,
       }}
@@ -147,11 +145,20 @@ export default function AudioInputDevice({
             color: activeStateColor,
           }}
         >
-          {areAudioAdjustmentsDisabled
-            ? "Not active"
-            : isSelected
-            ? "Broadcasting"
-            : "Not broadcasting"}
+          <span
+            style={{
+              backgroundColor: isSelected ? "#000" : "inherit",
+              fontWeight: isSelected ? "bold" : "normal",
+            }}
+          >
+            {areAudioAdjustmentsDisabled ? (
+              "Not active"
+            ) : isSelected ? (
+              <>&nbsp;&nbsp;Broadcasting&nbsp;&nbsp;</>
+            ) : (
+              "Not broadcasting"
+            )}
+          </span>
         </div>
       </div>
       <div style={{ marginTop: 10, clear: "right", display: "inline-block" }}>
