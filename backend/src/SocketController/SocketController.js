@@ -28,26 +28,6 @@ function _logCoreConnectionCount(suffix = "") {
   );
 }
 
-// Report how many active Socket.io connections there are on the current CPU core
-// once every interval cycle in the set internal setInterval
-//
-// NOTE: The CPU_NO condition at the beginning prevents this from running on
-// the master process of the cluster
-if (process.env.CPU_NO !== undefined) {
-  (() => {
-    // Keep track of idx to help break up multiple reports running back to back
-    // (prevents the console from looking like a big infinite loop when nothing
-    // else is going on)
-    let idx = -1;
-
-    setInterval(() => {
-      ++idx;
-
-      _logCoreConnectionCount(` [interval-reporter-${idx}]`);
-    }, 10 * 1000);
-  })();
-}
-
 /**
  * Handles Socket.io connectivity and signal routing.
  */
