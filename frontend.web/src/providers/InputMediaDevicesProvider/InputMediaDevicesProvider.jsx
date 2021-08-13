@@ -20,6 +20,58 @@ export const InputMediaDevicesContext = createContext({});
 export default function InputMediaDevicesProvider({ children }) {
   /** @type {MediaDeviceInfo[]} */
   const [mediaDevices, _setMediaDevices] = useState([]);
+
+  /**
+   * Obtains list of available audio input media devices and sets internal hook
+   * state.
+   *
+   * @param {boolean} isAggressive? [default = true]
+   * @return {Promise{MediaDeviceInfo[]}}
+   */
+  const fetchMediaDevices = useCallback(async (isAggressive = true) => {
+    const mediaDevices = await utils.fetchMediaDevices(isAggressive);
+
+    _setMediaDevices(mediaDevices);
+
+    return mediaDevices;
+  }, []);
+
+  /**
+   * Refetch media devices on device change.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/ondevicechange
+   *
+   * TODO: Should this onchange handler be proxied so other potential handlers
+   * can co-exist?
+   */
+  useEffect(() => {
+    if (navigator && navigator.mediaDevices && navigator.mediaDevices) {
+      navigator.mediaDevices.ondevicechange = fetchMediaDevices;
+
+      const _handleDeviceChange = () => {
+        // Don't try to refetch if no mediaDevices are already present simply
+        // because the first fetch will be an aggressive fetch and we don't
+        // necessarily want to prompt the user to accept mic permissions the
+        // first time they plug in a device
+        if (mediaDevices.length) {
+          // FIXME: Use logger.debug once global logger is automatically
+          // configured as default log level to run all levels in development
+          //
+          // @see https://github.com/zenOSmosis/phantom-core/issues/41
+          logger.info("Received ondevicechange and refetching media devices");
+
+          fetchMediaDevices();
+        }
+      };
+
+      navigator.mediaDevices.ondevicechange = _handleDeviceChange;
+
+      return function unmount() {
+        navigator.mediaDevices.ondevicechange = () => null;
+      };
+    }
+  }, [mediaDevices, fetchMediaDevices]);
+
   const [audioInputDevices, _setAudioInputDevices] = useState([]);
   const [videoInputDevices, _setVideoInputDevices] = useState([]);
 
@@ -78,57 +130,6 @@ export default function InputMediaDevicesProvider({ children }) {
   useEffect(() => {
   }, [])
   */
-
-  /**
-   * Obtains list of available audio input media devices and sets internal hook
-   * state.
-   *
-   * @param {boolean} isAggressive? [default = true]
-   * @return {Promise{MediaDeviceInfo[]}}
-   */
-  const fetchMediaDevices = useCallback(async (isAggressive = true) => {
-    const mediaDevices = await utils.fetchMediaDevices(isAggressive);
-
-    _setMediaDevices(mediaDevices);
-
-    return mediaDevices;
-  }, []);
-
-  /**
-   * Refetch media devices on device change.
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/ondevicechange
-   *
-   * TODO: Should this onchange handler be proxied so other potential handlers
-   * can co-exist?
-   */
-  useEffect(() => {
-    if (navigator && navigator.mediaDevices && navigator.mediaDevices) {
-      navigator.mediaDevices.ondevicechange = fetchMediaDevices;
-
-      const _handleDeviceChange = () => {
-        // Don't try to refetch if no mediaDevices are already present simply
-        // because the first fetch will be an aggressive fetch and we don't
-        // necessarily want to prompt the user to accept mic permissions the
-        // first time they plug in a device
-        if (mediaDevices.length) {
-          // FIXME: Use logger.debug once global logger is automatically
-          // configured as default log level to run all levels in development
-          //
-          // @see https://github.com/zenOSmosis/phantom-core/issues/41
-          logger.info("Received ondevicechange and refetching media devices");
-
-          fetchMediaDevices();
-        }
-      };
-
-      navigator.mediaDevices.ondevicechange = _handleDeviceChange;
-
-      return function unmount() {
-        navigator.mediaDevices.ondevicechange = () => null;
-      };
-    }
-  }, [mediaDevices, fetchMediaDevices]);
 
   // TODO: Document
   const addSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
@@ -204,6 +205,7 @@ export default function InputMediaDevicesProvider({ children }) {
       value={{
         fetchMediaDevices,
         audioInputDevices,
+        videoInputDevices,
 
         // *** Permissions
         hasUserAudioPermission,
