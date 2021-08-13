@@ -93,6 +93,36 @@ export default function InputMediaDevicesProvider({ children }) {
     return mediaDevices;
   }, []);
 
+  /**
+   * Refetch media devices on device change.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/ondevicechange
+   *
+   * TODO: Should this onchange handler be proxied so other potential handlers
+   * can co-exist?
+   */
+  useEffect(() => {
+    if (navigator && navigator.mediaDevices && navigator.mediaDevices) {
+      navigator.mediaDevices.ondevicechange = fetchMediaDevices;
+
+      const _handleDeviceChange = () => {
+        // Don't try to refetch if no mediaDevices are already present simply
+        // because the first fetch will be an aggressive fetch and we don't
+        // necessarily want to prompt the user to accept mic permissions the
+        // first time they plug in a device
+        if (mediaDevices.length) {
+          fetchMediaDevices();
+        }
+      };
+
+      navigator.mediaDevices.ondevicechange = _handleDeviceChange;
+
+      return function unmount() {
+        navigator.mediaDevices.ondevicechange = () => null;
+      };
+    }
+  }, [mediaDevices, fetchMediaDevices]);
+
   // TODO: Document
   const addSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
     // TODO: Store in cache
