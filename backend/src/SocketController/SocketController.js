@@ -19,12 +19,14 @@ const KEY_CLIENT_DEVICE_ADDRESS = "__clientDeviceAddress";
 // Number of active Socket connections on this CPU core
 let _coreConnectionCount = 0;
 
-function _logCoreConnectionCount(suffix = "") {
-  const totalConnections = SocketController.getCoreConnectionCount();
+function _logCoreConnectionCount() {
+  const lenCPUConnections = SocketController.getCoreConnectionCount();
+
+  // TODO: Include metric for how many total network Socket connections there
+  // are
 
   console.log(
-    `Socket.io connection count [CPU #${process.env.CPU_NO}]: ${totalConnections}` +
-      suffix
+    `Per CPU Socket.io connection count [CPU #${process.env.CPU_NO}]: ${lenCPUConnections}`
   );
 }
 
