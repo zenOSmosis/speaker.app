@@ -105,7 +105,7 @@ export default function InputMediaDevicesProvider({ children }) {
        */
 
       /**
-       * The list of currently obtained media devices
+       * The list of currently obtained media devices.
        *
        * @type {MediaDeviceList[]}
        */
