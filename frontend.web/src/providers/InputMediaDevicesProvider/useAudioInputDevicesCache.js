@@ -32,6 +32,8 @@ const KEY_CAIDP_IS_DEFAULT_DEVICE = "isDefaultDevice";
  *
  * @typedef {Object} AudioInputDeviceProps
  * @property {MediaDeviceInfo[]} audioInputDevices
+ *
+ * TODO: Document params / return
  */
 export default function useAudioInputDevicesCache({ audioInputDevices }) {
   const { getItem: getLocalStorageItem, setItem: setLocalStorageItem } =
