@@ -91,30 +91,50 @@ export default function InputMediaDevicesProvider({ children }) {
   const refMediaDevices = useRef(mediaDevices);
   refMediaDevices.current = mediaDevices;
   const fetchMediaDevices = useCallback(async (isAggressive = true) => {
+    /** @type {MediaDeviceList[]} */
     const nextMediaDevices = await (async () => {
-      let next = await utils.fetchMediaDevices(isAggressive);
+      /**
+       * IMPORTANT: The detectedMediaDevices are not directly written back to
+       * the mediaDevices state because the MediaDeviceInfo object elements are
+       * unique on subsequent runs. The following code in this function body
+       * will remedy that.
+       *
+       * TODO: Consider moving this handling directly to
+       * media-stream-track-controller so implementations don't have to go
+       * through this.
+       */
 
-      // Remove from predicate where existing media devices are not found
-      //
-      // TODO: This seems to work as intended, but I'm not exactly sure why
-      // it's working
-      next = next.filter(
-        predicate =>
-          !Boolean(
-            refMediaDevices.current.find(
-              xPredicate =>
-                xPredicate.kind === predicate.kind &&
-                xPredicate.deviceId === predicate.deviceId
-            )
-          )
+      /**
+       * The list of currently obtained media devices
+       *
+       * @type {MediaDeviceList[]}
+       */
+      const detectedMediaDevices = await utils.fetchMediaDevices(isAggressive);
+
+      /**
+       * This will become what is written back to the mediaDevices state.
+       *
+       * This original value represents the current state of mediaDevices with
+       * removed new devices filtered out.
+       *
+       * @type {MediaDeviceList[]}
+       */
+      const next = [...refMediaDevices.current].filter(device =>
+        Boolean(
+          detectedMediaDevices.find(predicate => {
+            const isMatch =
+              predicate.kind === device.kind &&
+              predicate.deviceId === device.deviceId;
+
+            return isMatch;
+          })
+        )
       );
 
-      // Re-use previous MediaDeviceInfo descriptors instead of using the next
-      // ones (fixes issue where hooks would update with latest component and
-      // lose related state)
-      refMediaDevices.current.forEach(device => {
+      // Add new media devices to the next array
+      detectedMediaDevices.forEach(device => {
         const isPrevious = Boolean(
-          next.find(
+          refMediaDevices.current.find(
             predicate =>
               predicate.kind === device.kind &&
               predicate.deviceId === device.deviceId
@@ -125,8 +145,6 @@ export default function InputMediaDevicesProvider({ children }) {
           next.push(device);
         }
       });
-
-      // TODO: Fix issue where unplugging media device and refreshing retains it in the list
 
       return next;
     })();
