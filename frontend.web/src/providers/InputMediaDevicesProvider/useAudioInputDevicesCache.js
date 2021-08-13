@@ -12,7 +12,7 @@ import useLocalStorage from "@hooks/useLocalStorage";
  * @typedef {Object} CachedAudioInputDeviceProps
  * @property {Object} mediaDeviceInfo
  * @property {Object} defaultConstraints
- * @property {boolean} isDefaultDevice
+ * @property {boolean} isDefaultDevice Maps to selected devices from InputMediaDevicesProvider
  */
 
 // Computed property names representing CachedAudioInputDeviceProps

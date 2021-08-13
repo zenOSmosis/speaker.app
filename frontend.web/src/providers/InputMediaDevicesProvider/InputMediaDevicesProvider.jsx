@@ -1,4 +1,10 @@
-import React, { createContext, useCallback, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import useAudioInputDevicesCache from "./useAudioInputDevicesCache";
 import useMediaDevicesCapture from "./useMediaDevicesCapture";
@@ -12,7 +18,65 @@ export const InputMediaDevicesContext = createContext({});
  */
 export default function InputMediaDevicesProvider({ children }) {
   /** @type {MediaDeviceInfo[]} */
+  const [mediaDevices, _setMediaDevices] = useState([]);
   const [audioInputDevices, _setAudioInputDevices] = useState([]);
+  const [videoInputDevices, _setVideoInputDevices] = useState([]);
+
+  // Automatically populate audio/videoInputDevices based on filters used on
+  // mediaDevices
+  useEffect(() => {
+    _setAudioInputDevices(
+      utils.fetchMediaDevices.filterAudioInputDevices(mediaDevices)
+    );
+
+    _setVideoInputDevices(
+      utils.fetchMediaDevices.filterVideoInputDevices(mediaDevices)
+    );
+  }, [mediaDevices]);
+
+  const [selectedInputMediaDevices, _setSelectedInputMediaDevices] = useState(
+    []
+  );
+  const [selectedAudioInputDevices, _setSelectedAudioInputDevices] = useState(
+    []
+  );
+  const [selectedVideoInputDevices, _setSelectedVideoInputDevices] = useState(
+    []
+  );
+
+  // Automatically populate selectedAudio/VideoInputDevices based on filters used on
+  // mediaDevices
+  useEffect(() => {
+    _setSelectedAudioInputDevices(
+      utils.fetchMediaDevices.filterAudioInputDevices(selectedInputMediaDevices)
+    );
+
+    _setSelectedVideoInputDevices(
+      utils.fetchMediaDevices.filterVideoInputDevices(selectedInputMediaDevices)
+    );
+  }, [selectedInputMediaDevices]);
+
+  const [testInputMediaDevices, _setTestInputMediaDevices] = useState([]);
+  const [testAudioInputDevices, _setTestAudioInputDevices] = useState([]);
+  const [testVideoInputDevices, _setTestVideoInputDevices] = useState([]);
+
+  // Automatically populate testAudio/VideoInputDevices based on filters used on
+  // mediaDevices
+  useEffect(() => {
+    _setTestAudioInputDevices(
+      utils.fetchMediaDevices.filterAudioInputDevices(testInputMediaDevices)
+    );
+
+    _setTestVideoInputDevices(
+      utils.fetchMediaDevices.filterVideoInputDevices(testInputMediaDevices)
+    );
+  }, [testInputMediaDevices]);
+
+  // TODO: Automatically filter selectedInputMediaDevices and testInputMediaDevices based on audioInputDevices
+  /*
+  useEffect(() => {
+  }, [])
+  */
 
   /**
    * Obtains list of available audio input media devices and sets internal hook
@@ -21,13 +85,99 @@ export default function InputMediaDevicesProvider({ children }) {
    * @param {boolean} isAggressive? [default = true]
    * @return {Promise{MediaDeviceInfo[]}}
    */
-  const fetchAudioInputDevices = useCallback(async (isAggressive = true) => {
-    const audioInputDevices =
-      await utils.fetchMediaDevices.fetchAudioInputDevices(isAggressive);
+  // IMPORTANT: This useRef is utilized to fix an infinite loop in
+  // implementations which were triggered by the mediaDevices being updated on
+  // each run and used internally
+  const refMediaDevices = useRef(mediaDevices);
+  refMediaDevices.current = mediaDevices;
+  const fetchMediaDevices = useCallback(async (isAggressive = true) => {
+    const nextMediaDevices = await (async () => {
+      let next = await utils.fetchMediaDevices(isAggressive);
 
-    _setAudioInputDevices(audioInputDevices);
+      // Remove from predicate where existing media devices are not found
+      //
+      // TODO: This seems to work as intended, but I'm not exactly sure why
+      // it's working
+      next = next.filter(
+        predicate =>
+          !Boolean(
+            refMediaDevices.current.find(
+              xPredicate =>
+                xPredicate.kind === predicate.kind &&
+                xPredicate.deviceId === predicate.deviceId
+            )
+          )
+      );
 
-    return audioInputDevices;
+      // Re-use previous MediaDeviceInfo descriptors instead of using the next
+      // ones (fixes issue where hooks would update with latest component and
+      // lose related state)
+      refMediaDevices.current.forEach(device => {
+        const isPrevious = Boolean(
+          next.find(
+            predicate =>
+              predicate.kind === device.kind &&
+              predicate.deviceId === device.deviceId
+          )
+        );
+
+        if (!isPrevious) {
+          next.push(device);
+        }
+      });
+
+      // TODO: Fix issue where unplugging media device and refreshing retains it in the list
+
+      return next;
+    })();
+
+    _setMediaDevices(nextMediaDevices);
+
+    return nextMediaDevices;
+  }, []);
+
+  // TODO: Document
+  const addSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
+    // TODO: Store in cache
+
+    _setSelectedInputMediaDevices(prev => {
+      if (prev.includes(mediaDeviceInfo)) {
+        return prev;
+      } else {
+        const next = [...prev, mediaDeviceInfo];
+
+        return next;
+      }
+    });
+  }, []);
+
+  // TODO: Document
+  const removeSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
+    // TODO: Remove from cache
+
+    _setSelectedInputMediaDevices(prev => [
+      ...prev.filter(testPrev => !Object.is(testPrev, mediaDeviceInfo)),
+    ]);
+  }, []);
+
+  // TODO: Document
+  const addTestInputMediaDevice = useCallback(mediaDeviceInfo => {
+    _setTestInputMediaDevices(prev => {
+      if (prev.includes(mediaDeviceInfo)) {
+        return prev;
+      } else {
+        const next = [...prev, mediaDeviceInfo];
+
+        return next;
+      }
+    });
+  }, []);
+
+  // TODO: Document
+  const removeTestInputMediaDevice = useCallback(mediaDeviceInfo => {
+    _setTestInputMediaDevices(prev => [
+      ...prev.filter(testPrev => !Object.is(testPrev, mediaDeviceInfo)),
+    ]);
   }, []);
 
   const {
@@ -58,7 +208,7 @@ export default function InputMediaDevicesProvider({ children }) {
   return (
     <InputMediaDevicesContext.Provider
       value={{
-        fetchAudioInputDevices,
+        fetchMediaDevices,
         audioInputDevices,
 
         // *** Permissions
@@ -69,18 +219,29 @@ export default function InputMediaDevicesProvider({ children }) {
         setHasUserVideoPermission,
         // *** /Permissions
 
-        defaultAudioInputDevices,
-        setDefaultAudioInputDevices,
+        // defaultAudioInputDevices,
+        // setDefaultAudioInputDevices,
 
         setAudioInputDeviceConstraints,
         getAudioInputDeviceConstraints,
 
-        captureMediaDevice,
-        captureSpecificMediaDevice,
-        uncaptureSpecificMediaDevice,
+        addSelectedInputMediaDevice,
+        removeSelectedInputMediaDevice,
 
-        audioCaptureDeviceControllers,
-        videoCaptureDeviceControllers,
+        addTestInputMediaDevice,
+        removeTestInputMediaDevice,
+
+        selectedAudioInputDevices,
+        selectedVideoInputDevices,
+        testAudioInputDevices,
+        testVideoInputDevices,
+
+        // captureMediaDevice,
+        // captureSpecificMediaDevice,
+        // uncaptureSpecificMediaDevice,
+
+        // audioCaptureDeviceControllers,
+        // videoCaptureDeviceControllers,
 
         getIsMediaDeviceCaptureSupported:
           utils.captureMediaDevice.getIsDeviceMediaCaptureSupported,

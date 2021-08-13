@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import Center from "@components/Center";
 import Layout, { Content, Footer } from "@components/Layout";
 import Section from "@components/Section";
@@ -14,58 +14,24 @@ import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 export default function AudioInputDeviceSelector() {
   const [isFetchingInputMediaDevices, setIsFetchingInputMediaDevices] =
     useState(false);
-  const [inputMediaDevices, setInputMediaDevices] = useState([]);
-  const [inputMediaDevicesError, setInputMediaDevicesError] = useState(null);
-
-  const [selectedInputMediaDevices, _setSelectedInputMediaDevices] = useState(
-    []
-  );
-  const [testInputMediaDevices, _setTestInputMediaDevices] = useState([]);
-
-  // TODO: Document
-  const _addSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
-    _setSelectedInputMediaDevices(prev => {
-      if (prev.includes(mediaDeviceInfo)) {
-        return prev;
-      } else {
-        const next = [...prev, mediaDeviceInfo];
-
-        return next;
-      }
-    });
-  }, []);
-
-  // TODO: Document
-  const _removeSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
-    _setSelectedInputMediaDevices(prev => [
-      ...prev.filter(testPrev => !Object.is(testPrev, mediaDeviceInfo)),
-    ]);
-  }, []);
-
-  // TODO: Document
-  const _addTestInputMediaDevice = useCallback(mediaDeviceInfo => {
-    _setTestInputMediaDevices(prev => {
-      if (prev.includes(mediaDeviceInfo)) {
-        return prev;
-      } else {
-        const next = [...prev, mediaDeviceInfo];
-
-        return next;
-      }
-    });
-  }, []);
-
-  // TODO: Document
-  const _removeTestInputMediaDevice = useCallback(mediaDeviceInfo => {
-    _setTestInputMediaDevices(prev => [
-      ...prev.filter(testPrev => !Object.is(testPrev, mediaDeviceInfo)),
-    ]);
-  }, []);
+  const [audioInputDevicesError, setAudioInputMediaDevicesError] =
+    useState(null);
 
   const {
-    fetchAudioInputDevices,
-    captureSpecificMediaDevice,
-    uncaptureSpecificMediaDevice,
+    fetchMediaDevices: _fetchMediaDevices,
+    audioInputDevices,
+
+    // captureSpecificMediaDevice,
+    // uncaptureSpecificMediaDevice,
+
+    addSelectedInputMediaDevice,
+    removeSelectedInputMediaDevice,
+
+    addTestInputMediaDevice,
+    removeTestInputMediaDevice,
+
+    selectedAudioInputDevices,
+    testAudioInputDevices,
 
     // TODO: Clean up unused props
     /*
@@ -82,24 +48,20 @@ export default function AudioInputDeviceSelector() {
 
   const handleFetchInputMediaDevices = useCallback(() => {
     setIsFetchingInputMediaDevices(true);
+    setAudioInputMediaDevicesError(null);
 
-    fetchAudioInputDevices()
-      .then(inputMediaDevices =>
-        setInputMediaDevices(
-          inputMediaDevices.filter(({ kind }) => kind === "audioinput")
-        )
-      )
+    _fetchMediaDevices()
       .catch(err => {
         console.error(err);
 
-        setInputMediaDevicesError(err);
+        setAudioInputMediaDevicesError(err);
       })
       .finally(() => {
         setIsFetchingInputMediaDevices(false);
       });
-  }, [fetchAudioInputDevices]);
+  }, [_fetchMediaDevices]);
 
-  // Automatically fetch input media devices
+  // Automatically fetch input media devices upon first load
   useEffect(() => {
     handleFetchInputMediaDevices();
   }, [handleFetchInputMediaDevices]);
@@ -108,13 +70,13 @@ export default function AudioInputDeviceSelector() {
   // Automatically select default audio input device
   /*
   useEffect(() => {
-    if (!defaultAudioInputDevice && inputMediaDevices.length) {
-      setDefaultAudioInputDevice(inputMediaDevices[0]);
+    if (!defaultAudioInputDevice && audioInputDevices.length) {
+      setDefaultAudioInputDevice(audioInputDevices[0]);
     }
-  }, [inputMediaDevices, defaultAudioInputDevice, setDefaultAudioInputDevice]);
+  }, [audioInputDevices, defaultAudioInputDevice, setDefaultAudioInputDevice]);
   */
 
-  if (inputMediaDevicesError) {
+  if (audioInputDevicesError) {
     return (
       <Center style={{ fontWeight: "bold" }}>
         Cannot obtain media devices. Do you have permissions blocked to access
@@ -149,7 +111,7 @@ export default function AudioInputDeviceSelector() {
               </div>
             </div>
 
-            {isFetchingInputMediaDevices && !inputMediaDevices.length ? (
+            {isFetchingInputMediaDevices && !audioInputDevices.length ? (
               <Center>
                 <div>Fetching audio input devices</div>
                 <div>
@@ -158,10 +120,10 @@ export default function AudioInputDeviceSelector() {
               </Center>
             ) : (
               <div>
-                {inputMediaDevices.map((device, idx) => {
-                  const isSelected = selectedInputMediaDevices.includes(device);
+                {audioInputDevices.map((device, idx) => {
+                  const isSelected = selectedAudioInputDevices.includes(device);
 
-                  const isTesting = testInputMediaDevices.includes(device);
+                  const isTesting = testAudioInputDevices.includes(device);
 
                   return (
                     <AudioInputDevice
@@ -171,15 +133,15 @@ export default function AudioInputDeviceSelector() {
                       onToggleSelect={() =>
                         // TODO: Use callback function instead
                         !isSelected
-                          ? _addSelectedInputMediaDevice(device)
-                          : _removeSelectedInputMediaDevice(device)
+                          ? addSelectedInputMediaDevice(device)
+                          : removeSelectedInputMediaDevice(device)
                       }
                       isTesting={isTesting}
                       onToggleTest={() =>
                         // TODO: Use callback function instead
                         !isTesting
-                          ? _addTestInputMediaDevice(device)
-                          : _removeTestInputMediaDevice(device)
+                          ? addTestInputMediaDevice(device)
+                          : removeTestInputMediaDevice(device)
                       }
 
                       // TODO: Implement
@@ -197,7 +159,7 @@ export default function AudioInputDeviceSelector() {
           </Section>
         </Content>
         <Footer style={{ backgroundColor: "rgba(0,0,0,.2)" }}>
-          {!selectedInputMediaDevices.length && (
+          {!selectedAudioInputDevices.length && (
             <div>
               {
                 // TODO: Change to "no input device available" if no audio devices are present
