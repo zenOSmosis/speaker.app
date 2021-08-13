@@ -125,6 +125,20 @@ export default function AudioInputDeviceSelector() {
 
                   const isTesting = testAudioInputDevices.includes(device);
 
+                  // TODO: Implement
+                  const isAudioNoiseSuppression = true;
+                  const setIsAudioNoiseSuppression = () =>
+                    alert("TODO: Implement");
+                  const isAudioEchoCancellation = true;
+                  const setIsAudioEchoCancellation = () =>
+                    alert("TODO: Implement");
+                  const isAudioAutoGainControl = true;
+                  const setIsAudioAutoGainControl = () =>
+                    alert("TODO: Implement");
+
+                  // TODO: Match from captureMediaDevice.getMediaDeviceTrackControllers
+                  const mediaStreamTrack = null;
+
                   return (
                     <AudioInputDevice
                       key={idx}
@@ -143,14 +157,13 @@ export default function AudioInputDeviceSelector() {
                           ? addTestInputMediaDevice(device)
                           : removeTestInputMediaDevice(device)
                       }
-
-                      // TODO: Implement
-                      // isAudioNoiseSuppression={isAudioNoiseSuppression}
-                      // setIsAudioNoiseSuppression={setIsAudioNoiseSuppression}
-                      // isAudioEchoCancellation={isAudioEchoCancellation}
-                      // setIsAudioEchoCancellation={setIsAudioEchoCancellation}
-                      // isAudioAutoGainControl={isAudioAutoGainControl}
-                      // setIsAudioAutoGainControl={setIsAudioAutoGainControl}
+                      isAudioNoiseSuppression={isAudioNoiseSuppression}
+                      setIsAudioNoiseSuppression={setIsAudioNoiseSuppression}
+                      isAudioEchoCancellation={isAudioEchoCancellation}
+                      setIsAudioEchoCancellation={setIsAudioEchoCancellation}
+                      isAudioAutoGainControl={isAudioAutoGainControl}
+                      setIsAudioAutoGainControl={setIsAudioAutoGainControl}
+                      mediaStreamTrack={mediaStreamTrack}
                     />
                   );
                 })}
