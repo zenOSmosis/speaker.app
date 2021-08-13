@@ -2,7 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { utils } from "media-stream-track-controller";
 
 /**
- * TODO: Document
+ * Maintains the current state of selected and test input devices.
+ *
+ * NOTE: This hook only maintains internal state and does not touch the cache.
  *
  * IMPORTANT: This hook should be treated as a singleton (provider based).
  */
@@ -45,16 +47,13 @@ export default function useSelectedAndTestInputMediaDevices() {
     );
   }, [testInputMediaDevices]);
 
-  // TODO: Automatically filter selectedInputMediaDevices and testInputMediaDevices based on audioInputDevices
-  /*
-  useEffect(() => {
-  }, [])
-  */
-
-  // TODO: Document
+  /**
+   * Adds the given mediaDeviceInfo to the selected list.
+   *
+   * @param {MediaDeviceInfo} mediaDeviceInfo
+   * @return {void}
+   */
   const addSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
-    // TODO: Store in cache
-
     _setSelectedInputMediaDevices(prev => {
       if (prev.includes(mediaDeviceInfo)) {
         return prev;
@@ -66,16 +65,24 @@ export default function useSelectedAndTestInputMediaDevices() {
     });
   }, []);
 
-  // TODO: Document
+  /**
+   * Removes the given mediaDeviceInfo from the selected list.
+   *
+   * @param {MediaDeviceInfo} mediaDeviceInfo
+   * @return {void}
+   */
   const removeSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
-    // TODO: Remove from cache
-
     _setSelectedInputMediaDevices(prev => [
       ...prev.filter(testPrev => !Object.is(testPrev, mediaDeviceInfo)),
     ]);
   }, []);
 
-  // TODO: Document
+  /**
+   * Adds the given mediaDeviceInfo to the test list.
+   *
+   * @param {MediaDeviceInfo} mediaDeviceInfo
+   * @return {void}
+   */
   const addTestInputMediaDevice = useCallback(mediaDeviceInfo => {
     _setTestInputMediaDevices(prev => {
       if (prev.includes(mediaDeviceInfo)) {
@@ -88,7 +95,12 @@ export default function useSelectedAndTestInputMediaDevices() {
     });
   }, []);
 
-  // TODO: Document
+  /**
+   * Removes the given mediaDeviceInfo from the test list.
+   *
+   * @param {MediaDeviceInfo} mediaDeviceInfo
+   * @return {void}
+   */
   const removeTestInputMediaDevice = useCallback(mediaDeviceInfo => {
     _setTestInputMediaDevices(prev => [
       ...prev.filter(testPrev => !Object.is(testPrev, mediaDeviceInfo)),
