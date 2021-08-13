@@ -33,6 +33,10 @@ export default function useObjectState(defaultState = {}) {
         updatedState = updatedState(refState.current);
         break;
 
+      case "object":
+        // Objects are okay the way they are
+        break;
+
       default:
         // TODO: Eventually throw this error once we know it doesn't raise a
         // bunch of warnings in the app as it is (August 6, 2021)
