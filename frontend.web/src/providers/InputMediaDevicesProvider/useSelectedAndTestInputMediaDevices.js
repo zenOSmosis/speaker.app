@@ -111,12 +111,14 @@ export default function useSelectedAndTestInputMediaDevices() {
     addSelectedInputMediaDevice,
     removeSelectedInputMediaDevice,
 
+    selectedInputMediaDevices,
     selectedAudioInputDevices,
     selectedVideoInputDevices,
 
     addTestInputMediaDevice,
     removeTestInputMediaDevice,
 
+    testInputMediaDevices,
     testAudioInputDevices,
     testVideoInputDevices,
   };

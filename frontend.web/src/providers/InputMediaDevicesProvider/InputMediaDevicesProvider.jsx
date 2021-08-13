@@ -17,12 +17,14 @@ export default function InputMediaDevicesProvider({ children }) {
     addSelectedInputMediaDevice,
     removeSelectedInputMediaDevice,
 
+    selectedInputMediaDevices,
     selectedAudioInputDevices,
     selectedVideoInputDevices,
 
     addTestInputMediaDevice,
     removeTestInputMediaDevice,
 
+    testInputMediaDevices,
     testAudioInputDevices,
     testVideoInputDevices,
   } = useSelectedAndTestInputMediaDevices();
@@ -96,6 +98,8 @@ export default function InputMediaDevicesProvider({ children }) {
     );
   }, [mediaDevices]);
 
+  // TODO: Map selected / testing states to cache
+  // TODO: Map initial cache values to selected states
   const {
     hasUserAudioPermission,
     setHasUserAudioPermission,
@@ -112,6 +116,7 @@ export default function InputMediaDevicesProvider({ children }) {
     audioInputDevices,
   });
 
+  // TODO: Automatically capture / uncapture depending on current selected / test states
   const {
     captureMediaDevice,
     captureSpecificMediaDevice,
@@ -121,13 +126,34 @@ export default function InputMediaDevicesProvider({ children }) {
     videoCaptureDeviceControllers,
   } = useMediaDevicesCapture();
 
+  // Dynamically capture / uncapture media devices based on selected and
+  // testing states.
+  useEffect(() => {
+    for (const device of mediaDevices) {
+      try {
+        if (device.deviceId) {
+          const isSelected = selectedInputMediaDevices.includes(device);
+          const isTesting = testInputMediaDevices.includes(device);
+
+          const isCurrentlyCapturing =
+            utils.captureMediaDevice.getIsMediaDeviceBeingCaptured(device);
+
+          if ((isSelected || isTesting) && !isCurrentlyCapturing) {
+            // TODO: Map constraints
+            utils.captureMediaDevice.captureSpecificMediaDevice(device);
+          } else if (!isSelected && !isTesting && isCurrentlyCapturing) {
+            utils.captureMediaDevice.uncaptureSpecificMediaDevice(device);
+          }
+        }
+      } catch (err) {
+        logger.error(err);
+      }
+    }
+  }, [mediaDevices, selectedInputMediaDevices, testInputMediaDevices]);
+
   return (
     <InputMediaDevicesContext.Provider
       value={{
-        fetchMediaDevices,
-        audioInputDevices,
-        videoInputDevices,
-
         // *** Permissions
         hasUserAudioPermission,
         setHasUserAudioPermission,
@@ -135,6 +161,10 @@ export default function InputMediaDevicesProvider({ children }) {
         hasUserVideoPermission,
         setHasUserVideoPermission,
         // *** /Permissions
+
+        fetchMediaDevices,
+        audioInputDevices,
+        videoInputDevices,
 
         // defaultAudioInputDevices,
         // setDefaultAudioInputDevices,
