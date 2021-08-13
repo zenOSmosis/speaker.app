@@ -127,7 +127,7 @@ export default function InputMediaDevicesProvider({ children }) {
   } = useMediaDevicesCapture();
 
   // Dynamically capture / uncapture media devices based on selected and
-  // testing states.
+  // testing states
   useEffect(() => {
     for (const device of mediaDevices) {
       try {
@@ -139,9 +139,39 @@ export default function InputMediaDevicesProvider({ children }) {
             utils.captureMediaDevice.getIsMediaDeviceBeingCaptured(device);
 
           if ((isSelected || isTesting) && !isCurrentlyCapturing) {
+            // Start capturing
+            //
             // TODO: Map constraints
-            utils.captureMediaDevice.captureSpecificMediaDevice(device);
+            utils.captureMediaDevice
+              .captureSpecificMediaDevice(device)
+              .then(trackControllerFactory => {
+                if (isSelected) {
+                  const trackControllers =
+                    trackControllerFactory.getTrackControllers();
+
+                  for (const controller of trackControllers) {
+                    // TODO: Add track controller to current published tracks
+
+                    // TODO: Remove
+                    console.log({
+                      addPublishedTrackController: controller,
+                    });
+                  }
+                }
+              });
           } else if (!isSelected && !isTesting && isCurrentlyCapturing) {
+            utils.captureMediaDevice
+              .getMediaDeviceTrackControllers(device)
+              .forEach(trackController => {
+                // TODO: Remove track controller from current published tracks
+
+                // TODO: Remove
+                console.log({
+                  removePublishedTrackController: trackController,
+                });
+              });
+
+            // Stop capturing
             utils.captureMediaDevice.uncaptureSpecificMediaDevice(device);
           }
         }
