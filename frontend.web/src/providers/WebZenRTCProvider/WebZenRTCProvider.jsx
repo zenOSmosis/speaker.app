@@ -15,7 +15,7 @@ import WebZenRTCPeer, {
   EVT_OUTGOING_MEDIA_STREAM_TRACK_REMOVED,
   EVT_INCOMING_MEDIA_STREAM_TRACK_ADDED,
   EVT_INCOMING_MEDIA_STREAM_TRACK_REMOVED,
-} from "../WebZenRTCPeer";
+} from "../../WebZenRTCPeer";
 
 // TODO: Implement Screen Wake Lock API
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API
@@ -282,6 +282,16 @@ export default function WebZenRTCProvider({
         outgoingAudioMediaStreamTracks,
         writableSyncObject,
         readOnlySyncObject,
+
+        // TODO: Implement
+        /*
+        addSelectedMediaStreamTrackController,
+        removeSelectedMediaStreamTrackController,
+
+        addTestingMediaStreamTrackController,
+        removeTestingMediaStreamTrackController,
+        */
+
         // TODO: Don't pass latency this way (it changes often, and entire app shouldn't re-render because of it)
         latency,
       }}
