@@ -114,6 +114,8 @@ export default function InputMediaDevicesProvider({ children }) {
         if (mediaDevices.length) {
           // FIXME: Use logger.debug once global logger is automatically
           // configured as default log level to run all levels in development
+          //
+          // @see https://github.com/zenOSmosis/phantom-core/issues/41
           logger.info("Received ondevicechange and refetching media devices");
 
           fetchMediaDevices();
