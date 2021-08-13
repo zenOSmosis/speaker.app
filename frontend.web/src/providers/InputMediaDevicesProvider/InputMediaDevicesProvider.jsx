@@ -2,8 +2,9 @@ import { logger } from "phantom-core";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 
 import useAudioInputDevicesCache from "./useAudioInputDevicesCache";
-import useMediaDevicesCapture from "./useMediaDevicesCapture";
 import useSelectedAndTestInputMediaDevices from "./useSelectedAndTestInputMediaDevices";
+
+// import useMediaDevicesCapture from "./useMediaDevicesCapture";
 
 import { utils } from "media-stream-track-controller";
 
@@ -116,7 +117,7 @@ export default function InputMediaDevicesProvider({ children }) {
     audioInputDevices,
   });
 
-  // TODO: Automatically capture / uncapture depending on current selected / test states
+  /*
   const {
     captureMediaDevice,
     captureSpecificMediaDevice,
@@ -125,6 +126,7 @@ export default function InputMediaDevicesProvider({ children }) {
     audioCaptureDeviceControllers,
     videoCaptureDeviceControllers,
   } = useMediaDevicesCapture();
+  */
 
   // Dynamically capture / uncapture media devices based on selected and
   // testing states
@@ -212,10 +214,6 @@ export default function InputMediaDevicesProvider({ children }) {
         selectedVideoInputDevices,
         testAudioInputDevices,
         testVideoInputDevices,
-
-        // captureMediaDevice,
-        // captureSpecificMediaDevice,
-        // uncaptureSpecificMediaDevice,
 
         // audioCaptureDeviceControllers,
         // videoCaptureDeviceControllers,
