@@ -1,14 +1,9 @@
 import { logger } from "phantom-core";
-import React, {
-  createContext,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { createContext, useCallback, useEffect, useState } from "react";
 
 import useAudioInputDevicesCache from "./useAudioInputDevicesCache";
 import useMediaDevicesCapture from "./useMediaDevicesCapture";
+import useSelectedAndTestInputMediaDevices from "./useSelectedAndTestInputMediaDevices";
 
 import { utils } from "media-stream-track-controller";
 
@@ -18,6 +13,20 @@ export const InputMediaDevicesContext = createContext({});
  * Manages access and user permissions of audio / video input media devices.
  */
 export default function InputMediaDevicesProvider({ children }) {
+  const {
+    addSelectedInputMediaDevice,
+    removeSelectedInputMediaDevice,
+
+    selectedAudioInputDevices,
+    selectedVideoInputDevices,
+
+    addTestInputMediaDevice,
+    removeTestInputMediaDevice,
+
+    testAudioInputDevices,
+    testVideoInputDevices,
+  } = useSelectedAndTestInputMediaDevices();
+
   /** @type {MediaDeviceInfo[]} */
   const [mediaDevices, _setMediaDevices] = useState([]);
 
@@ -86,94 +95,6 @@ export default function InputMediaDevicesProvider({ children }) {
       utils.fetchMediaDevices.filterVideoInputDevices(mediaDevices)
     );
   }, [mediaDevices]);
-
-  const [selectedInputMediaDevices, _setSelectedInputMediaDevices] = useState(
-    []
-  );
-  const [selectedAudioInputDevices, _setSelectedAudioInputDevices] = useState(
-    []
-  );
-  const [selectedVideoInputDevices, _setSelectedVideoInputDevices] = useState(
-    []
-  );
-
-  // Automatically populate selectedAudio/VideoInputDevices based on filters used on
-  // mediaDevices
-  useEffect(() => {
-    _setSelectedAudioInputDevices(
-      utils.fetchMediaDevices.filterAudioInputDevices(selectedInputMediaDevices)
-    );
-
-    _setSelectedVideoInputDevices(
-      utils.fetchMediaDevices.filterVideoInputDevices(selectedInputMediaDevices)
-    );
-  }, [selectedInputMediaDevices]);
-
-  const [testInputMediaDevices, _setTestInputMediaDevices] = useState([]);
-  const [testAudioInputDevices, _setTestAudioInputDevices] = useState([]);
-  const [testVideoInputDevices, _setTestVideoInputDevices] = useState([]);
-
-  // Automatically populate testAudio/VideoInputDevices based on filters used on
-  // mediaDevices
-  useEffect(() => {
-    _setTestAudioInputDevices(
-      utils.fetchMediaDevices.filterAudioInputDevices(testInputMediaDevices)
-    );
-
-    _setTestVideoInputDevices(
-      utils.fetchMediaDevices.filterVideoInputDevices(testInputMediaDevices)
-    );
-  }, [testInputMediaDevices]);
-
-  // TODO: Automatically filter selectedInputMediaDevices and testInputMediaDevices based on audioInputDevices
-  /*
-  useEffect(() => {
-  }, [])
-  */
-
-  // TODO: Document
-  const addSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
-    // TODO: Store in cache
-
-    _setSelectedInputMediaDevices(prev => {
-      if (prev.includes(mediaDeviceInfo)) {
-        return prev;
-      } else {
-        const next = [...prev, mediaDeviceInfo];
-
-        return next;
-      }
-    });
-  }, []);
-
-  // TODO: Document
-  const removeSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
-    // TODO: Remove from cache
-
-    _setSelectedInputMediaDevices(prev => [
-      ...prev.filter(testPrev => !Object.is(testPrev, mediaDeviceInfo)),
-    ]);
-  }, []);
-
-  // TODO: Document
-  const addTestInputMediaDevice = useCallback(mediaDeviceInfo => {
-    _setTestInputMediaDevices(prev => {
-      if (prev.includes(mediaDeviceInfo)) {
-        return prev;
-      } else {
-        const next = [...prev, mediaDeviceInfo];
-
-        return next;
-      }
-    });
-  }, []);
-
-  // TODO: Document
-  const removeTestInputMediaDevice = useCallback(mediaDeviceInfo => {
-    _setTestInputMediaDevices(prev => [
-      ...prev.filter(testPrev => !Object.is(testPrev, mediaDeviceInfo)),
-    ]);
-  }, []);
 
   const {
     hasUserAudioPermission,
