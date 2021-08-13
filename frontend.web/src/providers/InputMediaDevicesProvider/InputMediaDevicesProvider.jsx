@@ -85,73 +85,12 @@ export default function InputMediaDevicesProvider({ children }) {
    * @param {boolean} isAggressive? [default = true]
    * @return {Promise{MediaDeviceInfo[]}}
    */
-  // IMPORTANT: This useRef is utilized to fix an infinite loop in
-  // implementations which were triggered by the mediaDevices being updated on
-  // each run and used internally
-  const refMediaDevices = useRef(mediaDevices);
-  refMediaDevices.current = mediaDevices;
   const fetchMediaDevices = useCallback(async (isAggressive = true) => {
-    /** @type {MediaDeviceList[]} */
-    const nextMediaDevices = await (async () => {
-      /**
-       * IMPORTANT: The detectedMediaDevices are not directly written back to
-       * the mediaDevices state because the MediaDeviceInfo object elements are
-       * unique on subsequent runs. The following code in this function body
-       * will remedy that.
-       *
-       * TODO: Consider moving this handling directly to
-       * media-stream-track-controller so implementations don't have to go
-       * through this.
-       */
+    const mediaDevices = await utils.fetchMediaDevices(isAggressive);
 
-      /**
-       * The list of currently obtained media devices.
-       *
-       * @type {MediaDeviceList[]}
-       */
-      const detectedMediaDevices = await utils.fetchMediaDevices(isAggressive);
+    _setMediaDevices(mediaDevices);
 
-      /**
-       * This will become what is written back to the mediaDevices state.
-       *
-       * This original value represents the current state of mediaDevices with
-       * removed new devices filtered out.
-       *
-       * @type {MediaDeviceList[]}
-       */
-      const next = [...refMediaDevices.current].filter(device =>
-        Boolean(
-          detectedMediaDevices.find(predicate => {
-            const isMatch =
-              predicate.kind === device.kind &&
-              predicate.deviceId === device.deviceId;
-
-            return isMatch;
-          })
-        )
-      );
-
-      // Add new media devices to the next array
-      detectedMediaDevices.forEach(device => {
-        const isPrevious = Boolean(
-          refMediaDevices.current.find(
-            predicate =>
-              predicate.kind === device.kind &&
-              predicate.deviceId === device.deviceId
-          )
-        );
-
-        if (!isPrevious) {
-          next.push(device);
-        }
-      });
-
-      return next;
-    })();
-
-    _setMediaDevices(nextMediaDevices);
-
-    return nextMediaDevices;
+    return mediaDevices;
   }, []);
 
   // TODO: Document
