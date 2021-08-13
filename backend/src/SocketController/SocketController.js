@@ -54,7 +54,8 @@ export default class SocketController {
       socket.on("disconnect", () => {
         --_coreConnectionCount;
 
-        _logCoreConnectionCount();
+        // Log connection count after other cleanup work has been performed
+        process.nextTick(() => _logCoreConnectionCount());
       });
 
       next();
