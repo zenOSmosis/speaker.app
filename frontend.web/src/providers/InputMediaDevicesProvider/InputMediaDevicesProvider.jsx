@@ -1,3 +1,4 @@
+import { logger } from "phantom-core";
 import React, {
   createContext,
   useCallback,
@@ -111,6 +112,10 @@ export default function InputMediaDevicesProvider({ children }) {
         // necessarily want to prompt the user to accept mic permissions the
         // first time they plug in a device
         if (mediaDevices.length) {
+          // FIXME: Use logger.debug once global logger is automatically
+          // configured as default log level to run all levels in development
+          logger.info("Received ondevicechange and refetching media devices");
+
           fetchMediaDevices();
         }
       };
