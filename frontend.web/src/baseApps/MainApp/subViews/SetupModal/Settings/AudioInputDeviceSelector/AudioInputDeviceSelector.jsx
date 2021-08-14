@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Center from "@components/Center";
 import Layout, { Content, Footer } from "@components/Layout";
 import Section from "@components/Section";
