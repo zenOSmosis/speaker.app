@@ -45,13 +45,13 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
 
 ## Browser Support Matrix
 
-|             | Chrome                 | Edge (Chromium) | Firefox | Safari |
-| ----------- | ---------------------- | --------------- | ------- | ------ |
-| **Android** | ✓                      | ✓               | ✓       | N/A    |
-| **iOS**     | [transcoder host only] | N/A             | N/A     | ✓      |
-| **Linux**   | ✓                      | ✓               | ✓       | N/A    |
-| **macOS**   | ✓                      | ✓               | ✓       | ✓      |
-| **Windows** | ✓                      | ✓               | ✓       | N/A    |
+|             | Chrome                 | Edge (Chromium) | Firefox | Safari | IE  |
+| ----------- | ---------------------- | --------------- | ------- | ------ | --- |
+| **Android** | ✓                      | ✓               | ✓       | N/A    | N/A |
+| **iOS**     | [transcoder host only] | N/A             | N/A     | ✓      | N/A |
+| **Linux**   | ✓                      | ✓               | ✓       | N/A    | N/A |
+| **macOS**   | ✓                      | ✓               | ✓       | ✓      | N/A |
+| **Windows** | ✓                      | ✓               | ✓       | N/A    | N/A |
 
 Note, on every OS except iOS, Chrome is the recommended browser;  On iOS, Safari should be used.
 
