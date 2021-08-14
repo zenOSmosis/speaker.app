@@ -131,7 +131,7 @@ export default function InputMediaDevicesProvider({ children }) {
         // for videoinput could be empty for default device, even after doing
         // an aggressive fetch.  Should we do additional filtering in the
         // media-stream-track-controller fetchMediaDevices utility instead?
-        if (device.deviceId) {
+        if (device.deviceId.length) {
           const isSelected = selectedInputMediaDevices.includes(device);
           const isTesting = testInputMediaDevices.includes(device);
 
@@ -144,9 +144,10 @@ export default function InputMediaDevicesProvider({ children }) {
               // TODO: Map constraints to device
               .captureSpecificMediaDevice(device)
               .catch(err => {
-                // Since there is a problem with capturing, remove this from
-                // selected input devices
+                // Since there is a problem with capturing, remove this device
+                // from the selected / test states
                 removeSelectedInputMediaDevice(device);
+                removeTestInputMediaDevice(device);
 
                 // TODO: Either add this error to the hook's state or just
                 // re-throw it so we can catch it w/ the error boundary?
@@ -176,11 +177,14 @@ export default function InputMediaDevicesProvider({ children }) {
                 // TODO: Remove
                 console.log({
                   removePublishedTrackController: trackController,
+                  removeDeviceId: trackController.getInputDeviceId(),
                 });
               });
 
             // Stop capturing
             utils.captureMediaDevice.uncaptureSpecificMediaDevice(device);
+            removeSelectedInputMediaDevice(device);
+            removeTestInputMediaDevice(device);
           }
         }
       } catch (err) {
@@ -192,6 +196,7 @@ export default function InputMediaDevicesProvider({ children }) {
     selectedInputMediaDevices,
     testInputMediaDevices,
     removeSelectedInputMediaDevice,
+    removeTestInputMediaDevice,
   ]);
 
   return (
