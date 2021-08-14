@@ -154,7 +154,12 @@ export default function InputMediaDevicesProvider({ children }) {
                 console.error(err);
               })
               .then(trackControllerFactory => {
-                if (isSelected) {
+                // FIXME: This additional check for trackControllerFactory is
+                // due to an issue in Firefox where when selecting multiple
+                // audio devices where the trackControllerFactory is not
+                // present here.  Not exactly sure of the reason behind it, or
+                // if it's a potential bug in media-stream-track-controller
+                if (isSelected && trackControllerFactory) {
                   const trackControllers =
                     trackControllerFactory.getTrackControllers();
 
@@ -164,6 +169,7 @@ export default function InputMediaDevicesProvider({ children }) {
                     // TODO: Remove
                     console.log({
                       addPublishedTrackController: controller,
+                      addDeviceId: controller.getInputDeviceId(),
                     });
                   }
                 }

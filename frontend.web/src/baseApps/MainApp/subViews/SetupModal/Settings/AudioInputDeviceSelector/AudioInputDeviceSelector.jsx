@@ -123,9 +123,9 @@ export default function AudioInputDeviceSelector() {
             <div style={{ textAlign: "left" }}>
               <h1>Audio Input Devices</h1>
               <div className="note" style={{ marginBottom: 8 }}>
-                Multiple devices can be streamed concurrently. If plugging in a
-                new audio input device and it does not display in this list,
-                press{" "}
+                Multiple devices can be streamed concurrently (except in
+                Firefox). If plugging in a new audio input device and it does
+                not display in this list, press{" "}
                 <button
                   onClick={handleFetchInputMediaDevices}
                   disabled={isFetchingInputMediaDevices}
