@@ -119,7 +119,10 @@ export default function AudioInputDevice({
         &nbsp;
         <button
           onClick={onToggleTest}
-          style={{ backgroundColor: isTesting ? "green" : "inherit" }}
+          style={{
+            backgroundColor: isTesting ? "#d6d600" : "inherit",
+            color: isTesting ? "#000" : "inherit",
+          }}
           title="Check the audio levels of this device to determine if it is the audio input device you want to use"
         >
           Test
