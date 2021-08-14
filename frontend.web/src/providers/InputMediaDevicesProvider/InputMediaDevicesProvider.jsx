@@ -29,7 +29,7 @@ export default function InputMediaDevicesProvider({ children }) {
    * state.
    *
    * @param {boolean} isAggressive? [default = true]
-   * @return {Promise{MediaDeviceInfo[]}}
+   * @return {Promise<MediaDeviceInfo[]>}
    */
   const fetchMediaDevices = useCallback(async (isAggressive = true) => {
     const mediaDevices = await utils.fetchMediaDevices(isAggressive);
