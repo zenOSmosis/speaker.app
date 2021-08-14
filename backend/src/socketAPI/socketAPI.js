@@ -103,7 +103,7 @@ export default function initSocketAPI(io, socket) {
         console[!errMessage ? "log" : "error"](
           `"${socket.id}" SocketAPI task ${taskNumber} (${routeName}) ended ${
             !errMessage ? "successfully" : "unsuccessfully"
-          } [${totalRunningTasks} remaining]`
+          } [${totalRunningTasks} concurrent]`
         );
       }
     });
