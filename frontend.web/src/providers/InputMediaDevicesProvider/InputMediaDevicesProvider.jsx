@@ -1,10 +1,9 @@
 import { logger } from "phantom-core";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 
-import useAudioInputDevicesCache from "./useAudioInputDevicesCache";
+import useInputMediaDevicesPermissions from "./useInputMediaDevicesPermissions";
+import useInputMediaDevicesCache from "./useInputMediaDevicesCache";
 import useSelectedAndTestInputMediaDevices from "./useSelectedAndTestInputMediaDevices";
-
-// import useMediaDevicesCapture from "./useMediaDevicesCapture";
 
 import { utils } from "media-stream-track-controller";
 
@@ -15,20 +14,12 @@ export const InputMediaDevicesContext = createContext({});
  */
 export default function InputMediaDevicesProvider({ children }) {
   const {
-    addSelectedInputMediaDevice,
-    removeSelectedInputMediaDevice,
+    hasUserAudioPermission,
+    setHasUserAudioPermission,
 
-    selectedInputMediaDevices,
-    selectedAudioInputDevices,
-    selectedVideoInputDevices,
-
-    addTestInputMediaDevice,
-    removeTestInputMediaDevice,
-
-    testInputMediaDevices,
-    testAudioInputDevices,
-    testVideoInputDevices,
-  } = useSelectedAndTestInputMediaDevices();
+    hasUserVideoPermission,
+    setHasUserVideoPermission,
+  } = useInputMediaDevicesPermissions();
 
   /** @type {MediaDeviceInfo[]} */
   const [mediaDevices, _setMediaDevices] = useState([]);
@@ -102,31 +93,34 @@ export default function InputMediaDevicesProvider({ children }) {
   // TODO: Map selected / testing states to cache
   // TODO: Map initial cache values to selected states
   const {
-    hasUserAudioPermission,
-    setHasUserAudioPermission,
-
-    hasUserVideoPermission,
-    setHasUserVideoPermission,
-
     defaultAudioInputDevices,
     setDefaultAudioInputDevices,
 
     setAudioInputDeviceConstraints,
     getAudioInputDeviceConstraints,
-  } = useAudioInputDevicesCache({
-    audioInputDevices,
+  } = useInputMediaDevicesCache({
+    mediaDevices,
+    hasUserAudioPermission,
+    hasUserVideoPermission,
   });
 
-  /*
+  // TODO: Automatically from selected / test devices any devices which are not
+  // currently in the mediaDevices array
   const {
-    captureMediaDevice,
-    captureSpecificMediaDevice,
-    uncaptureSpecificMediaDevice,
+    addSelectedInputMediaDevice,
+    removeSelectedInputMediaDevice,
 
-    audioCaptureDeviceControllers,
-    videoCaptureDeviceControllers,
-  } = useMediaDevicesCapture();
-  */
+    selectedInputMediaDevices,
+    selectedAudioInputDevices,
+    selectedVideoInputDevices,
+
+    addTestInputMediaDevice,
+    removeTestInputMediaDevice,
+
+    testInputMediaDevices,
+    testAudioInputDevices,
+    testVideoInputDevices,
+  } = useSelectedAndTestInputMediaDevices();
 
   // Dynamically capture / uncapture media devices based on selected and
   // testing states
@@ -149,6 +143,15 @@ export default function InputMediaDevicesProvider({ children }) {
             utils.captureMediaDevice
               // TODO: Map constraints to device
               .captureSpecificMediaDevice(device)
+              .catch(err => {
+                // Since there is a problem with capturing, remove this from
+                // selected input devices
+                removeSelectedInputMediaDevice(device);
+
+                // TODO: Either add this error to the hook's state or just
+                // re-throw it so we can catch it w/ the error boundary?
+                console.error(err);
+              })
               .then(trackControllerFactory => {
                 if (isSelected) {
                   const trackControllers =
@@ -184,7 +187,12 @@ export default function InputMediaDevicesProvider({ children }) {
         logger.error(err);
       }
     }
-  }, [mediaDevices, selectedInputMediaDevices, testInputMediaDevices]);
+  }, [
+    mediaDevices,
+    selectedInputMediaDevices,
+    testInputMediaDevices,
+    removeSelectedInputMediaDevice,
+  ]);
 
   return (
     <InputMediaDevicesContext.Provider
