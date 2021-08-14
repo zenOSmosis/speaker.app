@@ -43,9 +43,6 @@ export default function InputMediaDevicesProvider({ children }) {
    * Refetch media devices on device change.
    *
    * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/ondevicechange
-   *
-   * TODO: Should this onchange handler be proxied so other potential handlers
-   * can co-exist?
    */
   useEffect(() => {
     if (navigator && navigator.mediaDevices && navigator.mediaDevices) {
@@ -61,16 +58,24 @@ export default function InputMediaDevicesProvider({ children }) {
           // configured as default log level to run all levels in development
           //
           // @see https://github.com/zenOSmosis/phantom-core/issues/41
-          logger.info("Received ondevicechange and refetching media devices");
+          logger.info(
+            "Received devicechange event; proceeding to re-fetch media devices"
+          );
 
           fetchMediaDevices();
         }
       };
 
-      navigator.mediaDevices.ondevicechange = _handleDeviceChange;
+      navigator.mediaDevices.addEventListener(
+        "devicechange",
+        _handleDeviceChange
+      );
 
       return function unmount() {
-        navigator.mediaDevices.ondevicechange = () => null;
+        navigator.mediaDevices.removeEventListener(
+          "devicechange",
+          _handleDeviceChange
+        );
       };
     }
   }, [mediaDevices, fetchMediaDevices]);
