@@ -28,6 +28,8 @@ export default function AudioMediaStreamTrackLevelVUMeter({
       return function unmount() {
         mediaStreamMonitor.destroy();
       };
+    } else {
+      setPercent(0);
     }
   }, [mediaStreamTrack]);
 

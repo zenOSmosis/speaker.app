@@ -17,20 +17,24 @@ export default function AudioMediaStreamTrackLevelAvatar({
   const [avatarEl, setAvatarEl] = useState(null);
 
   useEffect(() => {
-    if (avatarEl && mediaStreamTrack) {
-      const mediaStreamMonitor = new AudioMediaStreamTrackLevelMonitor(
-        mediaStreamTrack
-      );
+    if (avatarEl) {
+      if (mediaStreamTrack) {
+        const mediaStreamMonitor = new AudioMediaStreamTrackLevelMonitor(
+          mediaStreamTrack
+        );
 
-      mediaStreamMonitor.on(EVT_AUDIO_LEVEL_TICK, ({ rms }) => {
-        // FIXME: This is probably not supposed to be RMS, but it's close
-        // enough for prototyping
-        avatarEl.style.borderColor = getPercentColor(rms / 100 / 1.5);
-      });
+        mediaStreamMonitor.on(EVT_AUDIO_LEVEL_TICK, ({ rms }) => {
+          // FIXME: This is probably not supposed to be RMS, but it's close
+          // enough for prototyping
+          avatarEl.style.borderColor = getPercentColor(rms / 100 / 1.5);
+        });
 
-      return function unmount() {
-        mediaStreamMonitor.destroy();
-      };
+        return function unmount() {
+          mediaStreamMonitor.destroy();
+        };
+      } else {
+        avatarEl.style.borderColor = getPercentColor(0);
+      }
     }
   }, [avatarEl, mediaStreamTrack]);
 
