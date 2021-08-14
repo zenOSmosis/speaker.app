@@ -199,6 +199,22 @@ export default function InputMediaDevicesProvider({ children }) {
     removeTestInputMediaDevice,
   ]);
 
+  /**
+   * FIXME: This is currently written to only return the first track controller
+   * associated to the device and might should be renamed / refactored later.
+   *
+   * @param {MediaDeviceInfo | Object}
+   * @return {MediaStreamTrack | []}
+   */
+  const getInputMediaDeviceMediaStreamTrack = useCallback(mediaDevice => {
+    const trackControllers =
+      utils.captureMediaDevice.getMediaDeviceTrackControllers(mediaDevice);
+
+    if (trackControllers.length) {
+      return trackControllers[0].getOutputMediaStreamTrack();
+    }
+  }, []);
+
   return (
     <InputMediaDevicesContext.Provider
       value={{
@@ -228,6 +244,7 @@ export default function InputMediaDevicesProvider({ children }) {
 
         selectedAudioInputDevices,
         selectedVideoInputDevices,
+
         testAudioInputDevices,
         testVideoInputDevices,
 
@@ -236,6 +253,8 @@ export default function InputMediaDevicesProvider({ children }) {
 
         getIsMediaDeviceCaptureSupported:
           utils.captureMediaDevice.getIsDeviceMediaCaptureSupported,
+
+        getInputMediaDeviceMediaStreamTrack,
       }}
     >
       {children}

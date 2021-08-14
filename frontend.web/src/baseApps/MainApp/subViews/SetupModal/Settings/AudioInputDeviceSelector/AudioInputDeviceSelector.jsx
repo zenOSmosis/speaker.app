@@ -10,6 +10,7 @@ import ReloadIcon from "@icons/ReloadIcon";
 import AudioInputDevice from "./AudioInputDevice";
 
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
+import useForceUpdate from "@hooks/useForceUpdate";
 
 export default function AudioInputDeviceSelector() {
   const [isFetchingInputMediaDevices, setIsFetchingInputMediaDevices] =
@@ -32,6 +33,8 @@ export default function AudioInputDeviceSelector() {
 
     selectedAudioInputDevices,
     testAudioInputDevices,
+
+    getInputMediaDeviceMediaStreamTrack,
 
     // TODO: Clean up unused props
     /*
@@ -75,6 +78,28 @@ export default function AudioInputDeviceSelector() {
     }
   }, [audioInputDevices, defaultAudioInputDevice, setDefaultAudioInputDevice]);
   */
+
+  // FIXME: This fixes issue where MediaStreamTrack might not be immediately
+  // available after selecting a new device but might not be necessary if
+  // forcing a new render after relevant track controllers have been changed
+  const forceUpdate = useForceUpdate();
+  useEffect(() => {
+    if (
+      audioInputDevices.length &&
+      (selectedAudioInputDevices.length || testAudioInputDevices.length)
+    ) {
+      const to = setTimeout(forceUpdate, 100);
+
+      return function unmount() {
+        clearTimeout(to);
+      };
+    }
+  }, [
+    audioInputDevices,
+    selectedAudioInputDevices,
+    testAudioInputDevices,
+    forceUpdate,
+  ]);
 
   if (audioInputDevicesError) {
     return (
@@ -122,7 +147,6 @@ export default function AudioInputDeviceSelector() {
               <div>
                 {audioInputDevices.map((device, idx) => {
                   const isSelected = selectedAudioInputDevices.includes(device);
-
                   const isTesting = testAudioInputDevices.includes(device);
 
                   // TODO: Implement
@@ -137,7 +161,8 @@ export default function AudioInputDeviceSelector() {
                     alert("TODO: Implement");
 
                   // TODO: Match from captureMediaDevice.getMediaDeviceTrackControllers
-                  const mediaStreamTrack = null;
+                  const mediaStreamTrack =
+                    getInputMediaDeviceMediaStreamTrack(device);
 
                   return (
                     <AudioInputDevice
