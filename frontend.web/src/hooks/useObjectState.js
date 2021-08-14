@@ -24,6 +24,7 @@ export default function useObjectState(defaultState = {}) {
    * to JSON parse into an object.
    */
   const setState = useCallback(updatedState => {
+    // Check type validity / apply type coercion, etc.
     switch (typeof updatedState) {
       case "string":
         updatedState = JSON.parse(updatedState);
