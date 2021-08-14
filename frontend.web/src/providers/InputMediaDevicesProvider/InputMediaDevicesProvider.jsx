@@ -127,7 +127,7 @@ export default function InputMediaDevicesProvider({ children }) {
    * associated to the device and might should be renamed / refactored later.
    *
    * @param {MediaDeviceInfo | Object}
-   * @return {MediaStreamTrack | []}
+   * @return {MediaStreamTrack | void}
    */
   const getInputMediaDeviceMediaStreamTrack = useCallback(mediaDevice => {
     const trackControllers =
