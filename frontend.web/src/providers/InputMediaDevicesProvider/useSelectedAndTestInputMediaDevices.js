@@ -5,11 +5,15 @@ import { utils } from "media-stream-track-controller";
 /**
  * Maintains the current state of selected and test input devices.
  *
- * NOTE: This hook only maintains internal state and does not touch the cache.
+ * NOTE: This hook also controls the capturing / uncapturing of media devices
+ * based on various states of the application.
  *
  * IMPORTANT: This hook should be treated as a singleton (provider based).
  */
 export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
+  const [isAudioSelectorRendered, setIsAudioSelectorRendered] = useState(false);
+  const [isInCall, setIsInCall] = useState(false);
+
   const [selectedInputMediaDevices, _setSelectedInputMediaDevices] = useState(
     []
   );
@@ -110,6 +114,7 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
 
   // Dynamically capture / uncapture media devices based on selected and
   // testing states
+  //
   useEffect(() => {
     for (const device of mediaDevices) {
       try {
@@ -124,7 +129,11 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
           const isCurrentlyCapturing =
             utils.captureMediaDevice.getIsMediaDeviceBeingCaptured(device);
 
-          if ((isSelected || isTesting) && !isCurrentlyCapturing) {
+          if (
+            (isAudioSelectorRendered || isInCall) &&
+            (isSelected || isTesting) &&
+            !isCurrentlyCapturing
+          ) {
             // Start capturing
             utils.captureMediaDevice
               // TODO: Map constraints to device
@@ -189,6 +198,8 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
     testInputMediaDevices,
     removeSelectedInputMediaDevice,
     removeTestInputMediaDevice,
+    isInCall,
+    isAudioSelectorRendered,
   ]);
 
   return {
@@ -205,5 +216,8 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
     testInputMediaDevices,
     testAudioInputDevices,
     testVideoInputDevices,
+
+    setIsAudioSelectorRendered,
+    setIsInCall,
   };
 }

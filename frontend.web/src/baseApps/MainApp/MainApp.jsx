@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import * as routes from "./routes";
 
 import { useHistory } from "react-router";
@@ -184,7 +184,13 @@ function useTieIns() {
     // hasUIMicPermission,
     // micAudioController,
     // startMic,
+    setIsInCall,
   } = useInputMediaDevicesContext();
+
+  // Bind inputMediaDevices isOnCall state to isConnected
+  useEffect(() => {
+    setIsInCall(isConnected);
+  }, [isConnected, setIsInCall]);
 
   const { screenCaptureMediaStreams, stopScreenCapture } =
     useScreenCaptureContext();

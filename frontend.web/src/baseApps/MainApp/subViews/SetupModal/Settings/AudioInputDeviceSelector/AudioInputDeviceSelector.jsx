@@ -47,7 +47,17 @@ export default function AudioInputDeviceSelector() {
     defaultAudioAutoGainControl,
     setDefaultAudioAutoGainControl,
     */
+    setIsAudioSelectorRendered,
   } = useInputMediaDevicesContext();
+
+  // Enable audio devices to be tested while not necessarily on a call
+  useEffect(() => {
+    setIsAudioSelectorRendered(true);
+
+    return function unmount() {
+      setIsAudioSelectorRendered(false);
+    };
+  }, [setIsAudioSelectorRendered]);
 
   const handleFetchInputMediaDevices = useCallback(() => {
     setIsFetchingInputMediaDevices(true);

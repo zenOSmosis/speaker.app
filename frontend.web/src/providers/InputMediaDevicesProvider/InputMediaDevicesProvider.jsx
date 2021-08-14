@@ -125,6 +125,9 @@ export default function InputMediaDevicesProvider({ children }) {
     testInputMediaDevices,
     testAudioInputDevices,
     testVideoInputDevices,
+
+    setIsAudioSelectorRendered,
+    setIsInCall,
   } = useSelectedAndTestInputMediaDevices({ mediaDevices });
 
   /**
@@ -183,6 +186,9 @@ export default function InputMediaDevicesProvider({ children }) {
           utils.captureMediaDevice.getIsDeviceMediaCaptureSupported,
 
         getInputMediaDeviceMediaStreamTrack,
+
+        setIsAudioSelectorRendered,
+        setIsInCall,
       }}
     >
       {children}
