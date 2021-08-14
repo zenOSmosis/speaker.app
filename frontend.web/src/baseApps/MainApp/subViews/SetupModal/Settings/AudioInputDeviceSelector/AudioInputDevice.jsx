@@ -40,7 +40,7 @@ AudioInputDevice.propTypes = {
   setIsAudioAutoGainControl: PropTypes.bool.isRequired,
 
   // TODO: Document
-  mediaStreamTrack: PropTypes.instanceOf(MediaStream),
+  mediaStreamTrack: PropTypes.instanceOf(MediaStreamTrack),
 };
 
 export default function AudioInputDevice({
