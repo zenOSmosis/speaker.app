@@ -51,13 +51,14 @@ export default class SocketController {
       // authorization is not a good time).
       ++_coreConnectionCount;
 
-      _logCoreConnectionCount();
+      // Log connection count after other startup work has been performed
+      process.nextTick(_logCoreConnectionCount);
 
       socket.on("disconnect", () => {
         --_coreConnectionCount;
 
         // Log connection count after other cleanup work has been performed
-        process.nextTick(() => _logCoreConnectionCount());
+        process.nextTick(_logCoreConnectionCount);
       });
 
       next();
