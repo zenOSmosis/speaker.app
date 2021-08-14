@@ -133,6 +133,10 @@ export default function InputMediaDevicesProvider({ children }) {
   useEffect(() => {
     for (const device of mediaDevices) {
       try {
+        // FIXME: This deviceId check is here to fix an issue where deviceId
+        // for videoinput could be empty for default device, even after doing
+        // an aggressive fetch.  Should we do additional filtering in the
+        // media-stream-track-controller fetchMediaDevices utility instead?
         if (device.deviceId) {
           const isSelected = selectedInputMediaDevices.includes(device);
           const isTesting = testInputMediaDevices.includes(device);
@@ -142,9 +146,8 @@ export default function InputMediaDevicesProvider({ children }) {
 
           if ((isSelected || isTesting) && !isCurrentlyCapturing) {
             // Start capturing
-            //
-            // TODO: Map constraints
             utils.captureMediaDevice
+              // TODO: Map constraints to device
               .captureSpecificMediaDevice(device)
               .then(trackControllerFactory => {
                 if (isSelected) {
