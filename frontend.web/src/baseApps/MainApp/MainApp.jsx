@@ -49,9 +49,8 @@ import sleep from "@shared/sleep";
 
 import { ROUTE_HOME, ROUTE_SETUP_PROFILE } from "./routes";
 
-import { MediaStreamTrackControllerEvents } from "media-stream-track-controller";
-
-const { EVT_UPDATED } = MediaStreamTrackControllerEvents;
+// import { MediaStreamTrackControllerEvents } from "media-stream-track-controller";
+// const { EVT_UPDATED } = MediaStreamTrackControllerEvents;
 
 export default function MainApp() {
   const handleOpenProfile = useCallback(
@@ -237,6 +236,7 @@ function useTieIns() {
 
         const controller = micAudioController || newMicAudioController;
 
+        // TODO: Move to WebPhantomSessionProvider?
         if (newMicAudioController) {
           // This makes the UI immediately update when the mic is muted / unmuted
           controller.on(EVT_UPDATED, () => {
