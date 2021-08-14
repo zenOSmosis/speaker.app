@@ -37,7 +37,7 @@ AudioInputDevice.propTypes = {
 
   // TODO: Document
   isAudioAutoGainControl: PropTypes.bool.isRequired,
-  setIsAudioAutoGainControl: PropTypes.bool.isRequired,
+  setIsAudioAutoGainControl: PropTypes.func.isRequired,
 
   // TODO: Document
   mediaStreamTrack: PropTypes.instanceOf(MediaStreamTrack),
