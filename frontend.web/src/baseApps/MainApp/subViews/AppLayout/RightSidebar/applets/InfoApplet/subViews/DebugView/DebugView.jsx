@@ -63,6 +63,9 @@ export default function DebugView() {
 
         <div>
           Screen Resolution: {viewportSize.width} x {viewportSize.height}
+          <br />
+          Device Pixel Ratio:{" "}
+          {window.devicePixelRatio ? `${window.devicePixelRatio}:1` : "N/A"}
         </div>
 
         <div>Core Count: {coreCount}</div>
