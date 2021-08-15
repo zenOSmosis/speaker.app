@@ -11,6 +11,7 @@ import { utils } from "media-stream-track-controller";
  * IMPORTANT: This hook should be treated as a singleton (provider based).
  */
 export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
+  // These states are used in determination of whether to start / stop media devices
   const [isAudioSelectorRendered, setIsAudioSelectorRendered] = useState(false);
   const [isInCall, setIsInCall] = useState(false);
 
@@ -53,6 +54,8 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
   }, [testInputMediaDevices]);
 
   /**
+   * @public
+   *
    * Adds the given mediaDeviceInfo to the selected list.
    *
    * @param {MediaDeviceInfo} mediaDeviceInfo
@@ -71,6 +74,8 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
   }, []);
 
   /**
+   * @public
+   *
    * Removes the given mediaDeviceInfo from the selected list.
    *
    * @param {MediaDeviceInfo} mediaDeviceInfo
@@ -83,6 +88,8 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
   }, []);
 
   /**
+   * @public
+   *
    * Adds the given mediaDeviceInfo to the test list.
    *
    * @param {MediaDeviceInfo} mediaDeviceInfo
@@ -101,6 +108,8 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
   }, []);
 
   /**
+   * @public
+   *
    * Removes the given mediaDeviceInfo from the test list.
    *
    * @param {MediaDeviceInfo} mediaDeviceInfo
@@ -112,9 +121,100 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
     ]);
   }, []);
 
+  // Track controllers which represent selected input media devices
+  //
+  // TODO: Document a bit better
+  const [
+    publishableInputMediaDeviceTrackControllers,
+    _setPublishableTrackControllers,
+  ] = useState([]);
+  const [
+    publishableInputAudioTrackControllers,
+    _setPublishableAudioTrackControllers,
+  ] = useState([]);
+  const [
+    publishableInputVideoTrackControllers,
+    _setPublishableVideoTrackControllers,
+  ] = useState([]);
+
+  // Auto-populates publishable audio / video track controllers based on "kind"
+  // determination from iterated track controllers
+  useEffect(() => {
+    const audioControllers = [];
+    const videoControllers = [];
+
+    for (const controller of publishableInputMediaDeviceTrackControllers) {
+      const kind = controller.getKind();
+
+      switch (kind) {
+        case "audio":
+          audioControllers.push(controller);
+          break;
+
+        case "video":
+          videoControllers.push(controller);
+          break;
+
+        default:
+          throw new TypeError(`Unknown track controller kind: ${kind}`);
+      }
+    }
+
+    _setPublishableAudioTrackControllers(audioControllers);
+    _setPublishableVideoTrackControllers(videoControllers);
+  }, [publishableInputMediaDeviceTrackControllers]);
+
+  /**
+   * @private
+   *
+   * Adds a publishable track controller to the current state.
+   *
+   * @param {MediaStreamTrackControllerBase}
+   * @return {void}
+   */
+  const _addPublishableTrackController = useCallback(
+    trackController => {
+      _setPublishableTrackControllers(prev => {
+        const next = [...prev];
+
+        // Skip adding if already present
+        const isExisting = prev.find(predicate =>
+          Object.is(predicate, trackController)
+        );
+
+        if (!isExisting) {
+          next.push(trackController);
+        } else {
+          logger.warn(
+            "trackController is already in publishable state",
+            trackController
+          );
+        }
+
+        return next;
+      });
+    },
+    [_setPublishableTrackControllers]
+  );
+
+  /**
+   * @private
+   *
+   * Removes a publishable track controller from the current state.
+   *
+   * @param {MediaStreamTrackControllerBase}
+   * @return {void}
+   */
+  const _removePublishableTrackController = useCallback(trackController => {
+    _setPublishableTrackControllers(prev =>
+      [...prev].filter(predicate => !Object.is(predicate, trackController))
+    );
+  }, []);
+
+  // TODO: Fix issue where selecting two audio devices for broadcasting will create three audio controllers
+  //
   // Dynamically capture / uncapture media devices based on selected and
   // testing states
-  //
   useEffect(() => {
     for (const device of mediaDevices) {
       try {
@@ -159,7 +259,7 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
                     trackControllerFactory.getTrackControllers();
 
                   for (const controller of trackControllers) {
-                    // TODO: Add track controller to current published tracks
+                    _addPublishableTrackController(controller);
 
                     // TODO: Remove
                     console.log({
@@ -172,13 +272,13 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
           } else if (!isSelected && !isTesting && isCurrentlyCapturing) {
             utils.captureMediaDevice
               .getMediaDeviceTrackControllers(device)
-              .forEach(trackController => {
-                // TODO: Remove track controller from current published tracks
+              .forEach(controller => {
+                _removePublishableTrackController(controller);
 
                 // TODO: Remove
                 console.log({
-                  removePublishedTrackController: trackController,
-                  removeDeviceId: trackController.getInputDeviceId(),
+                  removePublishedTrackController: controller,
+                  removeDeviceId: controller.getInputDeviceId(),
                 });
               });
 
@@ -200,7 +300,16 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
     removeTestInputMediaDevice,
     isInCall,
     isAudioSelectorRendered,
+    _addPublishableTrackController,
+    _removePublishableTrackController,
   ]);
+
+  // TODO: Remove
+  console.log({
+    publishableInputMediaDeviceTrackControllers,
+    publishableInputAudioTrackControllers,
+    publishableInputVideoTrackControllers,
+  });
 
   return {
     addSelectedInputMediaDevice,
@@ -216,6 +325,12 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
     testInputMediaDevices,
     testAudioInputDevices,
     testVideoInputDevices,
+
+    publishableInputMediaDeviceTrackControllers,
+    publishableInputAudioTrackControllers,
+    publishableInputVideoTrackControllers,
+
+    // TODO: Expose single factory which represents all publishableInputMediaDevices
 
     setIsAudioSelectorRendered,
     setIsInCall,

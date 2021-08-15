@@ -115,16 +115,20 @@ export default function InputMediaDevicesProvider({ children }) {
     addSelectedInputMediaDevice,
     removeSelectedInputMediaDevice,
 
-    selectedInputMediaDevices,
+    // selectedInputMediaDevices,
     selectedAudioInputDevices,
     selectedVideoInputDevices,
 
     addTestInputMediaDevice,
     removeTestInputMediaDevice,
 
-    testInputMediaDevices,
+    // testInputMediaDevices,
     testAudioInputDevices,
     testVideoInputDevices,
+
+    publishableInputMediaDeviceTrackControllers,
+    publishableInputAudioTrackControllers,
+    publishableInputVideoTrackControllers,
 
     setIsAudioSelectorRendered,
     setIsInCall,
@@ -186,6 +190,10 @@ export default function InputMediaDevicesProvider({ children }) {
           utils.captureMediaDevice.getIsDeviceMediaCaptureSupported,
 
         getInputMediaDeviceMediaStreamTrack,
+
+        publishableInputMediaDeviceTrackControllers,
+        publishableInputAudioTrackControllers,
+        publishableInputVideoTrackControllers,
 
         setIsAudioSelectorRendered,
         setIsInCall,

@@ -215,6 +215,8 @@ function useTieIns() {
     }
   }, [isConnected, resetSidebarMenu]);
 
+  // TODO: Re-handle track muting (mute should affect all published audio track controllers from InputMediaDevicesProvider)
+
   // Handle tie-in of initial media streams in / out of WebZenRTCPeer
   //
   // TODO: Move somewhere else?
