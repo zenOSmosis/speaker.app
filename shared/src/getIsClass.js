@@ -1,5 +1,3 @@
-import { prototype } from "events";
-
 /**
  * Determines if the supplied object is a JavaScript class.
  *
