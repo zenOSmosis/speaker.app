@@ -184,12 +184,41 @@ function useTieIns() {
     // micAudioController,
     // startMic,
     setIsInCall,
+
+    publishableInputMediaDeviceTrackControllers,
   } = useInputMediaDevicesContext();
 
   // Bind inputMediaDevices isOnCall state to isConnected
   useEffect(() => {
     setIsInCall(isConnected);
   }, [isConnected, setIsInCall]);
+
+  // TODO: Document
+  const inputDevicesMediaStream = useMemo(() => new MediaStream(), []);
+
+  // TODO: Document
+  useEffect(() => {
+    if (isConnected) {
+      // TODO: Handle removed streams
+
+      // TODO: Don't re-add published controller
+
+      // TODO: Remove
+      console.log({ publishableInputMediaDeviceTrackControllers });
+
+      publishableInputMediaDeviceTrackControllers.forEach(controller =>
+        zenRTCPeer.addOutgoingMediaStreamTrack(
+          controller.getOutputMediaStreamTrack(),
+          inputDevicesMediaStream
+        )
+      );
+    }
+  }, [
+    inputDevicesMediaStream,
+    isConnected,
+    zenRTCPeer,
+    publishableInputMediaDeviceTrackControllers,
+  ]);
 
   const { screenCaptureMediaStreams, stopScreenCapture } =
     useScreenCaptureContext();
@@ -219,7 +248,7 @@ function useTieIns() {
 
   // Handle tie-in of initial media streams in / out of WebZenRTCPeer
   //
-  // TODO: Move somewhere else?
+  // TODO: Remove
   useEffect(() => {
     // TODO: Rework this
     /*

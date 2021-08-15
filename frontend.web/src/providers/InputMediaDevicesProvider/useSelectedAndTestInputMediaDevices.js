@@ -305,11 +305,13 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
   ]);
 
   // TODO: Remove
+  /*
   console.log({
     publishableInputMediaDeviceTrackControllers,
     publishableInputAudioTrackControllers,
     publishableInputVideoTrackControllers,
   });
+  */
 
   return {
     addSelectedInputMediaDevice,
