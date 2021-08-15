@@ -1,5 +1,5 @@
 import PhantomCore from "phantom-core";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import useObjectState from "@hooks/useObjectState";
 
 import { KEY_LOCAL_AUDIO_INPUT_DEVICES_CACHE } from "@local/localStorageKeys";

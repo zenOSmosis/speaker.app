@@ -259,8 +259,11 @@ export default function WebPhantomSessionProvider({ children }) {
         outgoingAudioMediaStreamTracks,
         writableSyncObject,
         readOnlySyncObject,
+
+        // TODO: Rename to ...IsOutgoingAudioMuted
         setIsMuted,
         getIsMuted,
+
         isMuted,
         latency,
         networkURL,

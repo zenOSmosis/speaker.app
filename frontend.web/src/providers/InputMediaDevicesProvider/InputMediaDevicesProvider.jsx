@@ -130,6 +130,8 @@ export default function InputMediaDevicesProvider({ children }) {
     publishableInputAudioTrackControllers,
     publishableInputVideoTrackControllers,
 
+    setIsPublishableAudioMuted,
+
     setIsAudioSelectorRendered,
     setIsInCall,
   } = useSelectedAndTestInputMediaDevices({ mediaDevices });
@@ -194,6 +196,8 @@ export default function InputMediaDevicesProvider({ children }) {
         publishableInputMediaDeviceTrackControllers,
         publishableInputAudioTrackControllers,
         publishableInputVideoTrackControllers,
+
+        setIsPublishableAudioMuted,
 
         setIsAudioSelectorRendered,
         setIsInCall,

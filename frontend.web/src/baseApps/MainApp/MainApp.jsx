@@ -10,8 +10,6 @@ import IDCard from "@components/IDCard";
 
 import AppLayout from "./subViews/AppLayout";
 
-import WebZenRTCPeer, { EVT_DISCONNECTED } from "@src/WebZenRTCPeer";
-
 import SplitAppMessageBusProvider, {
   ROLE_MAIN_APP,
 } from "@providers/SplitAppMessageBusProvider";
@@ -40,6 +38,7 @@ import useSocketContext from "@hooks/useSocketContext";
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
 import useRenderCount from "@hooks/useRenderCount";
 import useAppRoutesContext from "@hooks/useAppRoutesContext";
+import usePrevious from "@hooks/usePrevious";
 
 import NetworkIcon from "@icons/NetworkIcon";
 
@@ -48,9 +47,6 @@ import SetupModal, { PROFILE_TAB } from "@baseApps/MainApp/subViews/SetupModal";
 import sleep from "@shared/sleep";
 
 import { ROUTE_HOME, ROUTE_SETUP_PROFILE } from "./routes";
-
-// import { MediaStreamTrackControllerEvents } from "media-stream-track-controller";
-// const { EVT_UPDATED } = MediaStreamTrackControllerEvents;
 
 export default function MainApp() {
   const handleOpenProfile = useCallback(
@@ -181,8 +177,6 @@ function useTieIns() {
 
   const {
     // hasUIMicPermission,
-    // micAudioController,
-    // startMic,
     setIsInCall,
 
     publishableInputMediaDeviceTrackControllers,
@@ -193,30 +187,65 @@ function useTieIns() {
     setIsInCall(isConnected);
   }, [isConnected, setIsInCall]);
 
+  // TODO: Re-handle track muting (mute should affect all published audio track controllers from InputMediaDevicesProvider)
+
+  // TODO: Show UI notification when call starts and we're muted, or there are no audio input devices selected
+
+  // TODO: Automatically start audio devices if UI permissions are enabled
+
   // TODO: Document
   const inputDevicesMediaStream = useMemo(() => new MediaStream(), []);
 
-  // TODO: Document
+  const {
+    getPreviousValue: getPreviousPublishableInputMediaDeviceTrackControllers,
+  } = usePrevious(publishableInputMediaDeviceTrackControllers);
+
+  // Sync publishableInputMediaDeviceTrackControllers with zenRTCPeer instance, if connected
+  //
+  // This handles broadcasting of microphone / other media device inputs
   useEffect(() => {
     if (isConnected) {
-      // TODO: Handle removed streams
+      /** @type {MediaStreamTrackControllerBase[]} */
+      const prev =
+        getPreviousPublishableInputMediaDeviceTrackControllers() || [];
 
-      // TODO: Don't re-add published controller
+      /** @type {MediaStreamTrackControllerBase[]} */
+      const removed = prev.filter(
+        predicate =>
+          !publishableInputMediaDeviceTrackControllers.includes(predicate)
+      );
 
-      // TODO: Remove
-      console.log({ publishableInputMediaDeviceTrackControllers });
-
+      // NOTE: Publishing duplicates is okay, as only the first is used
+      // internally
       publishableInputMediaDeviceTrackControllers.forEach(controller =>
         zenRTCPeer.addOutgoingMediaStreamTrack(
           controller.getOutputMediaStreamTrack(),
           inputDevicesMediaStream
         )
       );
+
+      // Unpublish removed tracks; While this works for automatically
+      // destructed tracks, this handles "unselected" tracks which may be
+      // currently in a "test" state via InputMediaDevicesProvider /
+      // AudioInputDeviceSelector
+      removed.forEach(controller => {
+        const track = controller.getOutputMediaStreamTrack();
+
+        // NOTE: track might not be available on destroyed controller, so check
+        // for its presence first
+        if (track) {
+          zenRTCPeer.removeOutgoingMediaStreamTrack(
+            track,
+            inputDevicesMediaStream
+          );
+        }
+      });
     }
   }, [
     inputDevicesMediaStream,
     isConnected,
     zenRTCPeer,
+    getPreviousPublishableInputMediaDeviceTrackControllers,
     publishableInputMediaDeviceTrackControllers,
   ]);
 
@@ -243,84 +272,6 @@ function useTieIns() {
       resetSidebarMenu();
     }
   }, [isConnected, resetSidebarMenu]);
-
-  // TODO: Re-handle track muting (mute should affect all published audio track controllers from InputMediaDevicesProvider)
-
-  // Handle tie-in of initial media streams in / out of WebZenRTCPeer
-  //
-  // TODO: Remove
-  useEffect(() => {
-    // TODO: Rework this
-    /*
-    WebZenRTCPeer.beforeConnect = async zenRTCPeer => {
-      
-      try {
-        if (!hasUIMicPermission) {
-          return null;
-        }
-
-        let newMicAudioController = null;
-
-        if (!micAudioController) {
-          newMicAudioController = await startMic();
-        }
-
-        const controller = micAudioController || newMicAudioController;
-
-        // TODO: Move to WebPhantomSessionProvider?
-        if (newMicAudioController) {
-          // This makes the UI immediately update when the mic is muted / unmuted
-          controller.on(EVT_UPDATED, () => {
-            const newMuted = controller.getIsMuted();
-
-             // * TODO: Fix this
-             // *
-             // * For some reason, this is being called twice, rapidly, with the
-             // * first value being undefined. When debugging the controller
-             // * itself, it doesn't seem to be emitting EVT_UPDATED rapidly
-             // * twice, so I'm not sure how this is being called. Furthermore,
-             // * I've also checked the underlying controller._isMuted property
-             // * and uuid, and the _isMuted property shows undefined on the first
-             // * round as well and includes the same uuid.
-             // *
-             // * This entire block needs refactoring so maybe that will fix it.
-            if (newMuted === undefined) {
-              return;
-            }
-
-            if (newMuted !== getIsMuted()) {
-              setIsMuted(newMuted);
-            }
-          });
-        }
-
-        // Perform initial sync
-        setIsMuted(controller.getIsMuted());
-
-        const mediaStream = controller && controller.getOutputMediaStream();
-
-        // Kill mic on disconnect
-        //
-        // TODO: Add any other stream disconnects here
-        zenRTCPeer.once(EVT_DISCONNECTED, () => {
-          controller.destroy();
-
-          setIsMuted(true);
-        });
-
-        return mediaStream;
-      } catch (err) {
-        console.warn("Caught", err);
-      }
-    };
-    */
-  }, [
-    // hasUIMicPermission,
-    // micAudioController,
-    // startMic,
-    setIsMuted,
-    getIsMuted,
-  ]);
 
   // TODO: Move somewhere else?
   // Handle screensharing tie-in

@@ -25,6 +25,8 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
     []
   );
 
+  const [isPublishableAudioMuted, setIsPublishableAudioMuted] = useState(true);
+
   // Automatically populate selectedAudio/VideoInputDevices based on filters used on
   // mediaDevices
   useEffect(() => {
@@ -331,6 +333,8 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
     publishableInputMediaDeviceTrackControllers,
     publishableInputAudioTrackControllers,
     publishableInputVideoTrackControllers,
+
+    setIsPublishableAudioMuted,
 
     // TODO: Expose single factory which represents all publishableInputMediaDevices
 
