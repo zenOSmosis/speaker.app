@@ -8,7 +8,7 @@
 
 # Speaker.app / zenRTC / Phantom Server
 
-<iframe src="https://speaker.app" />
+<iframe src="https://speaker.app"></iframe>
 
 [Speaker.app](https://speaker.app) is a [batteries-included](#whats-in-the-box), quasi-decentralized, alternative free speech audio platform that is compatible on any device that supports a modern web browser.
 
