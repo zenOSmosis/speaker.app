@@ -1,6 +1,7 @@
 {
-  "name": "shared",
-  "version": "1.0.0",
+  "name": "speaker.app-shared",
+  "version": "1.0.1-alpha",
+  "private": true,
   "description": "",
   "main": "index.js",
   "scripts": {

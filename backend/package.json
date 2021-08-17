@@ -1,6 +1,7 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
+  "name": "speaker.app-backend",
+  "version": "1.0.1-alpha",
+  "private": true,
   "description": "",
   "main": "./src",
   "scripts": {
