@@ -1,37 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import VUMeter from "./VUMeter";
-import {
-  AudioMediaStreamTrackLevelMonitor,
-  AudioMediaStreamTrackLevelMonitorEvents,
-} from "media-stream-track-controller";
 
-const { EVT_AUDIO_LEVEL_TICK } = AudioMediaStreamTrackLevelMonitorEvents;
+import PropTypes from "prop-types";
+
+import useAudioMediaStreamTrackLevelMonitor from "@hooks/useAudioMediaStreamTrackLevelMonitor";
+
+AudioMediaStreamTrackLevelVUMeter.propTypes = {
+  /** When multiple audio tracks may be used together */
+  mediaStreamTracks: PropTypes.arrayOf(PropTypes.instanceOf(MediaStreamTrack)),
+
+  /** When only a single track is used */
+  mediaStreamTrack: PropTypes.instanceOf(MediaStreamTrack),
+};
 
 export default function AudioMediaStreamTrackLevelVUMeter({
+  mediaStreamTracks,
   mediaStreamTrack,
   ...rest
 }) {
-  const [percent, setPercent] = useState(0);
-
-  useEffect(() => {
-    if (mediaStreamTrack) {
-      const mediaStreamMonitor = new AudioMediaStreamTrackLevelMonitor(
-        mediaStreamTrack
-      );
-
-      mediaStreamMonitor.on(EVT_AUDIO_LEVEL_TICK, ({ rms }) => {
-        // FIXME: This is probably not supposed to be RMS, but it's close
-        // enough for prototyping
-        setPercent(rms);
-      });
-
-      return function unmount() {
-        mediaStreamMonitor.destroy();
-      };
-    } else {
-      setPercent(0);
-    }
-  }, [mediaStreamTrack]);
+  const percent = useAudioMediaStreamTrackLevelMonitor(
+    mediaStreamTrack || mediaStreamTracks
+  );
 
   return <VUMeter percent={percent} {...rest} />;
 }
