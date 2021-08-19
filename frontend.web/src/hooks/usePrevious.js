@@ -4,8 +4,9 @@ import { useCallback, useEffect, useRef } from "react";
  * Adapted from:
  * @see https://usehooks.com/usePrevious
  *
- * getPreviousValue was added so that the value could be obtained from within a
- * hook without the value being called as a dependency.
+ * getPreviousValue, a memoized callback with no dependencies, was added so
+ * that the value could be obtained from within a hook without the value being
+ * called as a dependency, which could cause an additional render.
  *
  * @param {any} value The current value
  * @return {Object<getPreviousValue: function>}
