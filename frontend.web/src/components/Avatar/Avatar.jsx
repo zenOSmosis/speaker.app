@@ -20,12 +20,10 @@ export default function Avatar({
   size,
   ...rest
 }) {
-  const title = useMemo(() => `${name}${description && ` | ${description}`}`, [
-    name,
-    description,
-  ]);
-
-  // TODO: Set dynamic icon if no source (use a question mark?)
+  const title = useMemo(
+    () => `${name}${description && ` | ${description}`}`,
+    [name, description]
+  );
 
   if (src) {
     return (
@@ -40,6 +38,8 @@ export default function Avatar({
       />
     );
   } else {
+    // TODO: Set dynamic icon if no source (use a question mark?)
+
     return null;
   }
 }
