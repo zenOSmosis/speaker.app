@@ -56,14 +56,16 @@ export default function useAudioMediaStreamTrackLevelMonitor(
   // Sync hook's media stream tracks with the audio monitor instance
   useEffect(() => {
     if (mediaStreamMonitor) {
-      const prevMediaStreamTracks = getPreviousMediaStreamTracks() || [];
-
-      const removedMediaStreamTracks = prevMediaStreamTracks.filter(
-        predicate => !mediaStreamTracks.includes(predicate)
+      const {
+        added: addedMediaStreamTracks,
+        removed: removedMediaStreamTracks,
+      } = MultiAudioMediaStreamTrackLevelMonitor.getChildrenDiff(
+        getPreviousMediaStreamTracks() || [],
+        mediaStreamTracks
       );
 
       // Handle added / existing tracks
-      for (const track of mediaStreamTracks) {
+      for (const track of addedMediaStreamTracks) {
         mediaStreamMonitor.addMediaStreamTrack(track);
       }
 
