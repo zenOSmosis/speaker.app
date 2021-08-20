@@ -219,6 +219,8 @@ export default function WebZenRTCProvider({
     [zenRTCPeer, socket, isSocketIoConnected, ZenRTCClass]
   );
 
+  // TODO: Do we really need this useRef?
+  //
   // Auto-destroy zenRTCPeer on unmount
   const refZenRTCPeer = useRef(zenRTCPeer);
   refZenRTCPeer.current = zenRTCPeer;
@@ -282,15 +284,6 @@ export default function WebZenRTCProvider({
         outgoingAudioMediaStreamTracks,
         writableSyncObject,
         readOnlySyncObject,
-
-        // TODO: Implement
-        /*
-        addSelectedMediaStreamTrackController,
-        removeSelectedMediaStreamTrackController,
-
-        addTestingMediaStreamTrackController,
-        removeTestingMediaStreamTrackController,
-        */
 
         // TODO: Don't pass latency this way (it changes often, and entire app shouldn't re-render because of it)
         latency,
