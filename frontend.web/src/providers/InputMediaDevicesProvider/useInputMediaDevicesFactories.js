@@ -12,20 +12,25 @@ import usePrevious from "@hooks/usePrevious";
  * IMPORTANT: This hook should be treated as a singleton (provider based).
  */
 export default function useInputMediaDevicesFactories({
+  isInCall,
+  isAudioSelectorRendered,
+
   selectedInputMediaDevices,
   testingInputMediaDevices,
 
   removeSelectedInputMediaDevice,
   removeTestingInputMediaDevice,
 }) {
-  // These states are used in determination of whether to start / stop media devices
-  const [_isAudioSelectorRendered, setIsAudioSelectorRendered] =
-    useState(false);
-  const [_isInCall, setIsInCall] = useState(false);
-
   const [inputMediaDevicesFactories, _setInputMediaDeviceFactories] = useState(
     []
   );
+
+  // TODO: Remove
+  /*
+  console.log({
+    inputMediaDevicesFactories,
+  });
+  */
 
   const { getPreviousValue: getPreviousSelectedInputMediaDevices } =
     usePrevious(selectedInputMediaDevices);
@@ -35,6 +40,9 @@ export default function useInputMediaDevicesFactories({
   );
 
   const destroyAllInputMediaDeviceFactories = useCallback(async () => {
+    // IMPORTANT: Factories aren't looked up from the state here due to the
+    // fact the state might not currently be written w/ this info depending on
+    // where we are in the event loop
     const factories = [
       ...new Set([...selectedInputMediaDevices, ...testingInputMediaDevices]),
     ]
@@ -53,11 +61,8 @@ export default function useInputMediaDevicesFactories({
 
   // Dynamic capturing / uncapturing of media devices based on determined state
   useEffect(() => {
-    const areSelectedDevicesEnabled = _isInCall || _isAudioSelectorRendered;
-    const areTestingDevicesEnabled = _isAudioSelectorRendered;
-
-    // TODO: Remove
-    console.log({ areSelectedDevicesEnabled, areTestingDevicesEnabled });
+    const areSelectedDevicesEnabled = isInCall || isAudioSelectorRendered;
+    const areTestingDevicesEnabled = isAudioSelectorRendered;
 
     if (!areSelectedDevicesEnabled && !areTestingDevicesEnabled) {
       destroyAllInputMediaDeviceFactories();
@@ -71,36 +76,22 @@ export default function useInputMediaDevicesFactories({
             getPreviousTestingInputMediaDevices() || [];
 
           const {
-            added: _addedSelectedInputMediaDevices,
-            removed: _removedSelectedInputMediaDevices,
+            added: addedInputMediaDevices,
+            removed: removedInputMediaDevices,
           } = PhantomCollection.getChildrenDiff(
-            previousSelectedInputMediaDevices,
-            // Don't add any new selected devices if audio selector is not rendered
-            areSelectedDevicesEnabled ? selectedInputMediaDevices : []
+            [
+              ...new Set([
+                ...previousSelectedInputMediaDevices,
+                ...previousTestingInputMediaDevices,
+              ]),
+            ],
+            [
+              ...new Set([
+                ...(areSelectedDevicesEnabled ? selectedInputMediaDevices : []),
+                ...(areTestingDevicesEnabled ? testingInputMediaDevices : []),
+              ]),
+            ]
           );
-
-          const {
-            added: _addedTestingInputMediaDevices,
-            removed: _removedTestingInputMediaDevices,
-          } = PhantomCollection.getChildrenDiff(
-            previousTestingInputMediaDevices,
-            // Don't add any new testing devices if audio selector is not rendered
-            areTestingDevicesEnabled ? testingInputMediaDevices : []
-          );
-
-          const addedInputMediaDevices = [
-            ...new Set([
-              ..._addedSelectedInputMediaDevices,
-              ..._addedTestingInputMediaDevices,
-            ]),
-          ];
-
-          const removedInputMediaDevices = [
-            ...new Set([
-              ..._removedSelectedInputMediaDevices,
-              ..._removedTestingInputMediaDevices,
-            ]),
-          ];
 
           return {
             addedInputMediaDevices,
@@ -108,56 +99,70 @@ export default function useInputMediaDevicesFactories({
           };
         })();
 
-        const removedFactories = await Promise.all(
-          removedInputMediaDevices
-            .map(removedMediaDevice => {
-              const factories =
-                MediaStreamTrackControllerFactory.getFactoriesWithInputMediaDevice(
-                  removedMediaDevice
-                );
+        // TODO: Remove
+        /*
+        console.log({
+          addedInputMediaDevices,
+          removedInputMediaDevices,
+        });
+        */
 
-              if (factories) {
-                return factories.map(factory => factory.destroy());
-              } else {
-                return [];
-              }
-            })
-            .flat()
-        );
+        const removedFactories = removedInputMediaDevices
+          .map(async removedMediaDevice => {
+            const factories =
+              MediaStreamTrackControllerFactory.getFactoriesWithInputMediaDevice(
+                removedMediaDevice
+              );
 
-        const addedFactories = await Promise.all(
-          addedInputMediaDevices
-            .map(async addedMediaDevice => {
-              // TODO: Populate
-              const constraints = {};
-              const factoryOptions = {};
+            if (factories) {
+              await factories.forEach(factory => factory.destroy());
 
-              try {
-                const factory =
-                  await utils.captureMediaDevice.captureSpecificMediaDevice(
-                    addedMediaDevice,
-                    constraints,
-                    factoryOptions
-                  );
+              return factories;
+            } else {
+              return [];
+            }
+          })
+          .flat();
 
-                factory.once(EVT_DESTROYED, () => {
-                  _setInputMediaDeviceFactories(prev =>
-                    [...prev].filter(predicate => predicate !== factory)
-                  );
-                });
+        const addedFactories = [];
 
-                return factory;
-              } catch (err) {
-                // Remove device from selecting / testing states (so UI will update)
-                removeSelectedInputMediaDevice(addedMediaDevice);
-                removeTestingInputMediaDevice(addedMediaDevice);
+        for (const addedMediaDevice of addedInputMediaDevices) {
+          // TODO: Populate
+          const constraints = {};
+          const factoryOptions = {};
 
-                logger.error(err);
-              }
-            })
-            // Remove entries which have no factory instance
-            .filter(factory => Boolean(factory))
-        );
+          // Ignore duplicate factory creation w/ same device
+          if (
+            MediaStreamTrackControllerFactory.getFactoriesWithInputMediaDevice(
+              addedMediaDevice
+            ).length
+          ) {
+            continue;
+          }
+
+          try {
+            const factory =
+              await utils.captureMediaDevice.captureSpecificMediaDevice(
+                addedMediaDevice,
+                constraints,
+                factoryOptions
+              );
+
+            factory.once(EVT_DESTROYED, () => {
+              _setInputMediaDeviceFactories(prev =>
+                [...prev].filter(predicate => predicate !== factory)
+              );
+            });
+
+            addedFactories.push(factory);
+          } catch (err) {
+            // Remove device from selecting / testing states (so UI will update)
+            removeSelectedInputMediaDevice(addedMediaDevice);
+            removeTestingInputMediaDevice(addedMediaDevice);
+
+            logger.error(err);
+          }
+        }
 
         // Set next factories state
         _setInputMediaDeviceFactories(prevFactories => {
@@ -168,19 +173,30 @@ export default function useInputMediaDevicesFactories({
             ...addedFactories,
           ];
 
+          // TODO: Remove
+          /*
+          console.log({
+            addedFactories,
+            removedFactories,
+            nextFactories,
+            selectedInputMediaDevices,
+            testingInputMediaDevices,
+          });
+          */
+
           return nextFactories;
         });
       })();
     }
   }, [
+    isAudioSelectorRendered,
+    isInCall,
+
     selectedInputMediaDevices,
     getPreviousSelectedInputMediaDevices,
 
     testingInputMediaDevices,
     getPreviousTestingInputMediaDevices,
-
-    _isAudioSelectorRendered,
-    _isInCall,
 
     removeSelectedInputMediaDevice,
     removeTestingInputMediaDevice,
@@ -190,8 +206,5 @@ export default function useInputMediaDevicesFactories({
 
   return {
     inputMediaDevicesFactories,
-
-    setIsInCall,
-    setIsAudioSelectorRendered,
   };
 }

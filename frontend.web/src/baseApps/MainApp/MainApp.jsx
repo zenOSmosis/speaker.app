@@ -38,7 +38,6 @@ import useSocketContext from "@hooks/useSocketContext";
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
 import useRenderCount from "@hooks/useRenderCount";
 import useAppRoutesContext from "@hooks/useAppRoutesContext";
-import usePrevious from "@hooks/usePrevious";
 
 import NetworkIcon from "@icons/NetworkIcon";
 

@@ -23,6 +23,10 @@ export default function InputMediaDevicesProvider({ children }) {
     setHasUserVideoPermission,
   } = useInputMediaDevicesPermissions();
 
+  // These states are used in determination of whether to start / stop media devices
+  const [isAudioSelectorRendered, setIsAudioSelectorRendered] = useState(false);
+  const [isInCall, setIsInCall] = useState(false);
+
   /** @type {MediaDeviceInfo[]} */
   const [inputMediaDevices, _setInputMediaDevices] = useState([]);
 
@@ -129,11 +133,10 @@ export default function InputMediaDevicesProvider({ children }) {
     testingVideoInputDevices,
   } = useSelectedAndTestingInputMediaDevices({ inputMediaDevices });
 
-  const {
-    inputMediaDevicesFactories,
-    setIsInCall,
-    setIsAudioSelectorRendered,
-  } = useInputMediaDevicesFactories({
+  const { inputMediaDevicesFactories } = useInputMediaDevicesFactories({
+    isInCall,
+    isAudioSelectorRendered,
+
     selectedInputMediaDevices,
     testingInputMediaDevices,
 
@@ -145,6 +148,9 @@ export default function InputMediaDevicesProvider({ children }) {
     publishableAudioInputControllerCollection,
     publishableVideoInputControllerCollection,
   } = usePublishableTrackControllerCollections({
+    isInCall,
+    isAudioSelectorRendered,
+
     selectedInputMediaDevices,
     inputMediaDevicesFactories,
   });
