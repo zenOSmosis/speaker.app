@@ -14,7 +14,7 @@ import useLocalStorage from "@hooks/useLocalStorage";
  * @typedef {Object} CachedInputMediaDeviceProps
  * @property {Object} mediaDeviceInfo
  * @property {Object} defaultConstraints
- * @property {boolean} isDefaultDevice Maps to selected devices from InputmediaDevicesProvider
+ * @property {boolean} isDefaultDevice Maps to selected devices from InputMediaDevicesProvider
  */
 
 // Computed property names representing CachedInputMediaDeviceProps
@@ -33,18 +33,22 @@ const KEY_CAIDP_IS_DEFAULT_DEVICE = "isDefaultDevice";
  * IMPORTANT: This hook should be treated as a singleton (provider based).
  *
  * @typedef {Object} InputMediaDevicesCacheProps
- * @property {MediaDeviceInfo[]} mediaDevices
- * // TODO: Add permissions here, and don't manage internally
+ * @property {MediaDeviceInfo[]} inputMediaDevices
+ * @property {boolean} hasUserAudioPermission
+ * @property {boolean} hasUserVideoPermission
+ *
+ * @param {InputMediaDevicesCacheProps} params
+ * @return {Object} TODO: Document
  */
 export default function useInputMediaDevicesCache({
-  mediaDevices,
+  inputMediaDevices,
   hasUserAudioPermission,
   hasUserVideoPermission,
 }) {
   // Enforce prop type checking
   useEffect(() => {
-    if (!Array.isArray(mediaDevices)) {
-      throw new TypeError("mediaDevices is not an array");
+    if (!Array.isArray(inputMediaDevices)) {
+      throw new TypeError("inputMediaDevices is not an array");
     }
 
     if (typeof hasUserAudioPermission !== "boolean") {
@@ -54,7 +58,7 @@ export default function useInputMediaDevicesCache({
     if (typeof hasUserVideoPermission !== "boolean") {
       throw new TypeError("hasUserVideoPermission is not a boolean");
     }
-  }, [mediaDevices, hasUserAudioPermission, hasUserVideoPermission]);
+  }, [inputMediaDevices, hasUserAudioPermission, hasUserVideoPermission]);
 
   const { getItem: getLocalStorageItem, setItem: setLocalStorageItem } =
     useLocalStorage();
@@ -64,7 +68,7 @@ export default function useInputMediaDevicesCache({
    */
   const [objectState, setObjectState] = useObjectState(
     /* || */ {
-      // mediaDevices will not be populated on first run, so this will
+      // inputMediaDevices will not be populated on first run, so this will
       // have to default to an empty array
 
       /** @type {CachedInputMediaDeviceProps[]} */
@@ -150,7 +154,7 @@ export default function useInputMediaDevicesCache({
           deviceCache =>
             utils.getMediaDeviceMatch.getAudioInputDeviceMatch(
               deviceCache.mediaDeviceInfo,
-              mediaDevices
+              inputMediaDevices
             )
         );
 
@@ -180,7 +184,7 @@ export default function useInputMediaDevicesCache({
         return { ...objectState };
       });
     },
-    [_createCachedDeviceProps, mediaDevices, setObjectState]
+    [_createCachedDeviceProps, inputMediaDevices, setObjectState]
   );
 
   // TODO: Document

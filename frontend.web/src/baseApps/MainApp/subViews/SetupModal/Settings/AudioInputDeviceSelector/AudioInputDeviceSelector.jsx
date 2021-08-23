@@ -28,13 +28,13 @@ export default function AudioInputDeviceSelector() {
     addSelectedInputMediaDevice,
     removeSelectedInputMediaDevice,
 
-    addTestInputMediaDevice,
-    removeTestInputMediaDevice,
+    addTestingInputMediaDevice,
+    removeTestingInputMediaDevice,
 
     selectedAudioInputDevices,
-    testAudioInputDevices,
+    testingAudioInputDevices,
 
-    getInputMediaDeviceMediaStreamTrack,
+    getAudioInputDeviceMediaStreamTracks,
 
     // TODO: Clean up unused props
     /*
@@ -96,7 +96,7 @@ export default function AudioInputDeviceSelector() {
   useEffect(() => {
     if (
       audioInputDevices.length &&
-      (selectedAudioInputDevices.length || testAudioInputDevices.length)
+      (selectedAudioInputDevices.length || testingAudioInputDevices.length)
     ) {
       const to = setTimeout(forceUpdate, 100);
 
@@ -107,7 +107,7 @@ export default function AudioInputDeviceSelector() {
   }, [
     audioInputDevices,
     selectedAudioInputDevices,
-    testAudioInputDevices,
+    testingAudioInputDevices,
     forceUpdate,
   ]);
 
@@ -157,7 +157,7 @@ export default function AudioInputDeviceSelector() {
               <div>
                 {audioInputDevices.map((device, idx) => {
                   const isSelected = selectedAudioInputDevices.includes(device);
-                  const isTesting = testAudioInputDevices.includes(device);
+                  const isTesting = testingAudioInputDevices.includes(device);
 
                   // TODO: Implement
                   const isAudioNoiseSuppression = true;
@@ -171,8 +171,8 @@ export default function AudioInputDeviceSelector() {
                     alert("TODO: Implement");
 
                   // TODO: Match from captureMediaDevice.getMediaDeviceTrackControllers
-                  const mediaStreamTrack =
-                    getInputMediaDeviceMediaStreamTrack(device);
+                  const mediaStreamTracks =
+                    getAudioInputDeviceMediaStreamTracks(device);
 
                   return (
                     <AudioInputDevice
@@ -189,8 +189,8 @@ export default function AudioInputDeviceSelector() {
                       onToggleTest={() =>
                         // TODO: Use callback function instead
                         !isTesting
-                          ? addTestInputMediaDevice(device)
-                          : removeTestInputMediaDevice(device)
+                          ? addTestingInputMediaDevice(device)
+                          : removeTestingInputMediaDevice(device)
                       }
                       isAudioNoiseSuppression={isAudioNoiseSuppression}
                       setIsAudioNoiseSuppression={setIsAudioNoiseSuppression}
@@ -198,7 +198,7 @@ export default function AudioInputDeviceSelector() {
                       setIsAudioEchoCancellation={setIsAudioEchoCancellation}
                       isAudioAutoGainControl={isAudioAutoGainControl}
                       setIsAudioAutoGainControl={setIsAudioAutoGainControl}
-                      mediaStreamTrack={mediaStreamTrack}
+                      mediaStreamTracks={mediaStreamTracks}
                     />
                   );
                 })}

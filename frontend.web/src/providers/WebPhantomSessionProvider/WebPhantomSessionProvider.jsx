@@ -67,13 +67,14 @@ export default function WebPhantomSessionProvider({ children }) {
   // state and does not directly manipulate the outgoing audio controllers
   const [isMuted, setIsMuted] = useState(false);
 
+  // TODO: Remove
   // NOTE: This useRef is to memoize the getIsMuted() function so a new
   // reference is not required for each pass
   //
   // This fixes an issue where this hook was excessively rendered
-  const refIsMuted = useRef(isMuted);
-  refIsMuted.current = isMuted;
-  const getIsMuted = useCallback(() => refIsMuted.current, []);
+  // const refIsMuted = useRef(isMuted);
+  // refIsMuted.current = isMuted;
+  // const getIsMuted = useCallback(() => refIsMuted.current, []);
 
   useEffect(() => {
     if (writableSyncObject) {
@@ -260,11 +261,12 @@ export default function WebPhantomSessionProvider({ children }) {
         writableSyncObject,
         readOnlySyncObject,
 
-        // TODO: Rename to ...IsOutgoingAudioMuted
         setIsMuted,
-        getIsMuted,
-
         isMuted,
+
+        // TODO: Remove
+        // getIsMuted,
+
         latency,
         networkURL,
       }}

@@ -3,7 +3,9 @@ import React, { createContext, useCallback, useEffect, useState } from "react";
 
 import useInputMediaDevicesPermissions from "./useInputMediaDevicesPermissions";
 import useInputMediaDevicesCache from "./useInputMediaDevicesCache";
-import useSelectedAndTestInputMediaDevices from "./useSelectedAndTestInputMediaDevices";
+import useInputMediaDevicesFactories from "./useInputMediaDevicesFactories";
+import usePublishableTrackControllerCollections from "./usePublishableTrackControllerCollections";
+import useSelectedAndTestingInputMediaDevices from "./useSelectedAndTestingInputMediaDevices";
 
 import { utils } from "media-stream-track-controller";
 
@@ -22,7 +24,7 @@ export default function InputMediaDevicesProvider({ children }) {
   } = useInputMediaDevicesPermissions();
 
   /** @type {MediaDeviceInfo[]} */
-  const [mediaDevices, _setMediaDevices] = useState([]);
+  const [inputMediaDevices, _setInputMediaDevices] = useState([]);
 
   /**
    * Obtains list of available audio input media devices and sets internal hook
@@ -32,11 +34,11 @@ export default function InputMediaDevicesProvider({ children }) {
    * @return {Promise<MediaDeviceInfo[]>}
    */
   const fetchMediaDevices = useCallback(async (isAggressive = true) => {
-    const mediaDevices = await utils.fetchMediaDevices(isAggressive);
+    const inputMediaDevices = await utils.fetchMediaDevices(isAggressive);
 
-    _setMediaDevices(mediaDevices);
+    _setInputMediaDevices(inputMediaDevices);
 
-    return mediaDevices;
+    return inputMediaDevices;
   }, []);
 
   /**
@@ -53,7 +55,7 @@ export default function InputMediaDevicesProvider({ children }) {
         // because the first fetch will be an aggressive fetch and we don't
         // necessarily want to prompt the user to accept mic permissions the
         // first time they plug in a device
-        if (mediaDevices.length) {
+        if (inputMediaDevices.length) {
           // FIXME: Use logger.debug once global logger is automatically
           // configured as default log level to run all levels in development
           //
@@ -78,22 +80,22 @@ export default function InputMediaDevicesProvider({ children }) {
         );
       };
     }
-  }, [mediaDevices, fetchMediaDevices]);
+  }, [inputMediaDevices, fetchMediaDevices]);
 
   const [audioInputDevices, _setAudioInputDevices] = useState([]);
   const [videoInputDevices, _setVideoInputDevices] = useState([]);
 
   // Automatically populate audio/videoInputDevices based on filters used on
-  // mediaDevices
+  // inputMediaDevices
   useEffect(() => {
     _setAudioInputDevices(
-      utils.fetchMediaDevices.filterAudioInputDevices(mediaDevices)
+      utils.fetchMediaDevices.filterAudioInputDevices(inputMediaDevices)
     );
 
     _setVideoInputDevices(
-      utils.fetchMediaDevices.filterVideoInputDevices(mediaDevices)
+      utils.fetchMediaDevices.filterVideoInputDevices(inputMediaDevices)
     );
-  }, [mediaDevices]);
+  }, [inputMediaDevices]);
 
   // TODO: Map selected / testing states to cache
   // TODO: Map initial cache values to selected states
@@ -104,57 +106,70 @@ export default function InputMediaDevicesProvider({ children }) {
     setAudioInputDeviceConstraints,
     getAudioInputDeviceConstraints,
   } = useInputMediaDevicesCache({
-    mediaDevices,
+    inputMediaDevices,
     hasUserAudioPermission,
     hasUserVideoPermission,
   });
 
   // TODO: Automatically from selected / test devices any devices which are not
-  // currently in the mediaDevices array
+  // currently in the inputMediaDevices array
   const {
     addSelectedInputMediaDevice,
     removeSelectedInputMediaDevice,
 
-    // selectedInputMediaDevices,
+    selectedInputMediaDevices,
     selectedAudioInputDevices,
     selectedVideoInputDevices,
 
-    addTestInputMediaDevice,
-    removeTestInputMediaDevice,
+    addTestingInputMediaDevice,
+    removeTestingInputMediaDevice,
 
-    // testInputMediaDevices,
-    testAudioInputDevices,
-    testVideoInputDevices,
+    testingInputMediaDevices,
+    testingAudioInputDevices,
+    testingVideoInputDevices,
+  } = useSelectedAndTestingInputMediaDevices({ inputMediaDevices });
 
-    publishableInputMediaDeviceTrackControllers,
-    publishableInputAudioTrackControllers,
-    publishableInputVideoTrackControllers,
-
-    setIsPublishableAudioMuted,
-
-    setIsAudioSelectorRendered,
+  const {
+    inputMediaDevicesFactories,
     setIsInCall,
-  } = useSelectedAndTestInputMediaDevices({ mediaDevices });
+    setIsAudioSelectorRendered,
+  } = useInputMediaDevicesFactories({
+    selectedInputMediaDevices,
+    testingInputMediaDevices,
+
+    removeSelectedInputMediaDevice,
+    removeTestingInputMediaDevice,
+  });
+
+  const {
+    publishableAudioInputControllerCollection,
+    publishableVideoInputControllerCollection,
+  } = usePublishableTrackControllerCollections({
+    selectedInputMediaDevices,
+    inputMediaDevicesFactories,
+  });
 
   /**
-   * FIXME: This is currently written to only return the first track controller
-   * associated to the device and might should be renamed / refactored later.
+   * Retrieves associated audio media stream tracks for the given MediaDevice.
    *
    * @param {MediaDeviceInfo | Object}
-   * @return {MediaStreamTrack | void}
+   * @return {MediaStreamTrack[]}
    */
-  const getInputMediaDeviceMediaStreamTrack = useCallback(mediaDevice => {
+  const getAudioInputDeviceMediaStreamTracks = useCallback(mediaDevice => {
     const trackControllers =
       utils.captureMediaDevice.getMediaDeviceTrackControllers(mediaDevice);
 
-    if (trackControllers.length) {
-      return trackControllers[0].getOutputMediaStreamTrack();
-    }
+    return (trackControllers || [])
+      .filter(controller => controller.getKind() === "audio")
+      .map(controller => controller.getOutputMediaStreamTrack());
   }, []);
 
   return (
     <InputMediaDevicesContext.Provider
       value={{
+        getIsMediaDeviceCaptureSupported:
+          utils.captureMediaDevice.getIsDeviceMediaCaptureSupported,
+
         // *** Permissions
         hasUserAudioPermission,
         setHasUserAudioPermission,
@@ -167,37 +182,25 @@ export default function InputMediaDevicesProvider({ children }) {
         audioInputDevices,
         videoInputDevices,
 
-        // defaultAudioInputDevices,
-        // setDefaultAudioInputDevices,
-
         setAudioInputDeviceConstraints,
         getAudioInputDeviceConstraints,
 
         addSelectedInputMediaDevice,
         removeSelectedInputMediaDevice,
 
-        addTestInputMediaDevice,
-        removeTestInputMediaDevice,
+        addTestingInputMediaDevice,
+        removeTestingInputMediaDevice,
 
         selectedAudioInputDevices,
         selectedVideoInputDevices,
 
-        testAudioInputDevices,
-        testVideoInputDevices,
+        testingAudioInputDevices,
+        testingVideoInputDevices,
 
-        // audioCaptureDeviceControllers,
-        // videoCaptureDeviceControllers,
+        publishableAudioInputControllerCollection,
+        publishableVideoInputControllerCollection,
 
-        getIsMediaDeviceCaptureSupported:
-          utils.captureMediaDevice.getIsDeviceMediaCaptureSupported,
-
-        getInputMediaDeviceMediaStreamTrack,
-
-        publishableInputMediaDeviceTrackControllers,
-        publishableInputAudioTrackControllers,
-        publishableInputVideoTrackControllers,
-
-        setIsPublishableAudioMuted,
+        getAudioInputDeviceMediaStreamTracks,
 
         setIsAudioSelectorRendered,
         setIsInCall,

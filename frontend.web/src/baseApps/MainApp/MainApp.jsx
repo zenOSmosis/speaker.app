@@ -171,15 +171,18 @@ function useTieIns() {
     isConnected,
     realmId,
     channelId,
+
+    // TODO: Re-intergrate
     setIsMuted,
-    getIsMuted,
+    isMuted,
   } = useWebPhantomSessionContext();
 
   const {
     // hasUIMicPermission,
     setIsInCall,
 
-    publishableInputMediaDeviceTrackControllers,
+    // TODO: Add / remove tracks based on this collection
+    publishableAudioInputControllerCollection,
   } = useInputMediaDevicesContext();
 
   // Bind inputMediaDevices isOnCall state to isConnected
@@ -194,22 +197,21 @@ function useTieIns() {
   // TODO: Automatically start audio devices if UI permissions are enabled
 
   // TODO: Document
-  const inputDevicesMediaStream = useMemo(() => new MediaStream(), []);
+  // const inputDevicesMediaStream = useMemo(() => new MediaStream(), []);
 
-  const {
-    getPreviousValue: getPreviousPublishableInputMediaDeviceTrackControllers,
-  } = usePrevious(publishableInputMediaDeviceTrackControllers);
-
+  // TODO: Refactor w/ publishableAudioInputControllerCollection support
+  //
   // Sync publishableInputMediaDeviceTrackControllers with zenRTCPeer instance, if connected
   //
   // This handles broadcasting of microphone / other media device inputs
+  /*
   useEffect(() => {
     if (isConnected) {
-      /** @type {MediaStreamTrackControllerBase[]} */
+      // @type {MediaStreamTrackControllerBase[]}
       const prev =
         getPreviousPublishableInputMediaDeviceTrackControllers() || [];
 
-      /** @type {MediaStreamTrackControllerBase[]} */
+      // @type {MediaStreamTrackControllerBase[]}
       const removed = prev.filter(
         predicate =>
           !publishableInputMediaDeviceTrackControllers.includes(predicate)
@@ -248,6 +250,7 @@ function useTieIns() {
     getPreviousPublishableInputMediaDeviceTrackControllers,
     publishableInputMediaDeviceTrackControllers,
   ]);
+  */
 
   const { screenCaptureMediaStreams, stopScreenCapture } =
     useScreenCaptureContext();

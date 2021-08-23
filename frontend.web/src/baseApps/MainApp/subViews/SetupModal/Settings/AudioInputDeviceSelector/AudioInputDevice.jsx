@@ -40,7 +40,7 @@ AudioInputDevice.propTypes = {
   setIsAudioAutoGainControl: PropTypes.func.isRequired,
 
   // TODO: Document
-  mediaStreamTrack: PropTypes.instanceOf(MediaStreamTrack),
+  mediaStreamTracks: PropTypes.arrayOf(PropTypes.instanceOf(MediaStreamTrack)),
 };
 
 export default function AudioInputDevice({
@@ -55,7 +55,7 @@ export default function AudioInputDevice({
   setIsAudioEchoCancellation,
   isAudioAutoGainControl,
   setIsAudioAutoGainControl,
-  mediaStreamTrack,
+  mediaStreamTracks,
 }) {
   // Ensure device.kind is an audio input
   useEffect(() => {
@@ -129,7 +129,7 @@ export default function AudioInputDevice({
         </button>
         &nbsp;
         <AudioMediaStreamTrackLevelMeter
-          mediaStreamTrack={mediaStreamTrack}
+          mediaStreamTracks={mediaStreamTracks}
           style={{ height: 50 }}
         />
       </div>

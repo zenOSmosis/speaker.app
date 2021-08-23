@@ -77,6 +77,7 @@ function Participant({ participant, onClick }) {
       <Animation animationName="flipInX">
         <AudioMediaStreamTrackLevelAvatar
           key={participant.socketIoId}
+          // TODO: Use all media streams from participant
           mediaStreamTrack={audioMediaStreamTrack}
           src={participant.avatarURL}
           name={participant.name}

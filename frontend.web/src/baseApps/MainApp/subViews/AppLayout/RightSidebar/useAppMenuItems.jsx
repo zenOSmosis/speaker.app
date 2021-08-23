@@ -223,6 +223,7 @@ export default function useAppMenuItems() {
               // TODO: Use outgoing mic audio level
             }
             <AudioMediaStreamTrackLevelMeter
+              // TODO: Use all local media stream tracks
               mediaStreamTrack={(() => {
                 const mediaStream =
                   micAudioController &&

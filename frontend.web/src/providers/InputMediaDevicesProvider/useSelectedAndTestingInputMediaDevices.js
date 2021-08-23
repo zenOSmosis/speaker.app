@@ -1,6 +1,9 @@
 import { logger } from "phantom-core";
-import { useCallback, useEffect, useState } from "react";
-import { utils } from "media-stream-track-controller";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  utils,
+  MediaStreamTrackControllerCollection,
+} from "media-stream-track-controller";
 
 /**
  * Maintains the current state of selected and test input devices.
@@ -10,11 +13,9 @@ import { utils } from "media-stream-track-controller";
  *
  * IMPORTANT: This hook should be treated as a singleton (provider based).
  */
-export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
-  // These states are used in determination of whether to start / stop media devices
-  const [isAudioSelectorRendered, setIsAudioSelectorRendered] = useState(false);
-  const [isInCall, setIsInCall] = useState(false);
-
+export default function useSelectedAndTestingInputMediaDevices({
+  mediaDevices,
+}) {
   const [selectedInputMediaDevices, _setSelectedInputMediaDevices] = useState(
     []
   );
@@ -24,8 +25,6 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
   const [selectedVideoInputDevices, _setSelectedVideoInputDevices] = useState(
     []
   );
-
-  const [isPublishableAudioMuted, setIsPublishableAudioMuted] = useState(true);
 
   // Automatically populate selectedAudio/VideoInputDevices based on filters used on
   // mediaDevices
@@ -39,32 +38,37 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
     );
   }, [selectedInputMediaDevices]);
 
-  const [testInputMediaDevices, _setTestInputMediaDevices] = useState([]);
-  const [testAudioInputDevices, _setTestAudioInputDevices] = useState([]);
-  const [testVideoInputDevices, _setTestVideoInputDevices] = useState([]);
+  const [testingInputMediaDevices, _setTestingInputMediaDevices] = useState([]);
+  const [testingAudioInputDevices, _setTestingAudioInputDevices] = useState([]);
+  const [testingVideoInputDevices, _setTestingVideoInputDevices] = useState([]);
+
+  // TODO: Automatically
 
   // Automatically populate testAudio/VideoInputDevices based on filters used on
   // mediaDevices
   useEffect(() => {
-    _setTestAudioInputDevices(
-      utils.fetchMediaDevices.filterAudioInputDevices(testInputMediaDevices)
+    _setTestingAudioInputDevices(
+      utils.fetchMediaDevices.filterAudioInputDevices(testingInputMediaDevices)
     );
 
-    _setTestVideoInputDevices(
-      utils.fetchMediaDevices.filterVideoInputDevices(testInputMediaDevices)
+    _setTestingVideoInputDevices(
+      utils.fetchMediaDevices.filterVideoInputDevices(testingInputMediaDevices)
     );
-  }, [testInputMediaDevices]);
+  }, [testingInputMediaDevices]);
 
   /**
    * @public
    *
    * Adds the given mediaDeviceInfo to the selected list.
    *
+   * NOTE: Duplicate entries are ignored.
+   *
    * @param {MediaDeviceInfo} mediaDeviceInfo
    * @return {void}
    */
   const addSelectedInputMediaDevice = useCallback(mediaDeviceInfo => {
     _setSelectedInputMediaDevices(prev => {
+      // Don't add duplicates
       if (prev.includes(mediaDeviceInfo)) {
         return prev;
       } else {
@@ -92,13 +96,16 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
   /**
    * @public
    *
-   * Adds the given mediaDeviceInfo to the test list.
+   * Adds the given mediaDeviceInfo to the testing list.
+   *
+   * NOTE: Duplicate entries are ignored.
    *
    * @param {MediaDeviceInfo} mediaDeviceInfo
    * @return {void}
    */
-  const addTestInputMediaDevice = useCallback(mediaDeviceInfo => {
-    _setTestInputMediaDevices(prev => {
+  const addTestingInputMediaDevice = useCallback(mediaDeviceInfo => {
+    _setTestingInputMediaDevices(prev => {
+      // Don't add duplicates
       if (prev.includes(mediaDeviceInfo)) {
         return prev;
       } else {
@@ -112,35 +119,23 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
   /**
    * @public
    *
-   * Removes the given mediaDeviceInfo from the test list.
+   * Removes the given mediaDeviceInfo from the testing list.
    *
    * @param {MediaDeviceInfo} mediaDeviceInfo
    * @return {void}
    */
-  const removeTestInputMediaDevice = useCallback(mediaDeviceInfo => {
-    _setTestInputMediaDevices(prev => [
+  const removeTestingInputMediaDevice = useCallback(mediaDeviceInfo => {
+    _setTestingInputMediaDevices(prev => [
       ...prev.filter(testPrev => !Object.is(testPrev, mediaDeviceInfo)),
     ]);
   }, []);
 
-  // Track controllers which represent selected input media devices
-  //
-  // TODO: Document a bit better
-  const [
-    publishableInputMediaDeviceTrackControllers,
-    _setPublishableTrackControllers,
-  ] = useState([]);
-  const [
-    publishableInputAudioTrackControllers,
-    _setPublishableAudioTrackControllers,
-  ] = useState([]);
-  const [
-    publishableInputVideoTrackControllers,
-    _setPublishableVideoTrackControllers,
-  ] = useState([]);
+  useEffect(() => {}, []);
 
+  // TODO: Refactor
   // Auto-populates publishable audio / video track controllers based on "kind"
   // determination from iterated track controllers
+  /*
   useEffect(() => {
     const audioControllers = [];
     const videoControllers = [];
@@ -165,6 +160,7 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
     _setPublishableAudioTrackControllers(audioControllers);
     _setPublishableVideoTrackControllers(videoControllers);
   }, [publishableInputMediaDeviceTrackControllers]);
+  */
 
   /**
    * @private
@@ -174,6 +170,7 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
    * @param {MediaStreamTrackControllerBase}
    * @return {void}
    */
+  /*
   const _addPublishableTrackController = useCallback(
     trackController => {
       _setPublishableTrackControllers(prev => {
@@ -198,6 +195,7 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
     },
     [_setPublishableTrackControllers]
   );
+  */
 
   /**
    * @private
@@ -207,16 +205,19 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
    * @param {MediaStreamTrackControllerBase}
    * @return {void}
    */
+  /*
   const _removePublishableTrackController = useCallback(trackController => {
     _setPublishableTrackControllers(prev =>
       [...prev].filter(predicate => !Object.is(predicate, trackController))
     );
   }, []);
+  */
 
   // TODO: Fix issue where selecting two audio devices for broadcasting will create three audio controllers
   //
   // Dynamically capture / uncapture media devices based on selected and
-  // testing states
+  // test states
+  /*
   useEffect(() => {
     for (const device of mediaDevices) {
       try {
@@ -226,7 +227,7 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
         // media-stream-track-controller fetchMediaDevices utility instead?
         if (device.deviceId.length) {
           const isSelected = selectedInputMediaDevices.includes(device);
-          const isTesting = testInputMediaDevices.includes(device);
+          const isTesting = testingInputMediaDevices.includes(device);
 
           const isCurrentlyCapturing =
             utils.captureMediaDevice.getIsMediaDeviceBeingCaptured(device);
@@ -244,11 +245,11 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
                 // Since there is a problem with capturing, remove this device
                 // from the selected / test states
                 removeSelectedInputMediaDevice(device);
-                removeTestInputMediaDevice(device);
+                removeTestingInputMediaDevice(device);
 
                 // TODO: Either add this error to the hook's state or just
                 // re-throw it so we can catch it w/ the error boundary?
-                console.error(err);
+                logger.error(err);
               })
               .then(trackControllerFactory => {
                 // FIXME: This additional check for trackControllerFactory is
@@ -287,7 +288,7 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
             // Stop capturing
             utils.captureMediaDevice.uncaptureSpecificMediaDevice(device);
             removeSelectedInputMediaDevice(device);
-            removeTestInputMediaDevice(device);
+            removeTestingInputMediaDevice(device);
           }
         }
       } catch (err) {
@@ -297,14 +298,15 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
   }, [
     mediaDevices,
     selectedInputMediaDevices,
-    testInputMediaDevices,
+    testingInputMediaDevices,
     removeSelectedInputMediaDevice,
-    removeTestInputMediaDevice,
+    removeTestingInputMediaDevice,
     isInCall,
     isAudioSelectorRendered,
     _addPublishableTrackController,
     _removePublishableTrackController,
   ]);
+  */
 
   // TODO: Remove
   /*
@@ -323,22 +325,11 @@ export default function useSelectedAndTestInputMediaDevices({ mediaDevices }) {
     selectedAudioInputDevices,
     selectedVideoInputDevices,
 
-    addTestInputMediaDevice,
-    removeTestInputMediaDevice,
+    addTestingInputMediaDevice,
+    removeTestingInputMediaDevice,
 
-    testInputMediaDevices,
-    testAudioInputDevices,
-    testVideoInputDevices,
-
-    publishableInputMediaDeviceTrackControllers,
-    publishableInputAudioTrackControllers,
-    publishableInputVideoTrackControllers,
-
-    setIsPublishableAudioMuted,
-
-    // TODO: Expose single factory which represents all publishableInputMediaDevices
-
-    setIsAudioSelectorRendered,
-    setIsInCall,
+    testingInputMediaDevices,
+    testingAudioInputDevices,
+    testingVideoInputDevices,
   };
 }
