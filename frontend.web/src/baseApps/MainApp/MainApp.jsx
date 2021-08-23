@@ -182,12 +182,18 @@ function useTieIns() {
 
     // TODO: Add / remove tracks based on this collection
     publishableAudioInputControllerCollection,
+
+    publishDefaultAudioInputDevice,
   } = useInputMediaDevicesContext();
 
   // Bind inputMediaDevices isOnCall state to isConnected
   useEffect(() => {
     setIsInCall(isConnected);
-  }, [isConnected, setIsInCall]);
+
+    if (isConnected) {
+      publishDefaultAudioInputDevice();
+    }
+  }, [isConnected, setIsInCall, publishDefaultAudioInputDevice]);
 
   // TODO: Re-handle track muting (mute should affect all published audio track controllers from InputMediaDevicesProvider)
 

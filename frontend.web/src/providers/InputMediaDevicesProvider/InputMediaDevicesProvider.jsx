@@ -155,6 +155,23 @@ export default function InputMediaDevicesProvider({ children }) {
     inputMediaDevicesFactories,
   });
 
+  // TODO: Rename and refactor
+  // Temporarily here to just get mic audio working again when call starts
+  const publishDefaultAudioInputDevice = useCallback(async () => {
+    let nextMediaDevices = [];
+
+    if (!inputMediaDevices.length) {
+      nextMediaDevices = await fetchMediaDevices();
+    }
+
+    const defaultAudioInputDevice = [
+      ...nextMediaDevices,
+      ...inputMediaDevices,
+    ].find(device => device.kind === "audioinput");
+
+    addSelectedInputMediaDevice(defaultAudioInputDevice);
+  }, [inputMediaDevices, fetchMediaDevices, addSelectedInputMediaDevice]);
+
   /**
    * Retrieves associated audio media stream tracks for the given MediaDevice.
    *
@@ -202,6 +219,8 @@ export default function InputMediaDevicesProvider({ children }) {
 
         testingAudioInputDevices,
         testingVideoInputDevices,
+
+        publishDefaultAudioInputDevice,
 
         publishableAudioInputControllerCollection,
         publishableVideoInputControllerCollection,
