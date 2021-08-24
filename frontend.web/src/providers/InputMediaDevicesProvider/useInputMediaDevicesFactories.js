@@ -39,6 +39,9 @@ export default function useInputMediaDevicesFactories({
     testingInputMediaDevices
   );
 
+  /**
+   * @return {Promise<void>}
+   */
   const destroyAllInputMediaDeviceFactories = useCallback(async () => {
     // IMPORTANT: Factories aren't looked up from the state here due to the
     // fact the state might not currently be written w/ this info depending on
@@ -69,11 +72,20 @@ export default function useInputMediaDevicesFactories({
     } else {
       (async () => {
         const { addedInputMediaDevices, removedInputMediaDevices } = (() => {
+          // IMPORTANT: The use of "true" for argument in getPrevious... calls
+          // below.  The previous issue was that if using "select" and "test"
+          // for the same device, then deactivating them, the device could not
+          // be activated again until both were enabled.  If using just an
+          // empty array, it's not possible to deactivate the device ever.  So
+          // the logic is, after obtaining the previous value one time, reset
+          // it back to the initial without changing the state, so that
+          // subsequent runs will have a fresh slate to work from.
+
           const previousSelectedInputMediaDevices =
-            getPreviousSelectedInputMediaDevices() || [];
+            getPreviousSelectedInputMediaDevices(true) || [];
 
           const previousTestingInputMediaDevices =
-            getPreviousTestingInputMediaDevices() || [];
+            getPreviousTestingInputMediaDevices(true) || [];
 
           const {
             added: addedInputMediaDevices,
@@ -98,14 +110,6 @@ export default function useInputMediaDevicesFactories({
             removedInputMediaDevices,
           };
         })();
-
-        // TODO: Remove
-        /*
-        console.log({
-          addedInputMediaDevices,
-          removedInputMediaDevices,
-        });
-        */
 
         const removedFactories = removedInputMediaDevices
           .map(async removedMediaDevice => {
@@ -163,6 +167,15 @@ export default function useInputMediaDevicesFactories({
             logger.error(err);
           }
         }
+
+        // TODO: Remove
+        console.log({
+          addedInputMediaDevices,
+          removedInputMediaDevices,
+
+          addedFactories,
+          removedFactories,
+        });
 
         // Set next factories state
         _setInputMediaDeviceFactories(prevFactories => {

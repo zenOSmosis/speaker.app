@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 
+const DEFAULT_REF_VALUE = null;
+
 /**
  * Adapted from:
  * @see https://usehooks.com/usePrevious
@@ -14,8 +16,8 @@ import { useCallback, useEffect, useRef } from "react";
 export default function usePrevious(value) {
   // The ref object is a generic container whose "current" property is mutable
   // and can hold any value, similar to an instance property on a class
-  const refPrev = useRef();
-  const ref = useRef();
+  const refPrev = useRef(DEFAULT_REF_VALUE);
+  const ref = useRef(DEFAULT_REF_VALUE);
   // Store current value in ref
   useEffect(() => {
     // The old value, before the update
@@ -28,7 +30,23 @@ export default function usePrevious(value) {
   }, [value]); // Only re-run if value changes
   // Return previous value (happens before update in useEffect above)
 
-  const getPreviousValue = useCallback(() => refPrev.current, []);
+  /**
+   * @param {boolean} resetPrevAfterRun? [default = false] If set, the previous
+   * value will be reset after the run. This functionality was put in place to
+   * resolve an issue w/ useInputMediaDevicesFactories incorrectly determining
+   * added / removed selected / testing devices across subsequent runs.
+   * @return {any} The previous value
+   */
+  const getPreviousValue = useCallback((resetPrevAfterRun = false) => {
+    const prev = refPrev.current;
+
+    if (resetPrevAfterRun) {
+      // Reset prev value to its initial state
+      refPrev.current = DEFAULT_REF_VALUE;
+    }
+
+    return prev;
+  }, []);
 
   return { getPreviousValue };
 }
