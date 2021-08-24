@@ -1,3 +1,4 @@
+import { PhantomCollection, EVT_UPDATED } from "phantom-core";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import * as routes from "./routes";
 
@@ -171,7 +172,7 @@ function useTieIns() {
     realmId,
     channelId,
 
-    // TODO: Re-intergrate
+    // TODO: Re-integrate
     setIsMuted,
     isMuted,
   } = useWebPhantomSessionContext();
@@ -183,7 +184,7 @@ function useTieIns() {
     // TODO: Add / remove tracks based on this collection
     publishableAudioInputControllerCollection,
 
-    publishDefaultAudioInputDevice,
+    getPublishableDefaultAudioInputDevice,
   } = useInputMediaDevicesContext();
 
   // Bind inputMediaDevices isOnCall state to isConnected
@@ -191,18 +192,67 @@ function useTieIns() {
     setIsInCall(isConnected);
 
     if (isConnected) {
-      publishDefaultAudioInputDevice();
+      getPublishableDefaultAudioInputDevice();
     }
-  }, [isConnected, setIsInCall, publishDefaultAudioInputDevice]);
+  }, [isConnected, setIsInCall, getPublishableDefaultAudioInputDevice]);
+
+  const inputDevicesMediaStream = useMemo(() => new MediaStream(), []);
+
+  useEffect(() => {
+    if (isConnected && zenRTCPeer) {
+      let prevChildren = [];
+
+      const _handleAudioInputCollectionUpdate = () => {
+        const nextChildren =
+          publishableAudioInputControllerCollection.getChildren();
+
+        const { added, removed } = PhantomCollection.getChildrenDiff(
+          prevChildren,
+          nextChildren
+        );
+
+        added.forEach(trackController =>
+          zenRTCPeer.addOutgoingMediaStreamTrack(
+            trackController.getOutputMediaStreamTrack(),
+            inputDevicesMediaStream
+          )
+        );
+
+        removed.forEach(trackController =>
+          zenRTCPeer.removeOutgoingMediaStreamTrack(
+            trackController.getOutputMediaStreamTrack(),
+            inputDevicesMediaStream
+          )
+        );
+      };
+
+      // Kick off initial sync
+      _handleAudioInputCollectionUpdate();
+
+      publishableAudioInputControllerCollection.on(
+        EVT_UPDATED,
+        _handleAudioInputCollectionUpdate
+      );
+
+      return function unmount() {
+        publishableAudioInputControllerCollection.off(
+          EVT_UPDATED,
+          _handleAudioInputCollectionUpdate
+        );
+      };
+    }
+  }, [
+    inputDevicesMediaStream,
+    isConnected,
+    zenRTCPeer,
+    publishableAudioInputControllerCollection,
+  ]);
 
   // TODO: Re-handle track muting (mute should affect all published audio track controllers from InputMediaDevicesProvider)
 
   // TODO: Show UI notification when call starts and we're muted, or there are no audio input devices selected
 
   // TODO: Automatically start audio devices if UI permissions are enabled
-
-  // TODO: Document
-  // const inputDevicesMediaStream = useMemo(() => new MediaStream(), []);
 
   // TODO: Refactor w/ publishableAudioInputControllerCollection support
   //

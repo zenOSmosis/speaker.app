@@ -70,14 +70,11 @@ export default function usePublishableTrackControllerCollections({
     inputMediaDevicesFactories,
   ]);
 
-  // TODO: Remove
-  console.log({
-    publishableAudioInputTrackControllers,
-    // publishableVideoInputTrackControllers,
-  });
-
   return {
     publishableAudioInputControllerCollection,
     publishableVideoInputControllerCollection,
+
+    publishableAudioInputTrackControllers,
+    publishableVideoInputTrackControllers,
   };
 }

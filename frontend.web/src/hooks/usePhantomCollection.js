@@ -1,17 +1,22 @@
 import { useEffect, useMemo, useRef } from "react";
-import useForceUpdate from "@hooks/useForceUpdate";
+import useObjectState from "./useObjectState";
 
 import { PhantomCollection, EVT_UPDATED } from "phantom-core";
 
 // TODO: Document
 export default function usePhantomCollection(
-  CollectionClass = PhantomCollection
+  collectionClass = PhantomCollection
 ) {
-  const forceUpdate = useForceUpdate();
+  const [{ children /* addedChildren, removedChildren */ }, setObjectState] =
+    useObjectState({
+      children: [],
+      // addedChildren: [],
+      // removedChildren: [],
+    });
 
   // Memoize so we don't run the risk of the following useMemo re-running if
   // the passed in value was not memoized
-  const refCollectionClass = useRef(CollectionClass);
+  const refCollectionClass = useRef(collectionClass);
 
   const collection = useMemo(() => {
     const collection = new refCollectionClass.current();
@@ -20,10 +25,29 @@ export default function usePhantomCollection(
       throw new TypeError("collection is not a PhantomCollection");
     }
 
-    collection.on(EVT_UPDATED, forceUpdate);
+    // let prevChildren = collection.getChildren();
+
+    const _handleUpdate = () => {
+      const nextChildren = collection.getChildren();
+
+      /*
+      const { added: addedChildren, removed: removedChildren } =
+        PhantomCollection.getUpdateDiff(prevChildren, nextChildren);
+
+      prevChildren = nextChildren;
+      */
+
+      setObjectState({
+        children: nextChildren,
+        // addedChildren,
+        // removedChildren,
+      });
+    };
+
+    collection.on(EVT_UPDATED, _handleUpdate);
 
     return collection;
-  }, [forceUpdate]);
+  }, [setObjectState]);
 
   // Auto-destruct collection when unmount
   useEffect(() => {
@@ -36,6 +60,11 @@ export default function usePhantomCollection(
 
   return {
     collection,
-    children: collection.getChildren(),
+    children,
+
+    /*
+    addedChildren,
+    removedChildren,
+    */
   };
 }

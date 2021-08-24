@@ -1,5 +1,11 @@
 import { logger } from "phantom-core";
-import React, { createContext, useCallback, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import useInputMediaDevicesPermissions from "./useInputMediaDevicesPermissions";
 import useInputMediaDevicesCache from "./useInputMediaDevicesCache";
@@ -147,6 +153,9 @@ export default function InputMediaDevicesProvider({ children }) {
   const {
     publishableAudioInputControllerCollection,
     publishableVideoInputControllerCollection,
+
+    publishableAudioInputTrackControllers,
+    publishableVideoInputTrackControllers,
   } = usePublishableTrackControllerCollections({
     isInCall,
     isAudioSelectorRendered,
@@ -157,20 +166,23 @@ export default function InputMediaDevicesProvider({ children }) {
 
   // TODO: Rename and refactor
   // Temporarily here to just get mic audio working again when call starts
-  const publishDefaultAudioInputDevice = useCallback(async () => {
+  // IMPORANT: useRef is used here to fix issue with mic continuously re-starting
+  const refInputMediaDevices = useRef(inputMediaDevices);
+  refInputMediaDevices.current = inputMediaDevices;
+  const getPublishableDefaultAudioInputDevice = useCallback(async () => {
     let nextMediaDevices = [];
 
-    if (!inputMediaDevices.length) {
+    if (!refInputMediaDevices.current.length) {
       nextMediaDevices = await fetchMediaDevices();
     }
 
     const defaultAudioInputDevice = [
       ...nextMediaDevices,
-      ...inputMediaDevices,
+      ...refInputMediaDevices.current,
     ].find(device => device.kind === "audioinput");
 
     addSelectedInputMediaDevice(defaultAudioInputDevice);
-  }, [inputMediaDevices, fetchMediaDevices, addSelectedInputMediaDevice]);
+  }, [fetchMediaDevices, addSelectedInputMediaDevice]);
 
   /**
    * Retrieves associated audio media stream tracks for the given MediaDevice.
@@ -220,10 +232,13 @@ export default function InputMediaDevicesProvider({ children }) {
         testingAudioInputDevices,
         testingVideoInputDevices,
 
-        publishDefaultAudioInputDevice,
+        getPublishableDefaultAudioInputDevice,
 
         publishableAudioInputControllerCollection,
         publishableVideoInputControllerCollection,
+
+        publishableAudioInputTrackControllers,
+        publishableVideoInputTrackControllers,
 
         getAudioInputDeviceMediaStreamTracks,
 
