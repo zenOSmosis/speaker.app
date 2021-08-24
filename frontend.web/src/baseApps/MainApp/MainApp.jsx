@@ -196,7 +196,10 @@ function useTieIns() {
     }
   }, [isConnected, setIsInCall, getPublishableDefaultAudioInputDevice]);
 
-  const inputDevicesMediaStream = useMemo(() => new MediaStream(), []);
+  const inputDevicesMediaStream = useMemo(
+    () => publishableAudioInputControllerCollection.getOutputMediaStream(),
+    [publishableAudioInputControllerCollection]
+  );
 
   useEffect(() => {
     if (isConnected && zenRTCPeer) {
