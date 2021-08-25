@@ -55,9 +55,6 @@ export default function AppFooter({ className }) {
                         : "white",
                     }}
                   />
-                  {
-                    // TODO: Use outgoing mic audio level
-                  }
                   <AudioMediaStreamTrackLevelMeter
                     mediaStreamTracks={(() => {
                       const mediaStream =
@@ -98,9 +95,6 @@ export default function AppFooter({ className }) {
             <div className={styles["content-wrap"]}>
               <ButtonTransparent onClick={toggleSidebar}>
                 <div>
-                  {
-                    // TODO: Change icon to blue back arrow if not on home menu screen
-                  }
                   {sidebarMenuSelectedIdx === -1 ? (
                     <SidebarIcon
                       className={styles["icon"]}

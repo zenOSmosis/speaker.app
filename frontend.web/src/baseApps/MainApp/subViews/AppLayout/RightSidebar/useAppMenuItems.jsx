@@ -205,7 +205,6 @@ export default function useAppMenuItems() {
       onClick: toggleMute,
       isDisabled: isMicOff,
       buttonView: () => (
-        // TODO: Handle muting detection off of media devices context...
         <div>
           <div>
             <MicrophoneIcon
@@ -221,9 +220,6 @@ export default function useAppMenuItems() {
                   : "white",
               }}
             />
-            {
-              // TODO: Use outgoing mic audio level
-            }
             <AudioMediaStreamTrackLevelMeter
               mediaStreamTracks={(() => {
                 const mediaStream =
@@ -257,7 +253,7 @@ export default function useAppMenuItems() {
         </div>
       ),
     }),
-    [publishableAudioInputControllerCollection, isMuted, toggleMute]
+    [publishableAudioInputControllerCollection, isMuted, isMicOff, toggleMute]
   );
 
   /*
