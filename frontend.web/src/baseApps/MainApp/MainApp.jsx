@@ -266,65 +266,6 @@ function useTieIns() {
     setIsMuted,
   ]);
 
-  // TODO: Re-handle track muting (mute should affect all published audio track controllers from InputMediaDevicesProvider)
-
-  // TODO: Show UI notification when call starts and we're muted, or there are no audio input devices selected
-
-  // TODO: Automatically start audio devices if UI permissions are enabled
-
-  // TODO: Refactor w/ publishableAudioInputControllerCollection support
-  //
-  // Sync publishableInputMediaDeviceTrackControllers with zenRTCPeer instance, if connected
-  //
-  // This handles broadcasting of microphone / other media device inputs
-  /*
-  useEffect(() => {
-    if (isConnected) {
-      // @type {MediaStreamTrackControllerBase[]}
-      const prev =
-        getPreviousPublishableInputMediaDeviceTrackControllers() || [];
-
-      // @type {MediaStreamTrackControllerBase[]}
-      const removed = prev.filter(
-        predicate =>
-          !publishableInputMediaDeviceTrackControllers.includes(predicate)
-      );
-
-      // NOTE: Publishing duplicates is okay, as only the first is used
-      // internally
-      publishableInputMediaDeviceTrackControllers.forEach(controller =>
-        zenRTCPeer.addOutgoingMediaStreamTrack(
-          controller.getOutputMediaStreamTrack(),
-          audioInputDevicesMediaStream
-        )
-      );
-
-      // Unpublish removed tracks; While this works for automatically
-      // destructed tracks, this handles "unselected" tracks which may be
-      // currently in a "test" state via InputMediaDevicesProvider /
-      // AudioInputDeviceSelector
-      removed.forEach(controller => {
-        const track = controller.getOutputMediaStreamTrack();
-
-        // NOTE: track might not be available on destroyed controller, so check
-        // for its presence first
-        if (track) {
-          zenRTCPeer.removeOutgoingMediaStreamTrack(
-            track,
-            audioInputDevicesMediaStream
-          );
-        }
-      });
-    }
-  }, [
-    audioInputDevicesMediaStream,
-    isConnected,
-    zenRTCPeer,
-    getPreviousPublishableInputMediaDeviceTrackControllers,
-    publishableInputMediaDeviceTrackControllers,
-  ]);
-  */
-
   const { screenCaptureMediaStreams, stopScreenCapture } =
     useScreenCaptureContext();
 
