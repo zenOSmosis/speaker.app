@@ -110,8 +110,8 @@ export default function InputMediaDevicesProvider({ children }) {
   // TODO: Map selected / testing states to cache
   // TODO: Map initial cache values to selected states
   const {
-    defaultAudioInputDevices,
-    setDefaultAudioInputDevices,
+    // defaultAudioInputDevices,
+    // setDefaultAudioInputDevices,
 
     setAudioInputDeviceConstraints,
     getAudioInputDeviceConstraints,

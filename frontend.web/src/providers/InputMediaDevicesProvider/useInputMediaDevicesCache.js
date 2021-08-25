@@ -138,10 +138,12 @@ export default function useInputMediaDevicesCache({
   );
 
   // TODO: Implement
+  /*
   const _getMatchedCachedDevice = useCallback(mediaDeviceInfo => {
     // TODO: Lookup existing devices from cache
     // TODO: If no match, add cached device and return it
   }, []);
+  */
 
   // TODO: Document
   const _setCachedInputMediaDeviceProps = useCallback(

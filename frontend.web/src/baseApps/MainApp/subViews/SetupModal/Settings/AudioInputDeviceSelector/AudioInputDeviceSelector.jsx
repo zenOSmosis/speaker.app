@@ -79,16 +79,6 @@ export default function AudioInputDeviceSelector() {
     handleFetchInputMediaDevices();
   }, [handleFetchInputMediaDevices]);
 
-  // TODO: Reimplement
-  // Automatically select default audio input device
-  /*
-  useEffect(() => {
-    if (!defaultAudioInputDevice && audioInputDevices.length) {
-      setDefaultAudioInputDevice(audioInputDevices[0]);
-    }
-  }, [audioInputDevices, defaultAudioInputDevice, setDefaultAudioInputDevice]);
-  */
-
   // FIXME: This fixes issue where MediaStreamTrack might not be immediately
   // available after selecting a new device but might not be necessary if
   // forcing a new render after relevant track controllers have been changed
