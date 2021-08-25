@@ -187,6 +187,11 @@ function useTieIns() {
     getPublishableDefaultAudioInputDevice,
   } = useInputMediaDevicesContext();
 
+  // Sync UI is-muted state to audio input controller collection
+  useEffect(() => {
+    publishableAudioInputControllerCollection.setIsMuted(isMuted);
+  }, [isMuted, publishableAudioInputControllerCollection]);
+
   // Bind inputMediaDevices isOnCall state to isConnected
   useEffect(() => {
     setIsInCall(isConnected);
@@ -196,14 +201,20 @@ function useTieIns() {
     }
   }, [isConnected, setIsInCall, getPublishableDefaultAudioInputDevice]);
 
-  const inputDevicesMediaStream = useMemo(
+  /**
+   * The collection-based MediaStream which all audio input devices share.
+   *
+   * @type {MediaStream}
+   **/
+  const audioInputDevicesMediaStream = useMemo(
     () => publishableAudioInputControllerCollection.getOutputMediaStream(),
     [publishableAudioInputControllerCollection]
   );
 
   useEffect(() => {
     if (isConnected && zenRTCPeer) {
-      let prevChildren = [];
+      let prevChildren =
+        publishableAudioInputControllerCollection.getChildren();
 
       const _handleAudioInputCollectionUpdate = () => {
         const nextChildren =
@@ -217,16 +228,19 @@ function useTieIns() {
         added.forEach(trackController =>
           zenRTCPeer.addOutgoingMediaStreamTrack(
             trackController.getOutputMediaStreamTrack(),
-            inputDevicesMediaStream
+            audioInputDevicesMediaStream
           )
         );
 
         removed.forEach(trackController =>
           zenRTCPeer.removeOutgoingMediaStreamTrack(
             trackController.getOutputMediaStreamTrack(),
-            inputDevicesMediaStream
+            audioInputDevicesMediaStream
           )
         );
+
+        // Sync collection is-muted state to UI
+        setIsMuted(publishableAudioInputControllerCollection.getIsMuted());
       };
 
       // Kick off initial sync
@@ -245,10 +259,11 @@ function useTieIns() {
       };
     }
   }, [
-    inputDevicesMediaStream,
+    audioInputDevicesMediaStream,
     isConnected,
     zenRTCPeer,
     publishableAudioInputControllerCollection,
+    setIsMuted,
   ]);
 
   // TODO: Re-handle track muting (mute should affect all published audio track controllers from InputMediaDevicesProvider)
@@ -280,7 +295,7 @@ function useTieIns() {
       publishableInputMediaDeviceTrackControllers.forEach(controller =>
         zenRTCPeer.addOutgoingMediaStreamTrack(
           controller.getOutputMediaStreamTrack(),
-          inputDevicesMediaStream
+          audioInputDevicesMediaStream
         )
       );
 
@@ -296,13 +311,13 @@ function useTieIns() {
         if (track) {
           zenRTCPeer.removeOutgoingMediaStreamTrack(
             track,
-            inputDevicesMediaStream
+            audioInputDevicesMediaStream
           );
         }
       });
     }
   }, [
-    inputDevicesMediaStream,
+    audioInputDevicesMediaStream,
     isConnected,
     zenRTCPeer,
     getPreviousPublishableInputMediaDeviceTrackControllers,
