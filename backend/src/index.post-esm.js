@@ -3,8 +3,7 @@
  *
  * @see https://github.com/elad/node-cluster-socket.io
  */
-
-import path from "path";
+import "./node.console";
 import cluster from "cluster";
 import express from "express";
 import httpProxy from "http-proxy";
@@ -15,40 +14,6 @@ import socketIoRedis from "socket.io-redis";
 import { cpus } from "os";
 import SocketController from "./SocketController";
 import NetworkController from "./NetworkController";
-
-/**
- * Node.js console debugger.
- *
- * Provides support for additional log method with line number support.
- *
- * NOTE: This may be replaced w/ something else.  It is here to make it easier
- * to debug.
- *
- * @see https://stackoverflow.com/questions/45395369/how-to-get-console-log-line-numbers-shown-in-nodejs/60305881#60305881
- */
-(() => {
-  ["debug", "log", "warn", "error"].forEach(methodName => {
-    const originalLoggingMethod = console[methodName];
-    console[methodName] = (firstArgument, ...otherArguments) => {
-      const originalPrepareStackTrace = Error.prepareStackTrace;
-      Error.prepareStackTrace = (_, stack) => stack;
-      const callee = new Error().stack[1];
-      Error.prepareStackTrace = originalPrepareStackTrace;
-      const relativeFileName = path.relative(
-        process.cwd(),
-        callee.getFileName()
-      );
-      const prefix = `${relativeFileName}:${callee.getLineNumber()}:`;
-      if (typeof firstArgument === "string") {
-        originalLoggingMethod(prefix + " " + firstArgument, ...otherArguments);
-      } else {
-        originalLoggingMethod(prefix, firstArgument, ...otherArguments);
-      }
-    };
-  });
-
-  console.debug("Initialized console override debugger");
-})();
 
 const lenCPUs = cpus().length;
 
@@ -196,7 +161,11 @@ if (cluster.isMaster) {
     })();
   })();
 
-  // React frontend
+  // Proxy the React frontend through the backend
+  //
+  // NOTE: The development /sock-js wss route for hot reloading is handled via
+  // the dev_ssl_proxy nginx server (located in the /dev_ssl_proxy directory
+  // of the project)
   (() => {
     const proxyServer = httpProxy.createProxyServer();
 

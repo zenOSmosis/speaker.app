@@ -53,6 +53,7 @@ import {
 // import useZenRTCContext from "@hooks/useZenRTCContext";
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
+import useScreenCaptureContext from "@hooks/useScreenCaptureContext";
 
 import { AudioMediaStreamTrackLevelMeter } from "@components/AudioLevelMeter";
 
@@ -93,12 +94,11 @@ export default function useAppMenuItems() {
   //
   // There might be an easier way of accomplishing this
 
-  const {
-    micAudioController,
-    isScreenSharingSupported,
-    isScreenSharing,
-    toggleScreenCapture,
-  } = useInputMediaDevicesContext();
+  const { publishableAudioInputControllerCollection } =
+    useInputMediaDevicesContext();
+
+  const { isScreenSharingSupported, isScreenSharing, toggleScreenCapture } =
+    useScreenCaptureContext();
 
   const menuItem__Profile = useMemo(
     () => ({
@@ -190,21 +190,21 @@ export default function useAppMenuItems() {
     [isHostOnline, isConnected, openRoute, realmId, channelId]
   );
 
-  const isMuted = micAudioController && micAudioController.getIsMuted();
+  const isMicOff =
+    publishableAudioInputControllerCollection.getChildren().length === 0;
+  const isMuted = publishableAudioInputControllerCollection.getIsMuted();
+
   const toggleMute = useCallback(
-    () => micAudioController && micAudioController.toggleMute(),
-    [micAudioController]
+    () => publishableAudioInputControllerCollection.toggleMute(),
+    [publishableAudioInputControllerCollection]
   );
 
   const menuItem__Muting = useMemo(
     () => ({
-      name:
-        (!micAudioController && "Mic Off") ||
-        `${isMuted ? "Unmute" : "Mute"} Mic`,
+      name: (isMicOff && "Mic Off") || `${isMuted ? "Unmute" : "Mute"} Mic`,
       onClick: toggleMute,
-      isDisabled: !micAudioController,
+      isDisabled: isMicOff,
       buttonView: () => (
-        // TODO: Handle muting detection off of media devices context...
         <div>
           <div>
             <MicrophoneIcon
@@ -213,25 +213,21 @@ export default function useAppMenuItems() {
                 marginLeft: 7,
                 verticalAlign: "middle",
                 fontSize: "2.8em",
-                color: !micAudioController
+                color: isMicOff
                   ? "gray"
-                  : !micAudioController.getIsMuted()
+                  : !publishableAudioInputControllerCollection.getIsMuted()
                   ? "red"
                   : "white",
               }}
             />
-            {
-              // TODO: Use outgoing mic audio level
-            }
             <AudioMediaStreamTrackLevelMeter
-              mediaStreamTrack={(() => {
+              mediaStreamTracks={(() => {
                 const mediaStream =
-                  micAudioController &&
-                  micAudioController.getOutputMediaStream();
+                  publishableAudioInputControllerCollection &&
+                  publishableAudioInputControllerCollection.getOutputMediaStream();
 
                 if (mediaStream) {
-                  // TODO: Make this more efficient
-                  return mediaStream.getAudioTracks()[0];
+                  return mediaStream.getAudioTracks();
                 }
               })()}
               style={{
@@ -248,16 +244,16 @@ export default function useAppMenuItems() {
               whiteSpace: "nowrap",
             }}
           >{`Mic ${
-            !micAudioController
+            !publishableAudioInputControllerCollection
               ? "Off"
-              : !micAudioController.getIsMuted()
+              : !publishableAudioInputControllerCollection.getIsMuted()
               ? "Active"
               : "Muted"
           }`}</div>
         </div>
       ),
     }),
-    [micAudioController, isMuted, toggleMute]
+    [publishableAudioInputControllerCollection, isMuted, isMicOff, toggleMute]
   );
 
   /*

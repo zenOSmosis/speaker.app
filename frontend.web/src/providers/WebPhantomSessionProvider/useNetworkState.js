@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { EVT_UPDATED } from "sync-object";
 
 // TODO: Document structure
+// IMPORTANT: This hook should be treated as a singleton (provider based).
 export default function useNetworkState(zenRTCPeer) {
   const [participants, _setParticipants] = useState([]);
   const [networkData, setNetworkData] = useState({});

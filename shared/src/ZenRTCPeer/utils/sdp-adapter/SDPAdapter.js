@@ -24,6 +24,9 @@ export default class SDPAdapter {
    * Stack Overflow: How to set up SDP for high-quality Opus audio
    * @see https://stackoverflow.com/questions/33649283/how-to-set-up-sdp-for-high-quality-opus-audio
    *
+   * MDN: Codecs used by WebRTC
+   * @see https://developer.mozilla.org/en-US/docs/Web/Media/Formats/WebRTC_codecs
+   *
    * @param {string} sdp
    * @param {string[]} preferredAudioCodecs? [default=["opus"]]
    * @param {number} maxAverageBitrate? [default=510000] Currently only affects
@@ -36,13 +39,13 @@ export default class SDPAdapter {
     maxAverageBitrate = 510000
   ) {
     // Normalize the array w/ uppercase entries
-    preferredAudioCodecs = preferredAudioCodecs.map((codec) =>
+    preferredAudioCodecs = preferredAudioCodecs.map(codec =>
       codec.toUpperCase()
     );
 
     const parsedSDP = sdpTransform.parse(sdp);
 
-    parsedSDP.media = parsedSDP.media.map((media) => {
+    parsedSDP.media = parsedSDP.media.map(media => {
       if (media.type === "audio") {
         const preferredPayloads = [];
 
@@ -62,7 +65,7 @@ export default class SDPAdapter {
 
         media.fmtp = media.fmtp
           .filter(({ payload }) => preferredPayloads.includes(payload))
-          .map((fmtp) => {
+          .map(fmtp => {
             // stereo=1;
             // @see https://stackoverflow.com/questions/33649283/how-to-set-up-sdp-for-high-quality-opus-audio
             // @see https://tools.ietf.org/html/rfc7587

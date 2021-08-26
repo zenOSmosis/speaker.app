@@ -1,6 +1,7 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
+  "name": "speaker.app-backend",
+  "version": "1.0.1-alpha",
+  "private": true,
   "description": "",
   "main": "./src",
   "scripts": {
@@ -12,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
+    "dayjs": "^1.10.6",
     "device-detector-js": "^2.2.9",
     "esm": "^3.2.25",
     "eth-crypto": "^1.9.0",

@@ -33,7 +33,13 @@ import { parseUserAgent } from "./device";
  * @param {Object} socket
  */
 export default function initSocketAPI(io, socket) {
-  console.log(`Initializing socket API with socket id: ${socket.id}`);
+  console.log(`HELLO to socket id: ${socket.id}`);
+
+  // Per-socket SocketAPI task number
+  let _taskNumberIdx = -1;
+
+  // Per-socket total number of running tasks
+  let totalRunningTasks = 0;
 
   /**
    * Wrapper around inbound Socket.io events which provides a common interface
@@ -45,8 +51,15 @@ export default function initSocketAPI(io, socket) {
   const addSocketAPIRoute = (routeName, routeHandler) => {
     // Socket.io event from demo.frontend
     //
-    // TODO: Use single socket event for all routes
+    // TODO: Use single socket event for all SocketAPI routes
     socket.on(routeName, async (clientArgs = {}, ack) => {
+      ++_taskNumberIdx;
+
+      ++totalRunningTasks;
+
+      // Fix issue where same _taskNumberIdx was reported for concurrent tasks
+      const taskNumber = _taskNumberIdx;
+
       if (!ack) {
         ack = () => null;
       }
@@ -56,9 +69,8 @@ export default function initSocketAPI(io, socket) {
 
       try {
         console.log(
-          `Started SocketAPI route "${routeName}" task with socket id "${socket.id}"`
+          `"${socket.id}" SocketAPI task ${taskNumber} (${routeName}) started [${totalRunningTasks} concurrent]`
         );
-
         // Run the task associated w/ the API route
         resp = await routeHandler(clientArgs, {
           io,
@@ -82,15 +94,23 @@ export default function initSocketAPI(io, socket) {
         // Response w/ tuple-like, [error, response] signature
         ack([errMessage, resp]);
 
-        console.log(
-          `Task completed for SocketAPI route "${routeName}" with socket id "${socket.id}"`
+        // TODO: Measure time spent performing task?
+        // @see https://nodejs.org/api/perf_hooks.html#perf_hooks_performance_measurement_apis
+
+        // Deincrement total running tasks because this task has ended
+        --totalRunningTasks;
+
+        console[!errMessage ? "log" : "error"](
+          `"${socket.id}" SocketAPI task ${taskNumber} (${routeName}) ended ${
+            !errMessage ? "successfully" : "unsuccessfully"
+          } [${totalRunningTasks} concurrent]`
         );
       }
     });
   };
 
   // Loopback - Whatever is sent is returned
-  addSocketAPIRoute(SOCKET_API_ROUTE_LOOPBACK, (data) => {
+  addSocketAPIRoute(SOCKET_API_ROUTE_LOOPBACK, data => {
     return data;
   });
 
@@ -138,6 +158,6 @@ export default function initSocketAPI(io, socket) {
   addSocketAPIRoute(SOCKET_API_ROUTE_FETCH_DEVICE_DETECTION, parseUserAgent);
 
   socket.on("disconnect", () => {
-    console.log(`De-initializing socket API with socket id: ${socket.id}`);
+    console.log(`BYE to socket id: ${socket.id}`);
   });
 }

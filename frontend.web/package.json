@@ -1,6 +1,6 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "speaker.app-frontend",
+  "version": "1.0.1-alpha",
   "private": true,
   "dependencies": {
     "@shelf/fast-chunk-string": "^1.1.1",
@@ -38,7 +38,7 @@
     "webrtc-peer": "github:zenosmosis/webrtc-peer"
   },
   "scripts": {
-    "start": "REACT_APP_GIT_HASH=$(git rev-parse --short=5 HEAD) react-app-rewired start",
+    "start": "REACT_APP_GIT_HASH=$(git rev-parse --short=5 HEAD) BROWSER=none react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "test-shared": "cd src/shared && npm run test",

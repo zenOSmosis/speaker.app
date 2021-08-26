@@ -846,6 +846,11 @@ export default class ZenRTCPeer extends PhantomCore {
     }
 
     try {
+      // TODO: Should the mediaStream.addTrack and addMediaStreamToList calls
+      // happen after this._webrtcPeer.addTrack happens, instead?  The peer
+      // will raise an error when trying to add a duplicate track to a stream,
+      // in which case that error could make the other states out of sync
+
       // Add track to local representation of stream
       mediaStream.addTrack(mediaStreamTrack);
 

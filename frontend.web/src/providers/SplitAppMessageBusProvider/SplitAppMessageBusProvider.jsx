@@ -3,7 +3,7 @@ import React, { useEffect, useMemo } from "react";
 import SplitAppMessageBus, {
   ROLE_MAIN_APP,
   ROLE_TRANSCODER_APP,
-} from "./SplitAppMessageBus";
+} from "./classes/SplitAppMessageBus";
 
 export const SplitAppMessageBusContext = React.createContext({});
 
@@ -23,10 +23,12 @@ SplitAppMessageBus.propTypes = {
   },
 };
 
+// TODO: Document
 export default function SplitAppMessageBusProvider({ role, children }) {
-  const splitAppMessageBus = useMemo(() => new SplitAppMessageBus(role), [
-    role,
-  ]);
+  const splitAppMessageBus = useMemo(
+    () => new SplitAppMessageBus(role),
+    [role]
+  );
 
   useEffect(() => {
     return function unmount() {

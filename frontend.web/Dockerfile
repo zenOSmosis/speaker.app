@@ -52,4 +52,6 @@ RUN if [ "${BUILD_ENV}" = "production" ] ; then \
 
 EXPOSE 3000
 
+# NOTE: The -s switch rewrites all not-found requests to \`index.html\`
+# @see https://github.com/vercel/serve/blob/main/bin/serve.js
 CMD serve -l 3000 -s build

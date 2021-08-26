@@ -37,16 +37,6 @@ export {
 
 // IMPORTANT: Not to be used w/ transcoder peer
 export default class WebZenRTCPeer extends ZenRTCPeer {
-  /**
-   * Called by instance before connecting.
-   *
-   * @param {WebZenRTCPeer} zenRTCPeer
-   * @return {Promise<MediaStream | void>}
-   */
-  static async beforeConnect(zenRTCPeer) {
-    throw new Error("beforeConnect must be overridden");
-  }
-
   constructor({ realmId, channelId, socket, ...rest }) {
     // Attach WebIPCMessageBroker instance to super
     super({
@@ -81,17 +71,6 @@ export default class WebZenRTCPeer extends ZenRTCPeer {
         mediaStreamTrack.stop();
       }
     });
-  }
-
-  /**
-   * Connects to the WebRTC server.
-   *
-   * @return {Promise<void>}
-   */
-  async connect() {
-    const outgoingMediaStream = await WebZenRTCPeer.beforeConnect(this);
-
-    await super.connect(outgoingMediaStream);
   }
 
   async disconnect() {

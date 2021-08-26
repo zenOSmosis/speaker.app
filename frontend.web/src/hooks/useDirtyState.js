@@ -54,7 +54,7 @@ export default function useDirtyState(defaultState = {}) {
    * Sets new clean state (i.e. "saved")
    */
   const handleSetCleanState = useCallback(
-    (state) => {
+    state => {
       setCleanState(state);
       setDirtyState(state);
     },
@@ -64,7 +64,10 @@ export default function useDirtyState(defaultState = {}) {
   return {
     state: dirtyState,
     setState: setDirtyState,
+
+    // TODO: Don't expose?
     setCleanState: handleSetCleanState,
+
     isDirty,
     save,
     cancel,

@@ -1,20 +1,43 @@
-import React, { useEffect, useState } from "react";
-import ButtonTransparent from "@components/ButtonTransparent";
+import React, { useCallback, useEffect, useState } from "react";
 import Center from "@components/Center";
 import Layout, { Content, Footer } from "@components/Layout";
-import LabeledSwitch from "@components/labeled/LabeledSwitch";
+import Section from "@components/Section";
 import Full from "@components/Full";
+import StaggeredWaveLoading from "@components/StaggeredWaveLoading/StaggeredWaveLoading";
+
+import ReloadIcon from "@icons/ReloadIcon";
+
+import AudioInputDevice from "./AudioInputDevice";
 
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
-
-import styles from "./AudioInputDeviceSelector.module.css";
+import useForceUpdate from "@hooks/useForceUpdate";
 
 export default function AudioInputDeviceSelector() {
-  const [mediaDevices, setMediaDevices] = useState([]);
-  const [mediaDevicesError, setMediaDevicesError] = useState(null);
+  const [isFetchingInputMediaDevices, setIsFetchingInputMediaDevices] =
+    useState(false);
+  const [audioInputDevicesError, setAudioInputMediaDevicesError] =
+    useState(null);
 
   const {
-    fetchMediaInputDevices,
+    fetchMediaDevices: _fetchMediaDevices,
+    audioInputDevices,
+
+    // captureSpecificMediaDevice,
+    // uncaptureSpecificMediaDevice,
+
+    addSelectedInputMediaDevice,
+    removeSelectedInputMediaDevice,
+
+    addTestingInputMediaDevice,
+    removeTestingInputMediaDevice,
+
+    selectedAudioInputDevices,
+    testingAudioInputDevices,
+
+    getAudioInputDeviceMediaStreamTracks,
+
+    // TODO: Clean up unused props
+    /*
     defaultAudioInputDevice,
     setDefaultAudioInputDevice,
     defaultAudioNoiseSuppression,
@@ -23,25 +46,62 @@ export default function AudioInputDeviceSelector() {
     setDefaultAudioEchoCancellation,
     defaultAudioAutoGainControl,
     setDefaultAudioAutoGainControl,
+    */
+    setIsAudioSelectorRendered,
   } = useInputMediaDevicesContext();
 
+  // Enable audio devices to be tested while not necessarily on a call
   useEffect(() => {
-    fetchMediaInputDevices()
-      .then(mediaDevices =>
-        setMediaDevices(
-          mediaDevices.filter(({ kind }) => kind === "audioinput")
-        )
-      )
+    setIsAudioSelectorRendered(true);
+
+    return function unmount() {
+      setIsAudioSelectorRendered(false);
+    };
+  }, [setIsAudioSelectorRendered]);
+
+  const handleFetchInputMediaDevices = useCallback(() => {
+    setIsFetchingInputMediaDevices(true);
+    setAudioInputMediaDevicesError(null);
+
+    _fetchMediaDevices()
       .catch(err => {
         console.error(err);
 
-        setMediaDevicesError(err);
+        setAudioInputMediaDevicesError(err);
+      })
+      .finally(() => {
+        setIsFetchingInputMediaDevices(false);
       });
-  }, [fetchMediaInputDevices]);
+  }, [_fetchMediaDevices]);
 
-  // TODO: After clicking on button, show view where echo cancellation / noise reduction can be used
+  // Automatically fetch input media devices upon first load
+  useEffect(() => {
+    handleFetchInputMediaDevices();
+  }, [handleFetchInputMediaDevices]);
 
-  if (mediaDevicesError) {
+  // FIXME: This fixes issue where MediaStreamTrack might not be immediately
+  // available after selecting a new device but might not be necessary if
+  // forcing a new render after relevant track controllers have been changed
+  const forceUpdate = useForceUpdate();
+  useEffect(() => {
+    if (
+      audioInputDevices.length &&
+      (selectedAudioInputDevices.length || testingAudioInputDevices.length)
+    ) {
+      const to = setTimeout(forceUpdate, 100);
+
+      return function unmount() {
+        clearTimeout(to);
+      };
+    }
+  }, [
+    audioInputDevices,
+    selectedAudioInputDevices,
+    testingAudioInputDevices,
+    forceUpdate,
+  ]);
+
+  if (audioInputDevicesError) {
     return (
       <Center style={{ fontWeight: "bold" }}>
         Cannot obtain media devices. Do you have permissions blocked to access
@@ -53,111 +113,110 @@ export default function AudioInputDeviceSelector() {
   return (
     <Full>
       <Layout>
-        <Content style={{ overflow: "auto" }}>
-          <div style={{ textAlign: "left" }}>
-            <h1>Default Audio Input Device</h1>
-            <p>Choose default audio device when starting new calls.</p>
-            <p>
-              Default audio device selection may not persist accurately when
-              starting new sessions.
-            </p>
-          </div>
-
-          <div className={styles["audio-input-device-selector"]}>
-            {mediaDevices.map((device, idx) => (
-              <div key={idx} className={styles["button-wrap"]}>
-                <ButtonTransparent
-                  style={{ width: "100%", height: "100%" }}
-                  onClick={() => setDefaultAudioInputDevice(device)}
+        <Content
+          style={{
+            // Don't show scrollbar when fetching
+            overflow: !isFetchingInputMediaDevices ? "auto" : "inherit",
+          }}
+        >
+          <Section>
+            <div style={{ textAlign: "left" }}>
+              <h1>Audio Input Devices</h1>
+              <div className="note" style={{ marginBottom: 8 }}>
+                Multiple devices can be streamed concurrently (except in
+                Firefox). If plugging in a new audio input device and it does
+                not display in this list, press{" "}
+                <button
+                  onClick={handleFetchInputMediaDevices}
+                  disabled={isFetchingInputMediaDevices}
                 >
-                  <div>Kind: {device.kind}</div>
-
-                  <div>Label: {device.label}</div>
-
-                  {!defaultAudioInputDevice && idx === 0 ? (
-                    <div className={styles["selected-triangle"]} />
-                  ) : (
-                    defaultAudioInputDevice &&
-                    defaultAudioInputDevice.deviceId === device.deviceId && (
-                      <div className={styles["selected-triangle"]} />
-                    )
-                  )}
-                </ButtonTransparent>
+                  Refresh <ReloadIcon />
+                </button>
+                .
               </div>
-            ))}
-          </div>
+            </div>
+
+            {isFetchingInputMediaDevices && !audioInputDevices.length ? (
+              <Center>
+                <div>Fetching audio input devices</div>
+                <div>
+                  <StaggeredWaveLoading />
+                </div>
+              </Center>
+            ) : (
+              <div>
+                {audioInputDevices.map((device, idx) => {
+                  const isSelected = selectedAudioInputDevices.includes(device);
+                  const isTesting = testingAudioInputDevices.includes(device);
+
+                  // TODO: Implement
+                  const isAudioNoiseSuppression = true;
+                  const setIsAudioNoiseSuppression = () =>
+                    alert("TODO: Implement");
+                  const isAudioEchoCancellation = true;
+                  const setIsAudioEchoCancellation = () =>
+                    alert("TODO: Implement");
+                  const isAudioAutoGainControl = true;
+                  const setIsAudioAutoGainControl = () =>
+                    alert("TODO: Implement");
+
+                  // TODO: Match from captureMediaDevice.getMediaDeviceTrackControllers
+                  const mediaStreamTracks =
+                    getAudioInputDeviceMediaStreamTracks(device);
+
+                  return (
+                    <AudioInputDevice
+                      key={idx}
+                      device={device}
+                      isSelected={isSelected}
+                      onToggleSelect={() =>
+                        // TODO: Use callback function instead
+                        !isSelected
+                          ? addSelectedInputMediaDevice(device)
+                          : removeSelectedInputMediaDevice(device)
+                      }
+                      isTesting={isTesting}
+                      onToggleTest={() =>
+                        // TODO: Use callback function instead
+                        !isTesting
+                          ? addTestingInputMediaDevice(device)
+                          : removeTestingInputMediaDevice(device)
+                      }
+                      isAudioNoiseSuppression={isAudioNoiseSuppression}
+                      setIsAudioNoiseSuppression={setIsAudioNoiseSuppression}
+                      isAudioEchoCancellation={isAudioEchoCancellation}
+                      setIsAudioEchoCancellation={setIsAudioEchoCancellation}
+                      isAudioAutoGainControl={isAudioAutoGainControl}
+                      setIsAudioAutoGainControl={setIsAudioAutoGainControl}
+                      mediaStreamTracks={mediaStreamTracks}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </Section>
         </Content>
         <Footer style={{ backgroundColor: "rgba(0,0,0,.2)" }}>
-          <div style={{ display: "inline-block" }}>
-            <div className="note" style={{ marginBottom: 8 }}>
-              Audio quality adjustments
+          {!selectedAudioInputDevices.length && (
+            <div>
+              {
+                // TODO: Change to "no input device available" if no audio devices are present
+              }
+              <div style={{ fontWeight: "bold", color: "yellow" }}>
+                {
+                  // TODO: Use caution sign as well
+                }
+                No audio input device selected for broadcasting.
+              </div>
+              <div>
+                <span className="note">
+                  Other participants will not be able to hear you.
+                </span>
+              </div>
             </div>
-            <LabeledSwitch
-              masterLabel="Noise Suppression"
-              isOn={defaultAudioNoiseSuppression}
-              onChange={setDefaultAudioNoiseSuppression}
-            />
-            <LabeledSwitch
-              masterLabel="Echo Cancellation"
-              isOn={defaultAudioEchoCancellation}
-              onChange={setDefaultAudioEchoCancellation}
-            />
-            <LabeledSwitch
-              masterLabel="Auto Gain Control"
-              isOn={defaultAudioAutoGainControl}
-              onChange={setDefaultAudioAutoGainControl}
-            />
-          </div>
+          )}
         </Footer>
       </Layout>
     </Full>
   );
 }
-
-/*
-  return (
-    <Center canOverflow={true}>
-      <Section style={{ maxWidth: 320, display: "inline-block" }}>
-        <h1>Audio Capturing</h1>
-        <ul>
-          <li>TODO: Work on these controls</li>
-          <li>
-            TODO: Implement default mic audio controller (grid; w/ angled green
-            triangle representing default)
-          </li>
-        </ul>
-
-        <button onClick={() => startMic()}>Capture Mic</button>
-        <ul>
-          <li>
-            Echo Cancellation <Switch style={{ float: "right" }} isOn={true} />
-            <p className="note" style={{ fontWeight: "normal" }}>
-              Echo cancellation is a feature which attempts to prevent echo
-              effects on a two-way audio connection by attempting to reduce or
-              eliminate crosstalk between the user's output device and their
-              input device. For example, it might apply a filter that negates
-              the sound being produced on the speakers from being included in
-              the input track generated from the microphone.
-            </p>
-            <p>
-              <TextLink href="https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings/echoCancellation" />
-            </p>
-          </li>
-          <li>
-            Noise Suppression <Switch style={{ float: "right" }} isOn={true} />
-            <p className="note" style={{ fontWeight: "normal" }}>
-              Noise suppression automatically filters the audio to remove
-              background noise, hum caused by equipment, and the like from the
-              sound before delivering it to your code. This feature is typically
-              used on microphones, although it is technically possible it could
-              be provided by other input sources as well.
-            </p>
-            <p>
-              <TextLink href="https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings/noiseSuppression" />
-            </p>
-          </li>
-        </ul>
-      </Section>
-    </Center>
-  );
-  */

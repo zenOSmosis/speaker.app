@@ -16,18 +16,59 @@ import { receiveHandshakeAuthentication } from "@shared/adapters/serviceAuthoriz
 // Property which rides on top of socket object (ONLY AVAILABLE ON THIS THREAD)
 const KEY_CLIENT_DEVICE_ADDRESS = "__clientDeviceAddress";
 
+// Number of active Socket connections on this CPU core
+let _coreConnectionCount = 0;
+
+function _logCoreConnectionCount() {
+  const lenCPUConnections = SocketController.getCoreConnectionCount();
+
+  // TODO: Include metric for how many total network Socket connections there
+  // are
+
+  console.log(
+    `Per CPU Socket.io connection count [CPU #${process.env.CPU_NO}]: ${lenCPUConnections}`
+  );
+}
+
 /**
  * Handles Socket.io connectivity and signal routing.
  */
 export default class SocketController {
+  /**
+   * Retrieves the number of Socket.io connections on this CPU.
+   *
+   * @return {number}
+   */
+  static getCoreConnectionCount() {
+    return _coreConnectionCount;
+  }
+
   static initWithSocketIo(io) {
+    io.use((socket, next) => {
+      // NOTE: Not waiting for "connect" event to be emit due to authorization
+      // event which will follow this (this count is mostly integrated to
+      // determine when a good time to restart the server is, and during
+      // authorization is not a good time).
+      ++_coreConnectionCount;
+
+      // Log connection count after other startup work has been performed
+      process.nextTick(_logCoreConnectionCount);
+
+      socket.on("disconnect", () => {
+        --_coreConnectionCount;
+
+        // Log connection count after other cleanup work has been performed
+        process.nextTick(_logCoreConnectionCount);
+      });
+
+      next();
+    });
+
     // Service authorization middleware
     io.use((socket, next) => {
       try {
-        const {
-          clientAuthorization,
-          clientDeviceAddress,
-        } = receiveHandshakeAuthentication(socket.handshake.auth);
+        const { clientAuthorization, clientDeviceAddress } =
+          receiveHandshakeAuthentication(socket.handshake.auth);
 
         socket.emit(
           SOCKET_EVT_CLIENT_AUTHORIZATION_GRANTED,
@@ -47,7 +88,7 @@ export default class SocketController {
       }
     });
 
-    io.on("connect", async (socket) => {
+    io.on("connect", async socket => {
       try {
         const networkController = new NetworkController();
 

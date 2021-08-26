@@ -5,7 +5,6 @@ import React, {
   useEffect,
   useMemo,
   useState,
-  useRef,
 } from "react";
 
 import { ZenRTCContext } from "../WebZenRTCProvider";
@@ -27,6 +26,7 @@ import { getCallURL } from "@baseApps/MainApp/routes";
 export const WebPhantomSessionContext = createContext({});
 
 // IMPORTANT: Only available to mainApp context (not transcoderApp)
+// TODO: Move to MainApp
 export default function WebPhantomSessionProvider({ children }) {
   const {
     realmId,
@@ -62,11 +62,18 @@ export default function WebPhantomSessionProvider({ children }) {
     }
   }, [isConnected]);
 
-  const [isMuted, setIsMuted] = useState(true);
+  // IMPORTANT: This session state directly only reflects the local muting
+  // state and does not directly manipulate the outgoing audio controllers
+  const [isMuted, setIsMuted] = useState(false);
 
-  const refIsMuted = useRef(isMuted);
-  refIsMuted.current = isMuted;
-  const getIsMuted = useCallback(() => refIsMuted.current, []);
+  // TODO: Remove
+  // NOTE: This useRef is to memoize the getIsMuted() function so a new
+  // reference is not required for each pass
+  //
+  // This fixes an issue where this hook was excessively rendered
+  // const refIsMuted = useRef(isMuted);
+  // refIsMuted.current = isMuted;
+  // const getIsMuted = useCallback(() => refIsMuted.current, []);
 
   useEffect(() => {
     if (writableSyncObject) {
@@ -76,7 +83,7 @@ export default function WebPhantomSessionProvider({ children }) {
     }
   }, [writableSyncObject, isMuted]);
 
-  // TODO: If connected and profile is updated, sync the profile w/ the host
+  // If connected and profile is updated, sync the profile w/ the host
   // transcoder
   useEffect(() => {
     if (
@@ -149,7 +156,7 @@ export default function WebPhantomSessionProvider({ children }) {
   // TODO: Refactor
   useEffect(() => {
     if (zenRTCPeer) {
-      const handleBeingKicked = ({ eventName }) => {
+      const handleKickDetection = ({ eventName }) => {
         if (eventName === SYNC_EVT_KICK) {
           console.warn("You have been kicked!");
 
@@ -166,10 +173,10 @@ export default function WebPhantomSessionProvider({ children }) {
         }
       };
 
-      zenRTCPeer.on(EVT_SYNC_EVT_RECEIVED, handleBeingKicked);
+      zenRTCPeer.on(EVT_SYNC_EVT_RECEIVED, handleKickDetection);
 
       return function unmount() {
-        zenRTCPeer.off(EVT_SYNC_EVT_RECEIVED, handleBeingKicked);
+        zenRTCPeer.off(EVT_SYNC_EVT_RECEIVED, handleKickDetection);
       };
     }
   }, [zenRTCPeer]);
@@ -252,9 +259,13 @@ export default function WebPhantomSessionProvider({ children }) {
         outgoingAudioMediaStreamTracks,
         writableSyncObject,
         readOnlySyncObject,
+
         setIsMuted,
-        getIsMuted,
         isMuted,
+
+        // TODO: Remove
+        // getIsMuted,
+
         latency,
         networkURL,
       }}

@@ -8,7 +8,7 @@ import {
   TRANSCODER_EVT_READY,
   TRANSCODER_EVT_CONNECTED,
   TRANSCODER_EVT_DISCONNECTED,
-} from "./SplitAppMessageBus";
+} from "./classes/SplitAppMessageBus";
 
 export default SplitAppMessageBusProvider;
 export {

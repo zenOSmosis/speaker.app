@@ -1,4 +1,8 @@
-## TODOs
+## Old TODOs
+
+NOTE: These priorities have changed since this file was last modified (previous to May 2021) and is currently here for archival purposes.
+
+Current issues are available at https://github.com/zenOSmosis/speaker.app/issues.
 
 ### High Priority
 - [-] Receive max of one video stream on mobile / configurable

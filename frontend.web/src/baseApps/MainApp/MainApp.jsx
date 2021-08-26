@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import { PhantomCollection, EVT_UPDATED } from "phantom-core";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import * as routes from "./routes";
 
 import { useHistory } from "react-router";
@@ -10,8 +11,6 @@ import IDCard from "@components/IDCard";
 
 import AppLayout from "./subViews/AppLayout";
 
-import WebZenRTCPeer, { EVT_DISCONNECTED } from "@src/WebZenRTCPeer";
-
 import SplitAppMessageBusProvider, {
   ROLE_MAIN_APP,
 } from "@providers/SplitAppMessageBusProvider";
@@ -19,6 +18,7 @@ import AppRoutesProvider from "@providers/AppRoutesProvider";
 import AppLayoutProvider from "@providers/AppLayoutProvider";
 import NotificationsProvider from "@providers/NotificationsProvider";
 import InputMediaDevicesProvider from "@providers/InputMediaDevicesProvider";
+import ScreenCaptureProvider from "@providers/ScreenCaptureProvider";
 import LocalProfileProvider from "@providers/LocalProfileProvider";
 import WebZenRTCProvider from "@providers/WebZenRTCProvider";
 import WebPhantomSessionProvider from "@providers/WebPhantomSessionProvider";
@@ -29,6 +29,7 @@ import TranscoderSandboxProvider from "./subProviders/TranscoderSandboxProvider"
 
 import useZenRTCContext from "@hooks/useZenRTCContext";
 import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
+import useScreenCaptureContext from "@hooks/useScreenCaptureContext";
 import useLocalProfileContext from "@hooks/useLocalProfileContext";
 import useNotificationsContext from "@hooks/useNotificationsContext";
 import useAppLayoutContext from "@hooks/useAppLayoutContext";
@@ -46,10 +47,6 @@ import SetupModal, { PROFILE_TAB } from "@baseApps/MainApp/subViews/SetupModal";
 import sleep from "@shared/sleep";
 
 import { ROUTE_HOME, ROUTE_SETUP_PROFILE } from "./routes";
-
-import { MediaStreamTrackControllerEvents } from "media-stream-track-controller";
-
-const { EVT_UPDATED } = MediaStreamTrackControllerEvents;
 
 export default function MainApp() {
   const handleOpenProfile = useCallback(
@@ -80,23 +77,25 @@ export default function MainApp() {
     <SplitAppMessageBusProvider role={ROLE_MAIN_APP}>
       <TranscoderSandboxProvider>
         <InputMediaDevicesProvider>
-          <LocalProfileProvider>
-            <WebZenRTCProvider>
-              <WebPhantomSessionProvider>
-                <SharedFilesProvider>
-                  <AppRoutesProvider routes={routes}>
-                    <AppLayoutProvider onOpenProfile={handleOpenProfile}>
-                      <NotificationsProvider>
-                        <ChatMessagesProvider>
-                          <MainAppView />
-                        </ChatMessagesProvider>
-                      </NotificationsProvider>
-                    </AppLayoutProvider>
-                  </AppRoutesProvider>
-                </SharedFilesProvider>
-              </WebPhantomSessionProvider>
-            </WebZenRTCProvider>
-          </LocalProfileProvider>
+          <ScreenCaptureProvider>
+            <LocalProfileProvider>
+              <WebZenRTCProvider>
+                <WebPhantomSessionProvider>
+                  <SharedFilesProvider>
+                    <AppRoutesProvider routes={routes}>
+                      <AppLayoutProvider onOpenProfile={handleOpenProfile}>
+                        <NotificationsProvider>
+                          <ChatMessagesProvider>
+                            <MainAppView />
+                          </ChatMessagesProvider>
+                        </NotificationsProvider>
+                      </AppLayoutProvider>
+                    </AppRoutesProvider>
+                  </SharedFilesProvider>
+                </WebPhantomSessionProvider>
+              </WebZenRTCProvider>
+            </LocalProfileProvider>
+          </ScreenCaptureProvider>
         </InputMediaDevicesProvider>
       </TranscoderSandboxProvider>
     </SplitAppMessageBusProvider>
@@ -119,6 +118,9 @@ function MainAppView() {
   if (!isSocketIoConnected) {
     return (
       <FullViewport>
+        {
+          // TODO: Dynamically adjust message based on network connection state
+        }
         <Center>Awaiting socket connection...</Center>
       </FullViewport>
     );
@@ -169,17 +171,103 @@ function useTieIns() {
     isConnected,
     realmId,
     channelId,
+
+    // TODO: Re-integrate
     setIsMuted,
-    getIsMuted,
+    isMuted,
   } = useWebPhantomSessionContext();
 
   const {
-    hasUIMicPermission,
-    micAudioController,
-    startMic,
-    screenCaptureMediaStreams,
-    stopScreenCapture,
+    // hasUIMicPermission,
+    setIsInCall,
+
+    // TODO: Add / remove tracks based on this collection
+    publishableAudioInputControllerCollection,
+
+    getPublishableDefaultAudioInputDevice,
   } = useInputMediaDevicesContext();
+
+  // Sync UI is-muted state to audio input controller collection
+  useEffect(() => {
+    publishableAudioInputControllerCollection.setIsMuted(isMuted);
+  }, [isMuted, publishableAudioInputControllerCollection]);
+
+  // Bind inputMediaDevices isOnCall state to isConnected
+  useEffect(() => {
+    setIsInCall(isConnected);
+
+    if (isConnected) {
+      getPublishableDefaultAudioInputDevice();
+    }
+  }, [isConnected, setIsInCall, getPublishableDefaultAudioInputDevice]);
+
+  /**
+   * The collection-based MediaStream which all audio input devices share.
+   *
+   * @type {MediaStream}
+   **/
+  const audioInputDevicesMediaStream = useMemo(
+    () => publishableAudioInputControllerCollection.getOutputMediaStream(),
+    [publishableAudioInputControllerCollection]
+  );
+
+  useEffect(() => {
+    if (isConnected && zenRTCPeer) {
+      let prevChildren =
+        publishableAudioInputControllerCollection.getChildren();
+
+      const _handleAudioInputCollectionUpdate = () => {
+        const nextChildren =
+          publishableAudioInputControllerCollection.getChildren();
+
+        const { added, removed } = PhantomCollection.getChildrenDiff(
+          prevChildren,
+          nextChildren
+        );
+
+        added.forEach(trackController =>
+          zenRTCPeer.addOutgoingMediaStreamTrack(
+            trackController.getOutputMediaStreamTrack(),
+            audioInputDevicesMediaStream
+          )
+        );
+
+        removed.forEach(trackController =>
+          zenRTCPeer.removeOutgoingMediaStreamTrack(
+            trackController.getOutputMediaStreamTrack(),
+            audioInputDevicesMediaStream
+          )
+        );
+
+        // Sync collection is-muted state to UI
+        setIsMuted(publishableAudioInputControllerCollection.getIsMuted());
+      };
+
+      // Kick off initial sync
+      _handleAudioInputCollectionUpdate();
+
+      publishableAudioInputControllerCollection.on(
+        EVT_UPDATED,
+        _handleAudioInputCollectionUpdate
+      );
+
+      return function unmount() {
+        publishableAudioInputControllerCollection.off(
+          EVT_UPDATED,
+          _handleAudioInputCollectionUpdate
+        );
+      };
+    }
+  }, [
+    audioInputDevicesMediaStream,
+    isConnected,
+    zenRTCPeer,
+    publishableAudioInputControllerCollection,
+    setIsMuted,
+  ]);
+
+  const { screenCaptureMediaStreams, stopScreenCapture } =
+    useScreenCaptureContext();
 
   const { avatarURL, name, description, isDirty } = useLocalProfileContext();
 
@@ -201,79 +289,6 @@ function useTieIns() {
       resetSidebarMenu();
     }
   }, [isConnected, resetSidebarMenu]);
-
-  // Handle tie-in of initial media streams in / out of WebZenRTCPeer
-  //
-  // TODO: Move somewhere else?
-  useEffect(() => {
-    WebZenRTCPeer.beforeConnect = async zenRTCPeer => {
-      try {
-        if (!hasUIMicPermission) {
-          return null;
-        }
-
-        let newMicAudioController = null;
-
-        if (!micAudioController) {
-          newMicAudioController = await startMic();
-        }
-
-        const controller = micAudioController || newMicAudioController;
-
-        if (newMicAudioController) {
-          // This makes the UI immediately update when the mic is muted / unmuted
-          controller.on(EVT_UPDATED, () => {
-            const newMuted = controller.getIsMuted();
-
-            /**
-             * TODO: Fix this
-             *
-             * For some reason, this is being called twice, rapidly, with the
-             * first value being undefined. When debugging the controller
-             * itself, it doesn't seem to be emitting EVT_UPDATED rapidly
-             * twice, so I'm not sure how this is being called. Furthermore,
-             * I've also checked the underlying controller._isMuted property
-             * and uuid, and the _isMuted property shows undefined on the first
-             * round as well and includes the same uuid.
-             *
-             * This entire block needs refactoring so maybe that will fix it.
-             */
-            if (newMuted === undefined) {
-              return;
-            }
-
-            if (newMuted !== getIsMuted()) {
-              setIsMuted(newMuted);
-            }
-          });
-        }
-
-        // Perform initial sync
-        setIsMuted(controller.getIsMuted());
-
-        const mediaStream = controller && controller.getOutputMediaStream();
-
-        // Kill mic on disconnect
-        //
-        // TODO: Add any other stream disconnects here
-        zenRTCPeer.once(EVT_DISCONNECTED, () => {
-          controller.destroy();
-
-          setIsMuted(true);
-        });
-
-        return mediaStream;
-      } catch (err) {
-        console.warn("Caught", err);
-      }
-    };
-  }, [
-    hasUIMicPermission,
-    micAudioController,
-    startMic,
-    setIsMuted,
-    getIsMuted,
-  ]);
 
   // TODO: Move somewhere else?
   // Handle screensharing tie-in

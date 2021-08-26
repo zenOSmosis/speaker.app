@@ -1,38 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Avatar from "../Avatar";
 
-import {
-  AudioMediaStreamTrackLevelMonitor,
-  AudioMediaStreamTrackLevelMonitorEvents,
-} from "media-stream-track-controller";
+import PropTypes from "prop-types";
+
+import useAudioMediaStreamTrackLevelMonitor from "@hooks/useAudioMediaStreamTrackLevelMonitor";
 
 import getPercentColor from "@shared/string/getPercentColor";
 
-const { EVT_AUDIO_LEVEL_TICK } = AudioMediaStreamTrackLevelMonitorEvents;
+AudioMediaStreamTrackLevelAvatar.propTypes = {
+  /** When multiple audio tracks may be used together */
+  mediaStreamTracks: PropTypes.arrayOf(PropTypes.instanceOf(MediaStreamTrack)),
+
+  /** When only a single track is used */
+  mediaStreamTrack: PropTypes.instanceOf(MediaStreamTrack),
+};
 
 export default function AudioMediaStreamTrackLevelAvatar({
+  mediaStreamTracks,
   mediaStreamTrack,
   ...rest
 }) {
   const [avatarEl, setAvatarEl] = useState(null);
 
-  useEffect(() => {
-    if (avatarEl && mediaStreamTrack) {
-      const mediaStreamMonitor = new AudioMediaStreamTrackLevelMonitor(
-        mediaStreamTrack
-      );
+  const percent = useAudioMediaStreamTrackLevelMonitor(
+    mediaStreamTrack || mediaStreamTracks
+  );
 
-      mediaStreamMonitor.on(EVT_AUDIO_LEVEL_TICK, ({ rms }) => {
-        // FIXME: This is probably not supposed to be RMS, but it's close
-        // enough for prototyping
-        avatarEl.style.borderColor = getPercentColor(rms / 100 / 1.5);
-      });
-
-      return function unmount() {
-        mediaStreamMonitor.destroy();
-      };
-    }
-  }, [avatarEl, mediaStreamTrack]);
+  if (avatarEl) {
+    avatarEl.style.borderColor = getPercentColor(percent);
+  }
 
   return <Avatar {...rest} onEl={setAvatarEl} />;
 }

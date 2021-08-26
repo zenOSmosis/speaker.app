@@ -22,10 +22,14 @@ import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 // TODO: Hide if there is main view content, or menu is shown, and we don't have much height
 
 export default function AppFooter({ className }) {
-  const { micAudioController } = useInputMediaDevicesContext();
+  const { publishableAudioInputControllerCollection } =
+    useInputMediaDevicesContext();
 
   const { toggleSidebar, sidebarMenuSelectedIdx, isSidebarOpen } =
     useAppLayoutContext();
+
+  const isMicOff =
+    publishableAudioInputControllerCollection.getChildren().length === 0;
 
   return (
     <Footer>
@@ -35,33 +39,29 @@ export default function AppFooter({ className }) {
             <div className={styles["content-wrap"]}>
               <ButtonTransparent
                 onClick={() =>
-                  micAudioController && micAudioController.toggleMute()
+                  publishableAudioInputControllerCollection.toggleMute()
                 }
+                disabled={isMicOff}
               >
                 <div>
                   <MicrophoneIcon
                     className={styles["icon"]}
                     style={{
                       marginLeft: 7,
-                      color: !micAudioController
+                      color: isMicOff
                         ? "gray"
-                        : !micAudioController.getIsMuted()
+                        : !publishableAudioInputControllerCollection.getIsMuted()
                         ? "red"
                         : "white",
                     }}
                   />
-                  {
-                    // TODO: Use outgoing mic audio level
-                  }
                   <AudioMediaStreamTrackLevelMeter
-                    mediaStreamTrack={(() => {
+                    mediaStreamTracks={(() => {
                       const mediaStream =
-                        micAudioController &&
-                        micAudioController.getOutputMediaStream();
+                        publishableAudioInputControllerCollection.getOutputMediaStream();
 
                       if (mediaStream) {
-                        // TODO: Make this more efficient
-                        return mediaStream.getAudioTracks()[0];
+                        return mediaStream.getAudioTracks();
                       }
                     })()}
                     style={{
@@ -73,9 +73,9 @@ export default function AppFooter({ className }) {
                   />
                 </div>
                 <div className={styles["icon-label"]}>{`Mic ${
-                  !micAudioController
+                  !publishableAudioInputControllerCollection
                     ? "Off"
-                    : !micAudioController.getIsMuted()
+                    : !publishableAudioInputControllerCollection.getIsMuted()
                     ? "Active"
                     : "Muted"
                 }`}</div>
@@ -95,9 +95,6 @@ export default function AppFooter({ className }) {
             <div className={styles["content-wrap"]}>
               <ButtonTransparent onClick={toggleSidebar}>
                 <div>
-                  {
-                    // TODO: Change icon to blue back arrow if not on home menu screen
-                  }
                   {sidebarMenuSelectedIdx === -1 ? (
                     <SidebarIcon
                       className={styles["icon"]}
