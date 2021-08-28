@@ -1,5 +1,5 @@
 import { PhantomCollection } from "phantom-core";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import usePrevious from "./usePrevious";
 
 /**
@@ -11,11 +11,13 @@ import usePrevious from "./usePrevious";
  * @return {ArrayDiff}
  */
 export default function useArrayDiff(next) {
-  // NOTE: Using empty array for previous default value type
+  // IMPORTANT: Using empty array for previous default value
   const prev = usePrevious(next, []);
 
-  const { added, removed } = useMemo(() => {
-    // NOTE: This check is inside the useMemo so it is not re-run more often
+  const [addedRemoved, _setAddedRemoved] = useState({ added: [], removed: [] });
+
+  useEffect(() => {
+    // NOTE: This check is inside the useEffect so it is not re-run more often
     // than it should
     if (!Array.isArray(next)) {
       throw new Error("next should be an array");
@@ -23,11 +25,16 @@ export default function useArrayDiff(next) {
 
     const { added, removed } = PhantomCollection.getChildrenDiff(prev, next);
 
-    return { added, removed };
+    if (added.length || removed.length) {
+      _setAddedRemoved({
+        added,
+        removed,
+      });
+    }
   }, [prev, next]);
 
   return {
-    added,
-    removed,
+    added: addedRemoved.added,
+    removed: addedRemoved.removed,
   };
 }
