@@ -28,7 +28,7 @@ export default function RightSidebar({ ...params }) {
   } = useAppLayoutContext();
 
   useKeyboardEvents({
-    onKeyDown: (keyCode) => {
+    onKeyDown: keyCode => {
       // Ignore if there is an open modal
       if (modalView) {
         return;
@@ -41,9 +41,13 @@ export default function RightSidebar({ ...params }) {
     },
   });
 
+  // TODO: I can't remember why I put this in here, but it makes the sidebar
+  // open by default and it shouldn't be placed here
+  /*
   useEffect(() => {
     setIsSidebarOpen(true);
   }, [setIsSidebarOpen]);
+  */
 
   const appMenuItems = useAppMenuItems({
     zenRTCPeer,

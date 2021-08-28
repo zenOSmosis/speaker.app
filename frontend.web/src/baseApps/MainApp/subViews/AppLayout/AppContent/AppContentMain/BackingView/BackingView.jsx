@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import SpeakerAppLogoScene from "@components/SpeakerAppLogoScene";
+// import SpeakerAppLogoScene from "@components/SpeakerAppLogoScene";
+import ParticipantsGrid from "@components/ParticipantsGrid";
 import Cover from "@components/Cover";
 import Animation from "@components/Animation";
 import Background from "@components/Background";
@@ -38,7 +39,7 @@ export default function BackingView() {
           ></Background>
         </Animation>
       ) : (
-        <SpeakerAppLogoScene />
+        <ParticipantsGrid />
       )}
     </Cover>
   );
