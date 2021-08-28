@@ -47,9 +47,7 @@ export default function InputMediaDevicesProvider({ children }) {
     async (isAggressive = true) => {
       const prev = inputMediaDevices;
 
-      // TODO: Add Boolean comparison in https://github.com/zenOSmosis/media-stream-track-controller/blob/main/src/utils/fetchMediaDevices.js
-      // This fixes an issue where isAggressive was being passed, apparently, truthy values, causing internal cache comparison operators to fail and a new media stream returned.  Seems to mostly affect Safari.
-      const next = await utils.fetchMediaDevices(Boolean(isAggressive));
+      const next = await utils.fetchMediaDevices(isAggressive);
 
       const { added, removed } = PhantomCollection.getChildrenDiff(prev, next);
 
@@ -71,10 +69,10 @@ export default function InputMediaDevicesProvider({ children }) {
     if (navigator && navigator.mediaDevices && navigator.mediaDevices) {
       navigator.mediaDevices.ondevicechange = fetchMediaDevices;
 
+      // FIXME: Safari runs this whenever a device is activated, while Chrome
+      // does not; provisions have been put in place so this shouldn't make a
+      // huge difference but I am not sure if it may still be causing problems
       const _handleDeviceChange = evt => {
-        // TODO: Remove
-        return;
-
         // Don't try to refetch if no mediaDevices are already present simply
         // because the first fetch will be an aggressive fetch and we don't
         // necessarily want to prompt the user to accept mic permissions the
