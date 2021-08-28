@@ -1,4 +1,4 @@
-import { logger } from "phantom-core";
+import { logger, PhantomCollection } from "phantom-core";
 import React, {
   createContext,
   useCallback,
@@ -43,13 +43,22 @@ export default function InputMediaDevicesProvider({ children }) {
    * @param {boolean} isAggressive? [default = true]
    * @return {Promise<MediaDeviceInfo[]>}
    */
-  const fetchMediaDevices = useCallback(async (isAggressive = true) => {
-    const inputMediaDevices = await utils.fetchMediaDevices(isAggressive);
+  const fetchMediaDevices = useCallback(
+    async (isAggressive = true) => {
+      const prev = inputMediaDevices;
 
-    _setInputMediaDevices(inputMediaDevices);
+      const next = await utils.fetchMediaDevices(isAggressive);
 
-    return inputMediaDevices;
-  }, []);
+      const { added, removed } = PhantomCollection.getChildrenDiff(prev, next);
+
+      if (added.length || removed.length) {
+        _setInputMediaDevices(next);
+      }
+
+      return next;
+    },
+    [inputMediaDevices]
+  );
 
   /**
    * Refetch media devices on device change.
@@ -60,7 +69,10 @@ export default function InputMediaDevicesProvider({ children }) {
     if (navigator && navigator.mediaDevices && navigator.mediaDevices) {
       navigator.mediaDevices.ondevicechange = fetchMediaDevices;
 
-      const _handleDeviceChange = () => {
+      // FIXME: Safari runs this whenever a device is activated, while Chrome
+      // does not; provisions have been put in place so this shouldn't make a
+      // huge difference but I am not sure if it may still be causing problems
+      const _handleDeviceChange = evt => {
         // Don't try to refetch if no mediaDevices are already present simply
         // because the first fetch will be an aggressive fetch and we don't
         // necessarily want to prompt the user to accept mic permissions the

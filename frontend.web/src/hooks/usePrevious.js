@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 const DEFAULT_REF_VALUE = null;
 
@@ -11,42 +11,23 @@ const DEFAULT_REF_VALUE = null;
  * called as a dependency, which could cause an additional render.
  *
  * @param {any} value The current value
- * @return {Object<getPreviousValue: function>}
+ * @param {boolean} defaultPreviousValue? [default = null]
+ * @return {any} The previous value
  */
-export default function usePrevious(value) {
+export default function usePrevious(
+  value,
+  defaultPreviousValue = DEFAULT_REF_VALUE
+) {
   // The ref object is a generic container whose "current" property is mutable
   // and can hold any value, similar to an instance property on a class
-  const refPrev = useRef(DEFAULT_REF_VALUE);
-  const ref = useRef(DEFAULT_REF_VALUE);
+  const refPrev = useRef(defaultPreviousValue);
+
   // Store current value in ref
+  // Only re-run if value changes
   useEffect(() => {
-    // The old value, before the update
-    const prev = ref.current;
+    refPrev.current = value;
+  }, [value]);
 
-    refPrev.current = prev;
-
-    // Update current
-    ref.current = value;
-  }, [value]); // Only re-run if value changes
   // Return previous value (happens before update in useEffect above)
-
-  /**
-   * @param {boolean} resetPrevAfterRun? [default = false] If set, the previous
-   * value will be reset after the run. This functionality was put in place to
-   * resolve an issue w/ useInputMediaDevicesFactories incorrectly determining
-   * added / removed selected / testing devices across subsequent runs.
-   * @return {any} The previous value
-   */
-  const getPreviousValue = useCallback((resetPrevAfterRun = false) => {
-    const prev = refPrev.current;
-
-    if (resetPrevAfterRun) {
-      // Reset prev value to its initial state
-      refPrev.current = DEFAULT_REF_VALUE;
-    }
-
-    return prev;
-  }, []);
-
-  return { getPreviousValue };
+  return refPrev.current;
 }

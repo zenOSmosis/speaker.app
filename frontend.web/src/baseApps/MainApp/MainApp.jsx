@@ -181,6 +181,8 @@ function useTieIns() {
     // hasUIMicPermission,
     setIsInCall,
 
+    selectedAudioInputDevices,
+
     // TODO: Add / remove tracks based on this collection
     publishableAudioInputControllerCollection,
 
@@ -192,11 +194,17 @@ function useTieIns() {
     publishableAudioInputControllerCollection.setIsMuted(isMuted);
   }, [isMuted, publishableAudioInputControllerCollection]);
 
-  // Bind inputMediaDevices isOnCall state to isConnected
+  /// Don't pass selectedAudioInputDevices as a dependency or it will be impossible to deselect the first device after the call is started
+  const refSelectedAudioInputDevices = useRef(selectedAudioInputDevices);
+  refSelectedAudioInputDevices.current = selectedAudioInputDevices;
   useEffect(() => {
+    // Bind inputMediaDevices isOnCall state to isConnected
     setIsInCall(isConnected);
 
-    if (isConnected) {
+    // If no active mic already, start the default device
+    // TODO: Respect permissions either here or in the hook
+    // TODO: Don't perform this selection if the user has explicitly turned off devices
+    if (isConnected && !refSelectedAudioInputDevices.current.length) {
       getPublishableDefaultAudioInputDevice();
     }
   }, [isConnected, setIsInCall, getPublishableDefaultAudioInputDevice]);
