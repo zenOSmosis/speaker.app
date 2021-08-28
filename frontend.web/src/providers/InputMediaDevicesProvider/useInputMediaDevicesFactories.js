@@ -180,15 +180,14 @@ export default function useInputMediaDevicesFactories({
   };
 }
 
-// TODO: Rename
+// FIXME: Rename
 function useAddedAndRemovedSelectedAndTestingInputMediaDevices({
   isInCall,
   isAudioSelectorRendered,
   selectedInputMediaDevices,
   testingInputMediaDevices,
 }) {
-  // TODO: Rename
-  // TODO: Reset on call / rendered state (not accurate if testing, leaving screen, then returning)
+  // FIXME: Rename
   const comparisonDiff = useMemo(() => {
     if (!isInCall && !isAudioSelectorRendered) {
       return [];
@@ -204,7 +203,7 @@ function useAddedAndRemovedSelectedAndTestingInputMediaDevices({
     testingInputMediaDevices,
   ]);
 
-  // TODO: Rename
+  // FIXME: Rename
   const { added: addedInputMediaDevices, removed: removedInputMediaDevices } =
     useArrayDiff(comparisonDiff);
 
