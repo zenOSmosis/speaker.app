@@ -1,4 +1,4 @@
-import { PhantomCollection, logger, EVT_DESTROYED } from "phantom-core";
+import { logger, EVT_DESTROYED } from "phantom-core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MediaStreamTrackControllerFactory,
@@ -25,26 +25,13 @@ export default function useInputMediaDevicesFactories({
     []
   );
 
-  // TODO: Rename
-  // TODO: Reset on call / rendered state (not accurate if testing, leaving screen, then returning)
-  const comparisonDiff = useMemo(() => {
-    if (!isInCall && !isAudioSelectorRendered) {
-      return [];
-    }
-
-    return [
-      ...new Set([...selectedInputMediaDevices, ...testingInputMediaDevices]),
-    ];
-  }, [
-    isInCall,
-    isAudioSelectorRendered,
-    selectedInputMediaDevices,
-    testingInputMediaDevices,
-  ]);
-
-  // TODO: Rename
-  const { added: addedInputMediaDevices, removed: removedInputMediaDevices } =
-    useArrayDiff(comparisonDiff);
+  const { addedInputMediaDevices, removedInputMediaDevices } =
+    useAddedAndRemovedSelectedAndTestingInputMediaDevices({
+      isInCall,
+      isAudioSelectorRendered,
+      selectedInputMediaDevices,
+      testingInputMediaDevices,
+    });
 
   /**
    * @return {Promise<void>}
@@ -101,7 +88,7 @@ export default function useInputMediaDevicesFactories({
 
         const addedFactories = [];
         for (const addedMediaDevice of addedInputMediaDevices) {
-          // TODO: Populate
+          // TODO: Populate with default constraints / factory options
           const constraints = {};
           const factoryOptions = {};
 
@@ -138,15 +125,6 @@ export default function useInputMediaDevicesFactories({
           }
         }
 
-        // TODO: Remove
-        console.log({
-          addedInputMediaDevices,
-          removedInputMediaDevices,
-
-          addedFactories,
-          removedFactories,
-        });
-
         if (removedFactories.length || addedFactories.length) {
           // Set next factories state
           _setInputMediaDeviceFactories(prevFactories => {
@@ -170,10 +148,7 @@ export default function useInputMediaDevicesFactories({
     removedInputMediaDevices,
 
     selectedInputMediaDevices,
-    // getPreviousSelectedInputMediaDevices,
-
     testingInputMediaDevices,
-    // getPreviousTestingInputMediaDevices,
 
     removeSelectedInputMediaDevice,
     removeTestingInputMediaDevice,
@@ -183,5 +158,39 @@ export default function useInputMediaDevicesFactories({
 
   return {
     inputMediaDevicesFactories,
+  };
+}
+
+// TODO: Rename
+function useAddedAndRemovedSelectedAndTestingInputMediaDevices({
+  isInCall,
+  isAudioSelectorRendered,
+  selectedInputMediaDevices,
+  testingInputMediaDevices,
+}) {
+  // TODO: Rename
+  // TODO: Reset on call / rendered state (not accurate if testing, leaving screen, then returning)
+  const comparisonDiff = useMemo(() => {
+    if (!isInCall && !isAudioSelectorRendered) {
+      return [];
+    }
+
+    return [
+      ...new Set([...selectedInputMediaDevices, ...testingInputMediaDevices]),
+    ];
+  }, [
+    isInCall,
+    isAudioSelectorRendered,
+    selectedInputMediaDevices,
+    testingInputMediaDevices,
+  ]);
+
+  // TODO: Rename
+  const { added: addedInputMediaDevices, removed: removedInputMediaDevices } =
+    useArrayDiff(comparisonDiff);
+
+  return {
+    addedInputMediaDevices,
+    removedInputMediaDevices,
   };
 }
