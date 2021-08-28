@@ -12,15 +12,7 @@ export default function ParticipantsGrid() {
     <Full style={{ overflow: "auto" }}>
       <Center canOverflow={true}>
         {participants
-          .sort((a, b) => {
-            if (a.isLocal) {
-              return -1;
-            } else if (b.isLocal) {
-              return -1;
-            } else {
-              return 0;
-            }
-          })
+          .sort((a, b) => (!a.isLocal && !b.isLocal ? 0 : b.isLocal ? -1 : 1))
           .map((participant, idx) => {
             return <Participant key={idx} participant={participant} />;
           })}
