@@ -23,15 +23,15 @@ export default function useAudioMediaStreamTrackLevelMonitor(
   /**
    * @type {MediaStreamTrack[]}
    */
-  const mediaStreamTracks = useMemo(() =>
-    (!mediaStreamTrackOrTracks
-      ? []
-      : Array.isArray(mediaStreamTrackOrTracks)
-      ? mediaStreamTrackOrTracks
-      : [mediaStreamTrackOrTracks],
-    [mediaStreamTrackOrTracks]).filter(
-      track => track instanceof MediaStreamTrack
-    )
+  const mediaStreamTracks = useMemo(
+    () =>
+      (!mediaStreamTrackOrTracks
+        ? []
+        : Array.isArray(mediaStreamTrackOrTracks)
+        ? mediaStreamTrackOrTracks
+        : [mediaStreamTrackOrTracks]
+      ).filter(track => track instanceof MediaStreamTrack),
+    [mediaStreamTrackOrTracks]
   );
 
   const [mediaStreamMonitor, _setMediaStreamMonitor] = useState(null);
