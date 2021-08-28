@@ -58,6 +58,25 @@ export default function useInputMediaDevicesFactories({
     }
   }, [selectedInputMediaDevices, testingInputMediaDevices]);
 
+  // Fixes issue where removing individual device on Safari would not
+  // completely stop the audio capturing (appeared to stop, then restart, even
+  // though the relevant device was not selected)
+  useEffect(() => {
+    // IMPORTANT: The primary reason for the inputMediaDevicesFactory length
+    // check is to consume this dependency and make this hook re-rerun every
+    // time it changes
+    if (inputMediaDevicesFactories.length) {
+      removedInputMediaDevices.forEach(mediaDevice => {
+        const factories =
+          MediaStreamTrackControllerFactory.getFactoriesWithInputMediaDevice(
+            mediaDevice
+          );
+
+        factories.forEach(factory => factory.destroy());
+      });
+    }
+  }, [inputMediaDevicesFactories, removedInputMediaDevices]);
+
   // Dynamic capturing / uncapturing of media devices based on determined state
   useEffect(() => {
     const areSelectedDevicesEnabled = isInCall || isAudioSelectorRendered;
