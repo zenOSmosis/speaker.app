@@ -50,7 +50,7 @@ export default function useAudioMediaStreamTrackLevelMonitor(
     mediaStreamMonitor.on(EVT_DEBOUNCED_PEAK_AUDIO_LEVEL_TICK, ({ rms }) => {
       // FIXME: This is probably not supposed to be RMS, but it's close
       // enough for prototyping
-      _setPercent(rms);
+      _setPercent(rms * 0.8);
     });
 
     _setMediaStreamMonitor(mediaStreamMonitor);
