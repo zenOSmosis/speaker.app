@@ -55,8 +55,9 @@ export default function PanelParticipantsScroller({ orientation }) {
 }
 
 function Participant({ participant, onClick }) {
-  const audioMediaStreamTrack = useMemo(
-    () => participant.mediaStreamTracks.find(track => track.kind === "audio"),
+  /** @type {MediaStreamTrack[]} */
+  const audioMediaStreamTracks = useMemo(
+    () => participant.mediaStreamTracks.filter(track => track.kind === "audio"),
     [participant]
   );
 
@@ -77,8 +78,7 @@ function Participant({ participant, onClick }) {
       <Animation animationName="flipInX">
         <AudioMediaStreamTrackLevelAvatar
           key={participant.socketIoId}
-          // TODO: Use all media streams from participant
-          mediaStreamTrack={audioMediaStreamTrack}
+          mediaStreamTracks={audioMediaStreamTracks}
           src={participant.avatarURL}
           name={participant.name}
           description={participant.description}
