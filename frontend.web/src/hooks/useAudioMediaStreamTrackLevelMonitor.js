@@ -20,6 +20,8 @@ const { EVT_DEBOUNCED_PEAK_AUDIO_LEVEL_TICK } =
 export default function useAudioMediaStreamTrackLevelMonitor(
   mediaStreamTrackOrTracks = []
 ) {
+  // TODO: This needs optimization; something about this monitor causes an infinite loop cycle
+
   /**
    * @type {MediaStreamTrack[]}
    */
@@ -30,7 +32,9 @@ export default function useAudioMediaStreamTrackLevelMonitor(
         : Array.isArray(mediaStreamTrackOrTracks)
         ? mediaStreamTrackOrTracks
         : [mediaStreamTrackOrTracks]
-      ).filter(track => track instanceof MediaStreamTrack),
+      ).filter(
+        track => track instanceof MediaStreamTrack && track.kind === "audio"
+      ),
     [mediaStreamTrackOrTracks]
   );
 

@@ -175,8 +175,22 @@ export default function useInputMediaDevicesFactories({
     destroyAllInputMediaDeviceFactories,
   ]);
 
+  // TODO: Document
+  const allAudioInputMediaStreamTracks = useMemo(() => {
+    return inputMediaDevicesFactories
+      .map(factory =>
+        factory
+          .getAudioTrackControllers()
+          .map(controller => controller.getOutputMediaStreamTrack())
+          .filter(track => track.readyState !== "ended")
+      )
+      .flat();
+  }, [inputMediaDevicesFactories]);
+
   return {
     inputMediaDevicesFactories,
+
+    allAudioInputMediaStreamTracks,
   };
 }
 

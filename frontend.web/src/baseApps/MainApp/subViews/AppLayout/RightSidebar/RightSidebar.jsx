@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import useAppMenuItems from "./useAppMenuItems";
 import Animation from "@components/Animation";
 import useAppLayoutContext from "@hooks/useAppLayoutContext";
@@ -40,14 +40,6 @@ export default function RightSidebar({ ...params }) {
       }
     },
   });
-
-  // TODO: I can't remember why I put this in here, but it makes the sidebar
-  // open by default and it shouldn't be placed here
-  /*
-  useEffect(() => {
-    setIsSidebarOpen(true);
-  }, [setIsSidebarOpen]);
-  */
 
   const appMenuItems = useAppMenuItems({
     zenRTCPeer,

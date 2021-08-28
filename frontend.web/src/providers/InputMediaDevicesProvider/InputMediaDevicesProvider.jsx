@@ -151,16 +151,17 @@ export default function InputMediaDevicesProvider({ children }) {
     testingVideoInputDevices,
   } = useSelectedAndTestingInputMediaDevices({ inputMediaDevices });
 
-  const { inputMediaDevicesFactories } = useInputMediaDevicesFactories({
-    isInCall,
-    isAudioSelectorRendered,
+  const { inputMediaDevicesFactories, allAudioInputMediaStreamTracks } =
+    useInputMediaDevicesFactories({
+      isInCall,
+      isAudioSelectorRendered,
 
-    selectedInputMediaDevices,
-    testingInputMediaDevices,
+      selectedInputMediaDevices,
+      testingInputMediaDevices,
 
-    removeSelectedInputMediaDevice,
-    removeTestingInputMediaDevice,
-  });
+      removeSelectedInputMediaDevice,
+      removeTestingInputMediaDevice,
+    });
 
   const {
     publishableAudioInputControllerCollection,
@@ -248,6 +249,8 @@ export default function InputMediaDevicesProvider({ children }) {
 
         publishableAudioInputControllerCollection,
         publishableVideoInputControllerCollection,
+
+        allAudioInputMediaStreamTracks,
 
         publishableAudioInputTrackControllers,
         publishableVideoInputTrackControllers,
