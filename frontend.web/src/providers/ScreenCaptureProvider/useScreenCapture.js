@@ -1,4 +1,4 @@
-import PhantomCore from "phantom-core";
+import PhantomCore, { logger } from "phantom-core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MediaStreamTrackControllerEvents,
@@ -53,8 +53,8 @@ export default function useScreenCapture() {
    *
    * @see https://github.com/zenOSmosis/media-stream-track-controller/blob/main/src/utils/captureScreen.js
    *
-   * @param {Object} factoryOptions
-   * @return {Promise<MediaStreamTrackControllerFactory}
+   * @param {Object} factoryOptions? [default = {}]
+   * @return {Promise<MediaStreamTrackControllerFactory | void>}
    */
   const startScreenCapture = useCallback(
     async (constraints = {}, factoryOptions = {}) => {
@@ -72,16 +72,13 @@ export default function useScreenCapture() {
           PhantomCore.mergeOptions(DEFAULT_FACTORY_OPTIONS, factoryOptions)
         );
       } catch (err) {
-        console.warn("Caught", err);
+        logger.error("Caught", err);
 
-        // TODO: The following MAY be resolved; test it
-        //
         // FIXME: Safari 14 (desktop / BrowserStack) throws "Unhandled Rejection
         // (InvalidAccessError): getDisplayMedia must be called from a user
-        // gesture handler."
-        //
-        // This is likely caused by the multiple redirections from calling this
-        // directly in a hook.
+        // gesture handler." The underlying media-stream-track-controller works
+        // okay with Safari; the functionality needs to be rewired so that the
+        // button itself triggers the screenshare.
         if (
           err.message ===
           "getDisplayMedia must be called from a user gesture handler."
@@ -90,18 +87,24 @@ export default function useScreenCapture() {
           alert(
             "There is currently an issue with trying to do screen sharing with Safari.  Please try from a different browser."
           );
-        }
 
-        return setIsScreenSharingSupported(false);
+          return setIsScreenSharingSupported(false);
+        } else if (err instanceof DOMException) {
+          alert(
+            "You may not have permissions enabled to screen share from this browser.  Double-check they are activated and try again."
+          );
+        }
       }
 
-      // Register screen capture w/ list of streams
-      setScreenCaptureControllerFactories(prev => [
-        ...prev,
-        screenCaptureControllerFactory,
-      ]);
+      if (screenCaptureControllerFactory) {
+        // Register screen capture w/ list of streams
+        setScreenCaptureControllerFactories(prev => [
+          ...prev,
+          screenCaptureControllerFactory,
+        ]);
 
-      return screenCaptureControllerFactory;
+        return screenCaptureControllerFactory;
+      }
     },
     [screenCaptureControllerFactories]
   );
