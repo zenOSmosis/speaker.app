@@ -11,7 +11,7 @@ const { EVT_DEBOUNCED_PEAK_AUDIO_LEVEL_TICK } =
 /**
  * Utilizes a MultiAudioMediaStreamTrackLevelMonitor as a React hook.
  *
- * @param {MediaStreamTrack | MediaStreamTrack[]} mediaStreamTrackOrTracks?
+ * @param {MediaStreamTrack | MediaStreamTrack[] | null} mediaStreamTrackOrTracks?
  * [default = []] A single track, or an array of tracks.  It is made optional
  * because rendered audio level meters may not already have an associated
  * MediaStreamTrack.
@@ -20,16 +20,20 @@ const { EVT_DEBOUNCED_PEAK_AUDIO_LEVEL_TICK } =
 export default function useAudioMediaStreamTrackLevelMonitor(
   mediaStreamTrackOrTracks = []
 ) {
+  /**
+   * @type {MediaStreamTrack[]}
+   */
   const mediaStreamTracks = useMemo(
     () =>
-      Array.isArray(mediaStreamTrackOrTracks)
+      !mediaStreamTrackOrTracks
+        ? []
+        : Array.isArray(mediaStreamTrackOrTracks)
         ? mediaStreamTrackOrTracks
         : [mediaStreamTrackOrTracks],
     [mediaStreamTrackOrTracks]
   );
 
-  const { getPreviousValue: getPreviousMediaStreamTracks } =
-    usePrevious(mediaStreamTracks);
+  const previousMediaStreamTracks = usePrevious(mediaStreamTracks, []);
 
   const [mediaStreamMonitor, _setMediaStreamMonitor] = useState(null);
 
@@ -60,7 +64,7 @@ export default function useAudioMediaStreamTrackLevelMonitor(
         added: addedMediaStreamTracks,
         removed: removedMediaStreamTracks,
       } = MultiAudioMediaStreamTrackLevelMonitor.getChildrenDiff(
-        getPreviousMediaStreamTracks() || [],
+        previousMediaStreamTracks,
         mediaStreamTracks
       );
 
@@ -74,7 +78,7 @@ export default function useAudioMediaStreamTrackLevelMonitor(
         mediaStreamMonitor.removeMediaStreamTrack(track);
       }
     }
-  }, [mediaStreamMonitor, mediaStreamTracks, getPreviousMediaStreamTracks]);
+  }, [mediaStreamMonitor, mediaStreamTracks, previousMediaStreamTracks]);
 
   return percent;
 }

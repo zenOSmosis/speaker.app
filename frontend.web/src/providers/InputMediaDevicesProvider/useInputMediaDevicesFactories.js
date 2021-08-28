@@ -1,11 +1,11 @@
 import { PhantomCollection, logger, EVT_DESTROYED } from "phantom-core";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MediaStreamTrackControllerFactory,
   utils,
 } from "media-stream-track-controller";
 
-import usePrevious from "@hooks/usePrevious";
+import useArrayDiff from "@hooks/useArrayDiff";
 
 // TODO: Document
 /**
@@ -25,19 +25,26 @@ export default function useInputMediaDevicesFactories({
     []
   );
 
-  // TODO: Remove
-  /*
-  console.log({
-    inputMediaDevicesFactories,
-  });
-  */
+  // TODO: Rename
+  // TODO: Reset on call / rendered state (not accurate if testing, leaving screen, then returning)
+  const comparisonDiff = useMemo(() => {
+    if (!isInCall && !isAudioSelectorRendered) {
+      return [];
+    }
 
-  const { getPreviousValue: getPreviousSelectedInputMediaDevices } =
-    usePrevious(selectedInputMediaDevices);
+    return [
+      ...new Set([...selectedInputMediaDevices, ...testingInputMediaDevices]),
+    ];
+  }, [
+    isInCall,
+    isAudioSelectorRendered,
+    selectedInputMediaDevices,
+    testingInputMediaDevices,
+  ]);
 
-  const { getPreviousValue: getPreviousTestingInputMediaDevices } = usePrevious(
-    testingInputMediaDevices
-  );
+  // TODO: Rename
+  const { added: addedInputMediaDevices, removed: removedInputMediaDevices } =
+    useArrayDiff(comparisonDiff);
 
   /**
    * @return {Promise<void>}
@@ -57,9 +64,11 @@ export default function useInputMediaDevicesFactories({
       )
       .flat();
 
-    await Promise.all(factories.map(factory => factory.destroy()));
+    if (factories.length) {
+      await Promise.all(factories.map(factory => factory.destroy()));
 
-    _setInputMediaDeviceFactories([]);
+      _setInputMediaDeviceFactories([]);
+    }
   }, [selectedInputMediaDevices, testingInputMediaDevices]);
 
   // Dynamic capturing / uncapturing of media devices based on determined state
@@ -71,47 +80,7 @@ export default function useInputMediaDevicesFactories({
       destroyAllInputMediaDeviceFactories();
     } else {
       (async () => {
-        const { addedInputMediaDevices, removedInputMediaDevices } = (() => {
-          // IMPORTANT: The use of "true" for argument in getPrevious... calls
-          // below.  The previous issue was that if using "select" and "test"
-          // for the same device, then deactivating them, the device could not
-          // be activated again until both were enabled.  If using just an
-          // empty array, it's not possible to deactivate the device ever.  So
-          // the logic is, after obtaining the previous value one time, reset
-          // it back to the initial without changing the state, so that
-          // subsequent runs will have a fresh slate to work from.
-
-          const previousSelectedInputMediaDevices =
-            getPreviousSelectedInputMediaDevices(true) || [];
-
-          const previousTestingInputMediaDevices =
-            getPreviousTestingInputMediaDevices(true) || [];
-
-          const {
-            added: addedInputMediaDevices,
-            removed: removedInputMediaDevices,
-          } = PhantomCollection.getChildrenDiff(
-            [
-              ...new Set([
-                ...previousSelectedInputMediaDevices,
-                ...previousTestingInputMediaDevices,
-              ]),
-            ],
-            [
-              ...new Set([
-                ...(areSelectedDevicesEnabled ? selectedInputMediaDevices : []),
-                ...(areTestingDevicesEnabled ? testingInputMediaDevices : []),
-              ]),
-            ]
-          );
-
-          return {
-            addedInputMediaDevices,
-            removedInputMediaDevices,
-          };
-        })();
-
-        const removedFactories = removedInputMediaDevices
+        const removeFactoryPromises = removedInputMediaDevices
           .map(async removedMediaDevice => {
             const factories =
               MediaStreamTrackControllerFactory.getFactoriesWithInputMediaDevice(
@@ -128,8 +97,9 @@ export default function useInputMediaDevicesFactories({
           })
           .flat();
 
-        const addedFactories = [];
+        const removedFactories = await Promise.all(removeFactoryPromises);
 
+        const addedFactories = [];
         for (const addedMediaDevice of addedInputMediaDevices) {
           // TODO: Populate
           const constraints = {};
@@ -177,39 +147,33 @@ export default function useInputMediaDevicesFactories({
           removedFactories,
         });
 
-        // Set next factories state
-        _setInputMediaDeviceFactories(prevFactories => {
-          const nextFactories = [
-            ...prevFactories.filter(factory =>
-              removedFactories.includes(factory)
-            ),
-            ...addedFactories,
-          ];
+        if (removedFactories.length || addedFactories.length) {
+          // Set next factories state
+          _setInputMediaDeviceFactories(prevFactories => {
+            const nextFactories = [
+              ...prevFactories.filter(factory =>
+                removedFactories.includes(factory)
+              ),
+              ...addedFactories,
+            ];
 
-          // TODO: Remove
-          /*
-          console.log({
-            addedFactories,
-            removedFactories,
-            nextFactories,
-            selectedInputMediaDevices,
-            testingInputMediaDevices,
+            return nextFactories;
           });
-          */
-
-          return nextFactories;
-        });
+        }
       })();
     }
   }, [
     isAudioSelectorRendered,
     isInCall,
 
+    addedInputMediaDevices,
+    removedInputMediaDevices,
+
     selectedInputMediaDevices,
-    getPreviousSelectedInputMediaDevices,
+    // getPreviousSelectedInputMediaDevices,
 
     testingInputMediaDevices,
-    getPreviousTestingInputMediaDevices,
+    // getPreviousTestingInputMediaDevices,
 
     removeSelectedInputMediaDevice,
     removeTestingInputMediaDevice,

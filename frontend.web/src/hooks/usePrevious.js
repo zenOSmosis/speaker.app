@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 const DEFAULT_REF_VALUE = null;
 
@@ -11,33 +11,21 @@ const DEFAULT_REF_VALUE = null;
  * called as a dependency, which could cause an additional render.
  *
  * @param {any} value The current value
- * @return {Object<getPreviousValue: function>}
+ * @param {boolean} defaultPreviousValue? [default = null]
+ * @return {any} The previous value
  */
-export default function usePrevious(value) {
+export default function usePrevious(
+  value,
+  defaultPreviousValue = DEFAULT_REF_VALUE
+) {
   // The ref object is a generic container whose "current" property is mutable
   // and can hold any value, similar to an instance property on a class
-  const refPrev = useRef(DEFAULT_REF_VALUE);
-  const ref = useRef(DEFAULT_REF_VALUE);
+  const refPrev = useRef(defaultPreviousValue);
   // Store current value in ref
   useEffect(() => {
-    // The old value, before the update
-    const prev = ref.current;
-
-    refPrev.current = prev;
-
-    // Update current
-    ref.current = value;
+    refPrev.current = value;
   }, [value]); // Only re-run if value changes
+
   // Return previous value (happens before update in useEffect above)
-
-  /**
-   * @return {any} The previous value
-   */
-  const getPreviousValue = useCallback(() => {
-    const prev = refPrev.current;
-
-    return prev;
-  }, []);
-
-  return { getPreviousValue };
+  return refPrev.current;
 }

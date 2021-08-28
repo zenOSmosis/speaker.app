@@ -38,8 +38,6 @@ export default function useSelectedAndTestingInputMediaDevices({
   const [testingAudioInputDevices, _setTestingAudioInputDevices] = useState([]);
   const [testingVideoInputDevices, _setTestingVideoInputDevices] = useState([]);
 
-  // TODO: Automatically
-
   // Automatically populate testAudio/VideoInputDevices based on filters used on
   // mediaDevices
   useEffect(() => {
