@@ -3,7 +3,7 @@ import { Row, Column } from "@components/Layout";
 import ButtonTransparent from "@components/ButtonTransparent";
 import Center from "@components/Center";
 // import LabeledLED from "@components/labeled/LabeledLED";
-import LabeledSwitch from "@components/labeled/LabeledSwitch";
+// import LabeledSwitch from "@components/labeled/LabeledSwitch";
 import SpeakerIcon from "@icons/SpeakerIcon";
 import LabeledIcon from "@components/labeled/LabeledIcon/LabeledIcon";
 
@@ -33,7 +33,6 @@ export default function SetupModalFooter() {
   const {
     // hasUIMicPermission,
     // setHasUIMicPermission,
-    micAudioController,
   } = useInputMediaDevicesContext();
 
   return (
@@ -65,20 +64,22 @@ export default function SetupModalFooter() {
               disabled={getIsCurrentRoute(ROUTE_SETUP_CONFIGURE)}
             />
 
-            <LabeledSwitch
-              masterLabel="Mic"
-              labelOn=""
-              labelOff=""
-              isOn={!micAudioController || !micAudioController.getIsMuted()}
-              onChange={() =>
-                micAudioController && micAudioController.toggleMute()
-              }
-              disabled={!isSessionConnected}
-              style={{
-                // opacity: !isConnected ? 0 : 1,
-                verticalAlign: "bottom",
-              }}
-            />
+            {/**
+               <LabeledSwitch
+                masterLabel="Mic"
+                labelOn=""
+                labelOff=""
+                isOn={!micAudioController || !micAudioController.getIsMuted()}
+                onChange={() =>
+                  micAudioController && micAudioController.toggleMute()
+                }
+                disabled={!isSessionConnected}
+                style={{
+                  // opacity: !isConnected ? 0 : 1,
+                  verticalAlign: "bottom",
+                }}
+              />
+               */}
           </nav>
         </Center>
       </Column>
