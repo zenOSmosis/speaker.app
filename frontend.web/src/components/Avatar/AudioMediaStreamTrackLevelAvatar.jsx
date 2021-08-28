@@ -22,12 +22,9 @@ export default function AudioMediaStreamTrackLevelAvatar({
 }) {
   const [avatarEl, setAvatarEl] = useState(null);
 
-  /*
   const percent = useAudioMediaStreamTrackLevelMonitor(
     mediaStreamTrack || mediaStreamTracks
   );
-  */
-  const percent = 0;
 
   if (avatarEl) {
     avatarEl.style.borderColor = getPercentColor(percent);
