@@ -31,19 +31,10 @@ export default function usePrevious(value) {
   // Return previous value (happens before update in useEffect above)
 
   /**
-   * @param {boolean} resetPrevAfterRun? [default = false] If set, the previous
-   * value will be reset after the run. This functionality was put in place to
-   * resolve an issue w/ useInputMediaDevicesFactories incorrectly determining
-   * added / removed selected / testing devices across subsequent runs.
    * @return {any} The previous value
    */
-  const getPreviousValue = useCallback((resetPrevAfterRun = false) => {
+  const getPreviousValue = useCallback(() => {
     const prev = refPrev.current;
-
-    if (resetPrevAfterRun) {
-      // Reset prev value to its initial state
-      refPrev.current = DEFAULT_REF_VALUE;
-    }
 
     return prev;
   }, []);
