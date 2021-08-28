@@ -12,7 +12,7 @@ import SettingsIcon from "@icons/SettingsIcon";
 import useAppRoutesContext from "@hooks/useAppRoutesContext";
 // import useSocketContext from "@hooks/useSocketContext";
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
-import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
+// import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 
 import {
   ROUTE_HOME,
@@ -30,10 +30,12 @@ export default function SetupModalFooter() {
     channelId,
   } = useWebPhantomSessionContext();
 
+  /*
   const {
     // hasUIMicPermission,
     // setHasUIMicPermission,
   } = useInputMediaDevicesContext();
+  */
 
   return (
     <Row>
