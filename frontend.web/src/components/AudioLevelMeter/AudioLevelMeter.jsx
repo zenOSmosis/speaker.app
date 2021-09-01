@@ -16,11 +16,11 @@ export default function AudioLevelMeter({
   const renderedLevels = useMemo(() => {
     let renderedLevels = [...percents];
 
-    if (typeof percent !== "undefined") {
+    if (percent !== undefined) {
       renderedLevels.push(percent);
     }
 
-    renderedLevels = renderedLevels.map((level) => 100 - level);
+    renderedLevels = renderedLevels.map(level => 100 - level);
 
     return renderedLevels;
   }, [percent, percents]);
