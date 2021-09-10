@@ -1,6 +1,6 @@
 {
   "name": "speaker.app-frontend",
-  "version": "1.0.1-alpha",
+  "version": "1.0.2-alpha",
   "private": true,
   "dependencies": {
     "@shelf/fast-chunk-string": "^1.1.1",
@@ -13,9 +13,9 @@
     "flat": "^5.0.2",
     "howler": "^2.2.1",
     "lodash": "^4.17.21",
-    "media-stream-track-controller": "github:zenosmosis/media-stream-track-controller",
+    "media-stream-track-controller": "github:zenosmosis/media-stream-track-controller#v1.0.0",
     "normalize.css": "^8.0.1",
-    "phantom-core": "github:zenosmosis/phantom-core",
+    "phantom-core": "github:zenosmosis/phantom-core#v1.0.0",
     "preload-it": "^1.4.0",
     "qrcode": "^1.4.4",
     "react": "^17.0.2",
@@ -32,7 +32,7 @@
     "secure-ls": "^1.2.6",
     "socket.io-client": "^4.1.2",
     "spark-md5": "^3.0.1",
-    "sync-object": "github:zenosmosis/sync-object",
+    "sync-object": "github:zenosmosis/sync-object#v1.0.0",
     "url-parse": "^1.5.1",
     "uuid": "^8.3.2",
     "webrtc-peer": "github:zenosmosis/webrtc-peer"
