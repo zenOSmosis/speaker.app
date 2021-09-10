@@ -35,7 +35,7 @@
     "sync-object": "github:zenosmosis/sync-object#v1.0.0",
     "url-parse": "^1.5.1",
     "uuid": "^8.3.2",
-    "webrtc-peer": "github:zenosmosis/webrtc-peer"
+    "webrtc-peer": "github:zenosmosis/webrtc-peer#v1.0.0"
   },
   "scripts": {
     "start": "REACT_APP_GIT_HASH=$(git rev-parse --short=5 HEAD) BROWSER=none react-app-rewired start",
