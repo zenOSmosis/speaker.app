@@ -69,7 +69,7 @@ services:
       REACT_APP_COTURN_HOSTNAME: ${COTURN_HOSTNAME}
       REACT_APP_COTURN_USERNAME: ${COTURN_USERNAME}
       REACT_APP_COTURN_PASSWORD: ${COTURN_PASSWORD}
-    command: ["npm", "run", "start"]
+    command: ["npm", "run", "start:speaker.app.portal"]
 
   # NOTE (jh): I didn't mount a volume here intentionally and it may need some
   # work to get it to work w/ a volume
