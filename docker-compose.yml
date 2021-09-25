@@ -62,7 +62,9 @@ services:
       - 3001
 
   frontend:
-    build: ./frontend.web
+    build:
+      context: ./frontend.web
+      dockerfile: Dockerfile.speaker.app
     restart: unless-stopped
     environment:
       NODE_ENV: production
