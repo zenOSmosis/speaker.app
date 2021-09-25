@@ -21,6 +21,5 @@ jobs:
       # NOTE: This copy just satisfies build script requirement for .env file to exist though in a real-world scenario this wouldn't work
       - run: cp .env.sample .env
 
-      # TODO: Uncomment
       # Build the production environment
       # - run: bash ./build.prod.sh

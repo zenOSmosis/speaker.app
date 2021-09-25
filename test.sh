@@ -14,12 +14,13 @@ echo "*** Starting test development modules install ***" \
   && echo "*** Installing npm modules in shared ***" \
   && cd shared \
   && $NPM_INSTALL_CMD \
-  && cd .. \
-  \
-  && echo "*** Installing npm modules in frontend.web ***" \
-  && cd frontend.web \
-  && $NPM_INSTALL_CMD \
-  && cd ..
+  && cd .. # \
+  # TODO: Uncomment
+  # \
+  # && echo "*** Installing npm modules in frontend.web ***" \
+  # && cd frontend.web \
+  # && $NPM_INSTALL_CMD \
+  # && cd ..
 
 cd shared && npm run test && cd ../
 
