@@ -23,6 +23,8 @@ echo "*** Starting test development modules install ***" \
 
 cd shared && npm run test && cd ../
 
+# TODO: Uncomment
 # cd backend && npm run test && cd ../
 
-cd frontend.web && CI=true npm run test && cd ../
+# TODO: Uncomment
+# cd frontend.web && CI=true npm run test && cd ../
