@@ -25,7 +25,7 @@
     "mongoose": "^5.12.11",
     "net": "^1.0.2",
     "node-fetch": "^2.6.1",
-    "phantom-core": "github:zenosmosis/phantom-core#v1.0.0",
+    "phantom-core": "github:zenosmosis/phantom-core#v1.0.1",
     "socket.io": "^4.1.2",
     "socket.io-redis": "^6.1.1",
     "spark-md5": "^3.0.1",

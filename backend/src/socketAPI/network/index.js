@@ -4,6 +4,7 @@ import NetworkController, {
 
 const KEY_SOCKET_NETWORK = "__network";
 
+// TODO: Document
 export async function initTranscoderSession(args, { socket }) {
   const networkController = NetworkController.getInstance();
 
@@ -63,6 +64,7 @@ export async function initTranscoderSession(args, { socket }) {
   }
 }
 
+// TODO: Document
 export async function endTranscoderSession({}, { socket }) {
   if (socket[KEY_SOCKET_NETWORK]) {
     const networkController = NetworkController.getInstance();
@@ -148,6 +150,7 @@ export async function fetchIsNetworkOnline({ realmId, channelId }) {
   return Boolean(hostSocketId);
 }
 
+// TODO: Document
 export async function setBackgroundImage({ backgroundImage }, { socket }) {
   const network = socket[KEY_SOCKET_NETWORK];
 
