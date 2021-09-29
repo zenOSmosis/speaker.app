@@ -1,10 +1,13 @@
 [![GPL-3.0 License][license-image]][license-url]
 [![ci][ci-image]][ci-url]
+[![tweet-url][tweet-image]][tweet-url]
 
 [license-image]: https://img.shields.io/github/license/zenosmosis/speaker.app
 [license-url]: https://raw.githubusercontent.com/zenOSmosis/speaker.app/master/LICENSE.txt
 [ci-image]: https://github.com/zenosmosis/speaker.app/actions/workflows/ci.yml/badge.svg
 [ci-url]: https://github.com/zenOSmosis/speaker.app/actions
+[tweet-image]: https://img.shields.io/twitter/url/http/shields.io.svg?style=social
+[tweet-url]: https://twitter.com/intent/tweet?text=Private%20audio%20chat%20rooms%20using%20your%20browser%20as%20a%20virtual%20server&url=https://github.com/zenOSmosis/speaker.app&hashtags=webrtc,audio,screensharing,virtual-server,group-chat,communications,private
 
 # Speaker.app / zenRTC / Phantom Server
 
