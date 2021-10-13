@@ -52,12 +52,16 @@ export default class SocketController {
       ++_coreConnectionCount;
 
       // Log connection count after other startup work has been performed
+      // TODO: Replace w/ setImmediate?
+      // @see https://github.com/zenOSmosis/phantom-core/issues/76
       process.nextTick(_logCoreConnectionCount);
 
       socket.on("disconnect", () => {
         --_coreConnectionCount;
 
         // Log connection count after other cleanup work has been performed
+        // TODO: Replace w/ setImmediate?
+        // @see https://github.com/zenOSmosis/phantom-core/issues/76
         process.nextTick(_logCoreConnectionCount);
       });
 

@@ -653,6 +653,8 @@ export default class ZenRTCPeer extends PhantomCore {
       this._webrtcPeer.on("track", (mediaStreamTrack, mediaStream) => {
         // NOTE (jh): This timeout seems to improve an issue w/ iOS 14
         // sometimes disconnecting when tracks are added
+        // TODO: Replace w/ setImmediate
+        // @see https://github.com/zenOSmosis/phantom-core/issues/76
         setTimeout(() => {
           this._addIncomingMediaStreamTrack(mediaStreamTrack, mediaStream);
         }, 500);
