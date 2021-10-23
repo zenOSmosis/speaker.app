@@ -34,7 +34,9 @@ export default class IPCMessageBroker extends PhantomCore {
     this._realmId = realmId;
     this._channelId = channelId;
 
+    // TODO: Do not use this property name
     this._isReady = false;
+
     this._isDestroyed = false;
   }
 
