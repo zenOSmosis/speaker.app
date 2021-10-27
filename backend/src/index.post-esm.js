@@ -1,3 +1,6 @@
+// TODO: [host-bridge] Look into Node.js Cluster adapter
+// @see https://socket.io/docs/v4/cluster-adapter/
+
 /**
  * Node clustering with Socket.io based on information obtained from:
  *
