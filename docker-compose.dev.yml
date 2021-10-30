@@ -67,9 +67,6 @@ services:
       NODE_ENV: development
       # Note: These are intentionally only supplied to the development; the production version uses them via the Dockerfile when building
       REACT_APP_GIT_HASH: ${GIT_HASH}
-      REACT_APP_COTURN_HOSTNAME: ${COTURN_HOSTNAME}
-      REACT_APP_COTURN_USERNAME: ${COTURN_USERNAME}
-      REACT_APP_COTURN_PASSWORD: ${COTURN_PASSWORD}
     command: ["npm", "run", "start:no-ssl"]
 
   # NOTE (jh): I didn't mount a volume here intentionally and it may need some

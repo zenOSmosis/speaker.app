@@ -73,6 +73,8 @@ export const EVT_SYNC_EVT_RECEIVED = "sync-event";
 const EVT_PONG = "pong";
 
 const ICE_SERVERS = (() => {
+  throw new Error("TODO: Rework COTURN variables");
+
   const hostname =
     process.env.REACT_APP_COTURN_HOSTNAME || process.env.COTURN_HOSTNAME;
 
