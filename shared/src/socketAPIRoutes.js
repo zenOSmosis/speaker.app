@@ -25,6 +25,10 @@ export const SOCKET_API_ROUTE_FETCH_NETWORK_EXISTS = "fetch-network-exists";
 
 // TODO: Document
 /** @type {Object} */
+export const SOCKET_API_ROUTE_FETCH_ICE_SERVERS = "fetch-ice-servers";
+
+// TODO: Document
+/** @type {Object} */
 export const SOCKET_API_ROUTE_INIT_TRANSCODER_SESSION =
   "init-transcoder-session";
 

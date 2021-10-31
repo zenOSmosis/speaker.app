@@ -2,6 +2,7 @@ import {
   SOCKET_API_ROUTE_LOOPBACK,
   SOCKET_API_ROUTE_FETCH_NETWORKS,
   SOCKET_API_ROUTE_FETCH_NETWORK_EXISTS,
+  SOCKET_API_ROUTE_FETCH_ICE_SERVERS,
   SOCKET_API_ROUTE_INIT_TRANSCODER_SESSION,
   SOCKET_API_ROUTE_CAPTURE_NETWORK_TOTAL_PARTICIPANTS,
   SOCKET_API_ROUTE_END_TRANSCODER_SESSION,
@@ -19,6 +20,7 @@ import {
   endTranscoderSession,
   fetchNetworks,
   fetchIsNetworkOnline,
+  fetchICEServers,
   setBackgroundImage,
 } from "./network";
 
@@ -121,6 +123,8 @@ export default function initSocketAPI(io, socket) {
     SOCKET_API_ROUTE_FETCH_NETWORK_EXISTS,
     fetchIsNetworkOnline
   );
+
+  addSocketAPIRoute(SOCKET_API_ROUTE_FETCH_ICE_SERVERS, fetchICEServers);
 
   // TODO: Extend to handle mesh networks
   addSocketAPIRoute(
