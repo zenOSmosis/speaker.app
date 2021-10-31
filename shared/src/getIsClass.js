@@ -1,3 +1,4 @@
+// TODO: Move to phantom-core
 /**
  * Determines if the supplied object is a JavaScript class.
  *

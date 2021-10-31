@@ -1,3 +1,5 @@
+// TODO: Remove?
+
 export const CAPABILITY_MULTI_PEER_MULTIPLEXER = "multi-peer-multiplexer";
 
 export const CAPABILITY_REMOTE_KEYBOARD_GAME_INPUT =
