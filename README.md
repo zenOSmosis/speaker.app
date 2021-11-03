@@ -11,6 +11,8 @@
 
 # Speaker.app / zenRTC / Phantom Server
 
+**Development Status: Nov. 3, 2021: Undergoing UI transitioning. Might take a couple of more months to complete. New UI will be more modularized so it can fit in with other projects.**
+
 **NOTE: This program is a work in progress, the console may be spammy, and it may not work at all, however, [a stable version should be running here](https://speaker.app).**
 
 [Speaker.app](https://speaker.app) is a [batteries-included](#whats-in-the-box), quasi-decentralized, alternative free speech audio platform that is compatible on any device that supports a modern web browser.
