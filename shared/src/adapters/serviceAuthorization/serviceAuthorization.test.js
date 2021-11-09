@@ -23,10 +23,8 @@ describe("serviceAuthorization", () => {
   it("Authenticates new clients", () => {
     const authentication = sendCachedAuthorization({});
 
-    const {
-      clientAuthorization,
-      clientDeviceAddress,
-    } = receiveHandshakeAuthentication(authentication);
+    const { clientAuthorization, clientDeviceAddress } =
+      receiveHandshakeAuthentication(authentication);
 
     expect(clientAuthorization).toHaveProperty("clientIdentity");
     expect(clientAuthorization.clientIdentity).toHaveProperty("address");
@@ -52,10 +50,8 @@ describe("serviceAuthorization", () => {
 
     const authentication = sendCachedAuthorization(cachedAuthorization);
 
-    const {
-      clientAuthorization,
-      clientDeviceAddress,
-    } = receiveHandshakeAuthentication(authentication);
+    const { clientAuthorization, clientDeviceAddress } =
+      receiveHandshakeAuthentication(authentication);
 
     expect(clientAuthorization.isExisting).toBe(true);
     expect(clientDeviceAddress).toBe(

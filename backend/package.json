@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node -r esm src/index.js",
     "start:dev": "GIT_BRANCH=$(git symbolic-ref --short HEAD) GIT_HASH=$(git rev-parse --short=5 HEAD) nodemon -r esm -L",
-    "test": "GIT_BRANCH=$(git symbolic-ref --short HEAD) GIT_HASH=$(git rev-parse --short=5 HEAD) echo \"Error: no test specified\" && exit 1"
+    "test": "GIT_BRANCH=$(git symbolic-ref --short HEAD) GIT_HASH=$(git rev-parse --short=5 HEAD) echo \"Error: no test specified\" && exit 1",
+    "lint": "prettier --write '(**/)*.js'"
   },
   "author": "",
   "license": "ISC",
@@ -36,5 +37,8 @@
   "_moduleAliases": {
     "@src": "src",
     "@shared": "src/shared"
+  },
+  "devDependencies": {
+    "prettier": "^2.4.1"
   }
 }

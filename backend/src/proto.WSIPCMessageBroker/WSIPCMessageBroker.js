@@ -122,7 +122,7 @@ export default class WSIPCMessageBroker extends IPCMessageBroker {
       this._setIsReady(true);
     });
 
-    this._wsChromeController.on("message", (data) => {
+    this._wsChromeController.on("message", data => {
       const message = JSON.parse(data);
 
       this.receiveMessage(message);
