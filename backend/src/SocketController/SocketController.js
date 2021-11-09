@@ -121,6 +121,8 @@ export default class SocketController {
           });
         })();
 
+        // TODO: Move to SocketAPI route
+        //
         // IPC message broker
         //
         // Mainly used for routing WebRTC signals to peers
