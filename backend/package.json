@@ -11,7 +11,7 @@
     "lint": "prettier --write '(**/)*.js'"
   },
   "author": "",
-  "license": "ISC",
+  "license": "GPL 3.0",
   "dependencies": {
     "axios": "^0.21.1",
     "dayjs": "^1.10.6",
