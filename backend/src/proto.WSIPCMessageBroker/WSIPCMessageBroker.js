@@ -40,20 +40,20 @@ export default class WSIPCMessageBroker extends IPCMessageBroker {
       });
 
       socket.on(TYPE_WEB_IPC_MESSAGE, async (req, ack) => {
-        const { realmId, channelId, ...rest } = req;
+        const { realmID, channelID, ...rest } = req;
 
         if (!WSIPCMessageBroker) {
           // TODO: Use cached session
           // TODO: Enforce same realm / channel combination for the duration of the socket session
           WSIPCMessageBroker = new WSIPCMessageBroker({
-            realmId,
-            channelId,
+            realmID,
+            channelID,
             socket,
           });
         } else {
           if (
-            WSIPCMessageBroker.getRealmId() !== realmId ||
-            WSIPCMessageBroker.getChannelId() !== channelId
+            WSIPCMessageBroker.getRealmId() !== realmID ||
+            WSIPCMessageBroker.getChannelId() !== channelID
           ) {
             // TODO: Raise error
             ack({
@@ -87,8 +87,8 @@ export default class WSIPCMessageBroker extends IPCMessageBroker {
   }
   */
 
-  constructor({ realmId, channelId, socket, ...rest }) {
-    super({ realmId, channelId, ...rest });
+  constructor({ realmID, channelID, socket, ...rest }) {
+    super({ realmID, channelID, ...rest });
 
     this._wsChromeController = null;
     this._socket = socket;
@@ -146,8 +146,8 @@ export default class WSIPCMessageBroker extends IPCMessageBroker {
    * @return {Promise<void>}
    */
   async sendMessage({
-    realmId = this._realmId,
-    channelId = this._channelId,
+    realmID = this._realmID,
+    channelID = this._channelID,
     serviceEntityTo = CHROME_SERVICE_ENTITY,
     serviceEntityFrom = BACKEND_SERVICE_ENTITY,
     socketIoId,
@@ -157,8 +157,8 @@ export default class WSIPCMessageBroker extends IPCMessageBroker {
   }) {
     // TODO: Use configurable logger
     console.log(`${this.constructor.name} sending message`, {
-      realmId,
-      channelId,
+      realmID,
+      channelID,
       serviceEntityTo,
       serviceEntityFrom,
       // socketIoId,
@@ -178,8 +178,8 @@ export default class WSIPCMessageBroker extends IPCMessageBroker {
         // Send the message over WebSocket to Chrome controller
         this._wsChromeController.send(
           JSON.stringify({
-            realmId,
-            channelId,
+            realmID,
+            channelID,
             serviceEntityTo,
             serviceEntityFrom,
             socketIoId,

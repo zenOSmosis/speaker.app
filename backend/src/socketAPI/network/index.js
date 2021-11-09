@@ -15,8 +15,8 @@ export async function initTranscoderSession(args, { socket }) {
 
   const {
     networkName: name,
-    realmId,
-    channelId,
+    realmID,
+    channelID,
     isPublic,
     networkDescription: description,
     deviceAddress: transcoderDeviceAddress,
@@ -32,8 +32,8 @@ export async function initTranscoderSession(args, { socket }) {
   // TODO: try / catch and pipe error to client if not able to establish
   const network = await networkController.createNetwork({
     name,
-    realmId,
-    channelId,
+    realmID,
+    channelID,
     isPublic,
     description,
     transcoderType: SERVER_TYPE_EXTERNAL,
@@ -107,17 +107,17 @@ export async function setConnectedParticipants(
 /**
  * @return {Promise<Object[]>} // TODO: Document
  */
-export async function fetchNetworks({ realmId, channelId, isPublic = true }) {
+export async function fetchNetworks({ realmID, channelID, isPublic = true }) {
   const networkController = NetworkController.getInstance();
 
   // TODO: Refactor
   const query = (() => {
     const query = {};
-    if (realmId) {
-      query.realmId = realmId;
+    if (realmID) {
+      query.realmID = realmID;
     }
-    if (channelId) {
-      query.channelId = channelId;
+    if (channelID) {
+      query.channelID = channelID;
     }
     query.isPublic = isPublic;
 
@@ -134,13 +134,13 @@ export async function fetchNetworks({ realmId, channelId, isPublic = true }) {
  * @param {Object} socketAPIContext
  * @return {Promise<boolean>}
  */
-export async function fetchIsNetworkOnline({ realmId, channelId }) {
+export async function fetchIsNetworkOnline({ realmID, channelID }) {
   // { io, socket }
   const networkController = NetworkController.getInstance();
 
   const hostSocketId = await networkController.fetchTranscoderSocketId({
-    realmId,
-    channelId,
+    realmID,
+    channelID,
   });
 
   // TODO: Remove

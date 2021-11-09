@@ -24,15 +24,15 @@ export default class IPCMessageBroker extends PhantomCore {
   constructor({
     socketIoIdFrom,
     socketIoIdTo = null,
-    realmId = null,
-    channelId = null,
+    realmID = null,
+    channelID = null,
   }) {
     super();
 
     this._socketIoIdFrom = socketIoIdFrom;
     this._socketIoIdTo = socketIoIdTo;
-    this._realmId = realmId;
-    this._channelId = channelId;
+    this._realmID = realmID;
+    this._channelID = channelID;
 
     // TODO: Do not use this property name
     this._isReady = false;

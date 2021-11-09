@@ -10,8 +10,8 @@ export { TYPE_WEB_IPC_MESSAGE };
  */
 export default class BackendIPCMessageBroker extends IPCMessageBroker {
   // TODO: Document
-  constructor({ realmId, channelId, io, ...rest }) {
-    super({ realmId, channelId, ...rest });
+  constructor({ realmID, channelID, io, ...rest }) {
+    super({ realmID, channelID, ...rest });
 
     this._io = io;
     this._networkController = new NetworkController();
@@ -21,8 +21,8 @@ export default class BackendIPCMessageBroker extends IPCMessageBroker {
    * @return {Promise<void>}
    */
   async sendMessage({
-    realmId = this._realmId,
-    channelId = this._channelId,
+    realmID = this._realmID,
+    channelID = this._channelID,
     socketIoIdFrom = this._socketIoIdFrom,
     socketIoIdTo = null,
     ...rest
@@ -31,8 +31,8 @@ export default class BackendIPCMessageBroker extends IPCMessageBroker {
 
     if (!socketIoIdTo) {
       socketIoIdTo = await this._networkController.fetchTranscoderSocketId({
-        realmId,
-        channelId,
+        realmID,
+        channelID,
       });
     }
 
@@ -42,8 +42,8 @@ export default class BackendIPCMessageBroker extends IPCMessageBroker {
 
     // Proxy to receiver Socket.io peer
     this._io.to(socketIoIdTo).emit(TYPE_WEB_IPC_MESSAGE, {
-      realmId,
-      channelId,
+      realmID,
+      channelID,
       socketIoIdFrom,
       socketIoIdTo,
       ...rest,

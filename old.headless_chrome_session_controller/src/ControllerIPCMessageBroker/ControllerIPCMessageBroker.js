@@ -18,21 +18,21 @@ const _instances = {};
  */
 export default class ControllerIPCMessageBroker extends IPCMessageBroker {
   /**
-   * @param {{realmId: string | number, channelId: string | number}} config
+   * @param {{realmID: string | number, channelID: string | number}} config
    * @return {ControllerIPCMessageBroker}
    */
-  static getOrCreateInstance({ realmId, channelId }) {
+  static getOrCreateInstance({ realmID, channelID }) {
     const instanceKey = ControllerIPCMessageBroker.getInstanceKey({
-      realmId,
-      channelId,
+      realmID,
+      channelID,
     });
 
     if (_instances[instanceKey]) {
       return _instances[instanceKey];
     } else {
       return new ControllerIPCMessageBroker({
-        realmId,
-        channelId,
+        realmID,
+        channelID,
       });
     }
   }
@@ -42,17 +42,17 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
    *
    * This is specifically used for internal caching.
    *
-   * @param {{realmId: string | number, channelId: string | number}} config
+   * @param {{realmID: string | number, channelID: string | number}} config
    * @return {string}
    */
-  static getInstanceKey({ realmId, channelId }) {
-    return `${realmId}-${channelId}`;
+  static getInstanceKey({ realmID, channelID }) {
+    return `${realmID}-${channelID}`;
   }
 
-  constructor({ realmId, channelId }) {
+  constructor({ realmID, channelID }) {
     const _instanceKey = ControllerIPCMessageBroker.getInstanceKey({
-      realmId,
-      channelId,
+      realmID,
+      channelID,
     });
 
     if (_instances[_instanceKey]) {
@@ -62,7 +62,7 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
       );
     }
 
-    super({ realmId, channelId });
+    super({ realmID, channelID });
 
     // TODO: Adjust accordingly
     this.setMaxListeners(100);
@@ -103,10 +103,8 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
     this._isInitStarted = true;
     // Chrome handling
     // TODO: Finish implementing
-    const {
-      PUPPETEER_BROWSER_WS_ENDPOINT,
-      PUPPETEER_BROWSER_PAGE_URL,
-    } = process.env;
+    const { PUPPETEER_BROWSER_WS_ENDPOINT, PUPPETEER_BROWSER_PAGE_URL } =
+      process.env;
 
     this._browser = await puppeteer.connect({
       // For debugging; wait for manual resume interaction
@@ -132,7 +130,7 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
     page.on("close", () => console.log("page closed...."));
 
     // TODO: Clean up handling
-    page.on("console", (msg) => {
+    page.on("console", msg => {
       const data = msg.text();
 
       const logPrefix = "Headless Chrome Log Emit:";
@@ -153,12 +151,12 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
 
     await page.goto(PUPPETEER_BROWSER_PAGE_URL);
 
-    const realmId = this._realmId;
-    const channelId = this._channelId;
+    const realmID = this._realmID;
+    const channelID = this._channelID;
 
     // Set up message broker w/ Chrome
     await page.evaluate(
-      ({ realmId, channelId }) => {
+      ({ realmID, channelID }) => {
         // Set up global chromeIPC handler in Chrome
         //
         // TODO: Debug why this sometimes "resets" on that page, losing its
@@ -168,15 +166,15 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
         // reloading in the headless_chrome_app, but not all the time.
         // TODO: Use constant here
         window.__chromeIPC = new window.__ChromeIPCMessageBroker({
-          realmId,
-          channelId,
+          realmID,
+          channelID,
         });
       },
-      { realmId, channelId }
+      { realmID, channelID }
     );
 
     // TODO: Set up interface for Chrome to be able to post back here
-    await page.exposeFunction("__sendControllerMessage", async (message) => {
+    await page.exposeFunction("__sendControllerMessage", async message => {
       await this.receiveMessage(message);
     });
 
@@ -216,7 +214,7 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
         // Backend -> Controller -> Chrome
 
         await this._page.evaluate(
-          (sendMessageParams) => {
+          sendMessageParams => {
             // TODO: Validate this object exists, and if not, handle it accordingly...
             //  - Do we re-instantiate or emit an error?
 
@@ -333,27 +331,27 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
     port: WS_LISTEN_PORT,
   });
 
-  wss.on("connection", (ws) => {
+  wss.on("connection", ws => {
     console.log("wss connected");
 
     // Each connection can only have a reference to one controller
     let controller = null;
 
     // API calls from backend
-    ws.on("message", async (data) => {
+    ws.on("message", async data => {
       const messagePacket = JSON.parse(data);
 
       // TODO: Remove
       // console.log("received message packet from backend", messagePacket);
 
-      const { realmId, channelId, socketIoId, ...rest } = messagePacket;
+      const { realmID, channelID, socketIoId, ...rest } = messagePacket;
 
       if (!controller) {
         // Ensure that subsequent backend WebSocket connections reach to the same
         // Chrome session.
         controller = ControllerIPCMessageBroker.getOrCreateInstance({
-          realmId,
-          channelId,
+          realmID,
+          channelID,
         });
 
         // Associate this WebSocket connection to the controller

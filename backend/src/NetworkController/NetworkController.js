@@ -89,18 +89,18 @@ export default class NetworkController extends PhantomCore {
       }
     );
 
-    // TODO: Implement length validation for any client-generated strings (i.e. realmId, channelId, description, transcoder*)
+    // TODO: Implement length validation for any client-generated strings (i.e. realmID, channelID, description, transcoder*)
     this._networkSchema = new mongoose.Schema(
       {
         name: {
           type: String,
           required: true,
         },
-        realmId: {
+        realmID: {
           type: String,
           required: true,
         },
-        channelId: {
+        channelID: {
           type: String,
           required: true,
         },
@@ -189,7 +189,7 @@ export default class NetworkController extends PhantomCore {
     );
 
     // Ensure realm and channel are unique
-    this._networkSchema.index({ realmId: 1, channelId: 1 }, { unique: true });
+    this._networkSchema.index({ realmID: 1, channelID: 1 }, { unique: true });
 
     // TODO: What is this used for?  Should it be used?
     // await this._networkSchema.syncIndexes();
@@ -203,8 +203,8 @@ export default class NetworkController extends PhantomCore {
    */
   async createNetwork({
     name,
-    realmId,
-    channelId,
+    realmID,
+    channelID,
     description,
     transcoderSocketId,
     transcoderType,
@@ -226,8 +226,8 @@ export default class NetworkController extends PhantomCore {
     const network = new Network({
       name,
       controllerNodeHostname: os.hostname(),
-      realmId,
-      channelId,
+      realmID,
+      channelID,
       description,
       isPublic,
       backgroundImage,
@@ -357,17 +357,17 @@ export default class NetworkController extends PhantomCore {
    * interface, then make this a public method again.
    *
    * @typedef {Object} NetworkDBObjectQuery
-   * @property {string} realmId
-   * @property {string} channelId
+   * @property {string} realmID
+   * @property {string} channelID
    *
    * @param {NetworkDBObjectQuery}
    * @return {Promise<NetworkDBObject>}
    */
-  async _fetchNetwork({ realmId, channelId, ...rest }) {
+  async _fetchNetwork({ realmID, channelID, ...rest }) {
     // TODO: Convert to class method
     const Network = mongoose.model(NETWORK_MODEL_NAME, this._networkSchema);
 
-    const network = await Network.findOne({ realmId, channelId, ...rest });
+    const network = await Network.findOne({ realmID, channelID, ...rest });
 
     return network;
   }
@@ -375,14 +375,14 @@ export default class NetworkController extends PhantomCore {
   /**
    * @return {Promise<string>}
    */
-  async fetchTranscoderSocketId({ realmId, channelId }) {
-    const network = await this._fetchNetwork({ realmId, channelId });
+  async fetchTranscoderSocketId({ realmID, channelID }) {
+    const network = await this._fetchNetwork({ realmID, channelID });
 
     if (network) {
       return network["transcoderSocketId"];
     } else {
       console.warn(
-        `Unable to find network with realm "${realmId}" and channel "${channelId}"`
+        `Unable to find network with realm "${realmID}" and channel "${channelID}"`
       );
     }
   }

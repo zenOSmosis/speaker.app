@@ -138,10 +138,10 @@ export default class SocketController {
 
           socket.on(
             TYPE_WEB_IPC_MESSAGE,
-            ({ realmId, channelId, serviceEntityTo, ...rest }) => {
+            ({ realmID, channelID, serviceEntityTo, ...rest }) => {
               ipcMessageBroker.sendMessage({
-                realmId,
-                channelId,
+                realmID,
+                channelID,
                 senderDeviceAddress: socket[KEY_CLIENT_DEVICE_ADDRESS],
                 ...rest,
               });

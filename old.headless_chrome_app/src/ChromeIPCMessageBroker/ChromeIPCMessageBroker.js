@@ -24,10 +24,10 @@ export default class ChromeIPCMessageBroker extends IPCMessageBroker {
   }
 
   /**
-   * @param {string} realmId
-   * @param {string} channelId
+   * @param {string} realmID
+   * @param {string} channelID
    */
-  constructor({ realmId, channelId }) {
+  constructor({ realmID, channelID }) {
     // Prevent more than one instance here
     if (_instance) {
       throw new Error(
@@ -35,7 +35,7 @@ export default class ChromeIPCMessageBroker extends IPCMessageBroker {
       );
     }
 
-    super({ realmId, channelId });
+    super({ realmID, channelID });
 
     _instance = this;
   }
@@ -71,8 +71,8 @@ export default class ChromeIPCMessageBroker extends IPCMessageBroker {
         new ChromeZenRTCPeer({
           ipcMessageBroker: this,
           socketIoId,
-          realmId: this._realmId,
-          channelId: this._channelId,
+          realmID: this._realmID,
+          channelID: this._channelID,
         });
       }
 
