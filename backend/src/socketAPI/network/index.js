@@ -58,6 +58,7 @@ export async function initTranscoderSession(args, { socket }) {
   if (!socket.connected) {
     endTranscoderSession(args, { socket });
   } else {
+    // TODO: Remove this event listener when network is destructed
     socket.on("disconnect", () => {
       endTranscoderSession(args, { socket });
     });
