@@ -1,6 +1,11 @@
 {
   "name": "speaker.app-backend",
   "version": "2.0.0-alpha",
+  "author": {
+    "name": "zenOSmosis",
+    "email": "info@zenosmosis.com",
+    "url": "https://zenosmosis.com"
+  },
   "private": true,
   "description": "",
   "main": "./src",
@@ -10,7 +15,6 @@
     "test": "GIT_BRANCH=$(git symbolic-ref --short HEAD) GIT_HASH=$(git rev-parse --short=5 HEAD) echo \"Error: no test specified\" && exit 1",
     "lint": "prettier --write '(**/)*.js'"
   },
-  "author": "",
   "license": "GPL 3.0",
   "dependencies": {
     "axios": "^0.21.1",
