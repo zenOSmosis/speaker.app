@@ -30,7 +30,7 @@ export default class BackendIPCMessageBroker extends IPCMessageBroker {
     // TODO: Handle errors
 
     if (!socketIDTo) {
-      socketIDTo = await this._networkController.fetchTranscoderSocketId({
+      socketIDTo = await this._networkController.fetchTranscoderSocketID({
         realmID,
         channelID,
       });

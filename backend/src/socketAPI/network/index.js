@@ -37,7 +37,7 @@ export async function initTranscoderSession(args, { socket }) {
     isPublic,
     description,
     transcoderType: SERVER_TYPE_EXTERNAL,
-    transcoderSocketId: socket.id,
+    transcoderSocketID: socket.id,
     transcoderDeviceAddress,
     transcoderUserAgent,
     transcoderCoreCount,
@@ -138,7 +138,7 @@ export async function fetchIsNetworkOnline({ realmID, channelID }) {
   // { io, socket }
   const networkController = NetworkController.getInstance();
 
-  const hostSocketId = await networkController.fetchTranscoderSocketId({
+  const hostSocketId = await networkController.fetchTranscoderSocketID({
     realmID,
     channelID,
   });

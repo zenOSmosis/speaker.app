@@ -131,7 +131,7 @@ export default class NetworkController extends PhantomCore {
           required: true,
           index: true,
         },
-        transcoderSocketId: {
+        transcoderSocketID: {
           // TODO: Rename to transcoder socket id
           type: String,
           required: true,
@@ -206,7 +206,7 @@ export default class NetworkController extends PhantomCore {
     realmID,
     channelID,
     description,
-    transcoderSocketId,
+    transcoderSocketID,
     transcoderType,
     isPublic,
     backgroundImage = {},
@@ -233,8 +233,8 @@ export default class NetworkController extends PhantomCore {
       backgroundImage,
       connectedParticipants,
       maxParticipants,
-      transcoderIsConnected: Boolean(transcoderSocketId),
-      transcoderSocketId,
+      transcoderIsConnected: Boolean(transcoderSocketID),
+      transcoderSocketID,
       transcoderType,
       transcoderDeviceAddress,
       transcoderUserAgent,
@@ -304,7 +304,7 @@ export default class NetworkController extends PhantomCore {
     await network.updateOne({
       controllerNodeHostname: null,
       transcoderIsConnected: false,
-      transcoderSocketId: null,
+      transcoderSocketID: null,
       connectedParticipants: null,
     });
 
@@ -375,11 +375,11 @@ export default class NetworkController extends PhantomCore {
   /**
    * @return {Promise<string>}
    */
-  async fetchTranscoderSocketId({ realmID, channelID }) {
+  async fetchTranscoderSocketID({ realmID, channelID }) {
     const network = await this._fetchNetwork({ realmID, channelID });
 
     if (network) {
-      return network["transcoderSocketId"];
+      return network["transcoderSocketID"];
     } else {
       console.warn(
         `Unable to find network with realm "${realmID}" and channel "${channelID}"`
