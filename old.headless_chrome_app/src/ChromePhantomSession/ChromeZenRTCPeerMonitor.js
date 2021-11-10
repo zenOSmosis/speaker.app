@@ -101,11 +101,11 @@ export default class ChromeZenRTCPeerMonitor extends PhantomCore {
   }
 
   /**
-   * @param {string} socketIoId
+   * @param {string} socketID
    * @return {ChromeZenRTCPeer | undefined}
    */
-  getPeerWithSocketIoId(socketIoId) {
-    return ChromeZenRTCPeer.getInstanceWithSocketIoId(socketIoId);
+  getPeerWithSocketID(socketID) {
+    return ChromeZenRTCPeer.getInstanceWithSocketID(socketID);
   }
 
   // TODO: Document

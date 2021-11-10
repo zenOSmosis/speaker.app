@@ -39,7 +39,7 @@ export default function PhantomServerDebugger() {
                 }}
               >
                 <div>idx: {idx}</div>
-                <div>Socket IO Id: {peer.getSocketIoId()}</div>
+                <div>Socket IO Id: {peer.getSocketID()}</div>
                 <div>
                   <h3>Outgoing Media Stream Tracks</h3>
                   <GroupedMediaStreamTracks

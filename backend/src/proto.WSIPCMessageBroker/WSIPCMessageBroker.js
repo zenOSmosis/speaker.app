@@ -66,7 +66,7 @@ export default class WSIPCMessageBroker extends IPCMessageBroker {
         }
 
         await WSIPCMessageBroker.sendMessage({
-          socketIoId: socket.id,
+          socketID: socket.id,
           ...rest,
         });
 
@@ -150,7 +150,7 @@ export default class WSIPCMessageBroker extends IPCMessageBroker {
     channelID = this._channelID,
     serviceEntityTo = CHROME_SERVICE_ENTITY,
     serviceEntityFrom = BACKEND_SERVICE_ENTITY,
-    socketIoId,
+    socketID,
     messageId,
     messageData,
     ...rest
@@ -161,7 +161,7 @@ export default class WSIPCMessageBroker extends IPCMessageBroker {
       channelID,
       serviceEntityTo,
       serviceEntityFrom,
-      // socketIoId,
+      // socketID,
       // messageId,
       // messageData,
       // ...rest,
@@ -182,7 +182,7 @@ export default class WSIPCMessageBroker extends IPCMessageBroker {
             channelID,
             serviceEntityTo,
             serviceEntityFrom,
-            socketIoId,
+            socketID,
             messageId,
             messageData,
             ...rest,

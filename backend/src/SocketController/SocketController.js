@@ -129,7 +129,7 @@ export default class SocketController {
         (() => {
           const ipcMessageBroker = new BackendIPCMessageBroker({
             io,
-            socketIoIdFrom: socket.id,
+            socketIDFrom: socket.id,
           });
 
           socket.on("disconnect", () => {
@@ -162,11 +162,11 @@ export default class SocketController {
   /**
    * Consideration: Surely this isn't very memory efficient?
    *
-   * @param {string} socketIoId
+   * @param {string} socketID
    * @param {Object} io // TODO: Document
    */
-  static getSocketWithId(socketIoId, io) {
-    return io.sockets.clients().connected[socketIoId];
+  static getSocketWithId(socketID, io) {
+    return io.sockets.clients().connected[socketID];
   }
 
   /**

@@ -11,20 +11,20 @@ describe("TranscoderVirtualParticipant", () => {
       cat: "not-a-dog",
     });
 
-    expect(vp1.getSocketIoIds()).toEqual(["abc123"]);
+    expect(vp1.getSocketIDs()).toEqual(["abc123"]);
 
     const vp3 = new TranscoderVirtualParticipant("def456", {
       abc: "123",
     });
 
-    expect(vp1.getSocketIoIds()).toEqual(["abc123"]);
-    expect(vp2.getSocketIoIds()).toEqual(["abc123"]);
-    expect(vp3.getSocketIoIds()).toEqual(["def456"]);
+    expect(vp1.getSocketIDs()).toEqual(["abc123"]);
+    expect(vp2.getSocketIDs()).toEqual(["abc123"]);
+    expect(vp3.getSocketIDs()).toEqual(["def456"]);
 
-    // vp1.addSocketIoId("aab124");
+    // vp1.addSocketID("aab124");
 
-    // expect(vp1.getSocketIoIds()).toEqual(["abc123", "aab124"]);
-    // expect(vp2.getSocketIoIds()).toEqual(["abc123", "aab124"]);
+    // expect(vp1.getSocketIDs()).toEqual(["abc123", "aab124"]);
+    // expect(vp2.getSocketIDs()).toEqual(["abc123", "aab124"]);
   });
 
   it("Removes Socket.io ID from participants", () => {
@@ -32,20 +32,20 @@ describe("TranscoderVirtualParticipant", () => {
       foo: "bar",
     });
 
-    vp1.addSocketIoId("ddd111");
-    vp1.addSocketIoId("ddd222");
-    vp1.addSocketIoId("ddd333");
+    vp1.addSocketID("ddd111");
+    vp1.addSocketID("ddd222");
+    vp1.addSocketID("ddd333");
 
-    expect(vp1.getSocketIoIds()).toEqual([
+    expect(vp1.getSocketIDs()).toEqual([
       "981a",
       "ddd111",
       "ddd222",
       "ddd333",
     ]);
 
-    vp1.removeSocketIoId("ddd222");
+    vp1.removeSocketID("ddd222");
 
-    expect(vp1.getSocketIoIds()).toEqual(["981a", "ddd111", "ddd333"]);
+    expect(vp1.getSocketIDs()).toEqual(["981a", "ddd111", "ddd333"]);
   });
 });
 */

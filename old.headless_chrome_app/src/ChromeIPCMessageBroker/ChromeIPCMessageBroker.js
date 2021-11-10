@@ -57,20 +57,20 @@ export default class ChromeIPCMessageBroker extends IPCMessageBroker {
   }
 
   async receiveMessage(message) {
-    const { socketIoId /* type, signal, ...rest */ } = message;
+    const { socketID /* type, signal, ...rest */ } = message;
 
     try {
-      if (ChromeZenRTCPeer.getInstanceWithSocketIoId(socketIoId)) {
+      if (ChromeZenRTCPeer.getInstanceWithSocketID(socketID)) {
         // TODO: Remove
         /*
         console.log(
-          `Found existing ChromeZenRTCPeer with socketIoId "${socketIoId}"`
+          `Found existing ChromeZenRTCPeer with socketID "${socketID}"`
         );
         */
       } else {
         new ChromeZenRTCPeer({
           ipcMessageBroker: this,
-          socketIoId,
+          socketID,
           realmID: this._realmID,
           channelID: this._channelID,
         });

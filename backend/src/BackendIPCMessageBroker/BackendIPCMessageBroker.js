@@ -23,29 +23,29 @@ export default class BackendIPCMessageBroker extends IPCMessageBroker {
   async sendMessage({
     realmID = this._realmID,
     channelID = this._channelID,
-    socketIoIdFrom = this._socketIoIdFrom,
-    socketIoIdTo = null,
+    socketIDFrom = this._socketIDFrom,
+    socketIDTo = null,
     ...rest
   }) {
     // TODO: Handle errors
 
-    if (!socketIoIdTo) {
-      socketIoIdTo = await this._networkController.fetchTranscoderSocketId({
+    if (!socketIDTo) {
+      socketIDTo = await this._networkController.fetchTranscoderSocketId({
         realmID,
         channelID,
       });
     }
 
     this.log.debug(
-      `${this.constructor.name} proxying message from ${socketIoIdFrom} to ${socketIoIdTo}`
+      `${this.constructor.name} proxying message from ${socketIDFrom} to ${socketIDTo}`
     );
 
     // Proxy to receiver Socket.io peer
-    this._io.to(socketIoIdTo).emit(TYPE_WEB_IPC_MESSAGE, {
+    this._io.to(socketIDTo).emit(TYPE_WEB_IPC_MESSAGE, {
       realmID,
       channelID,
-      socketIoIdFrom,
-      socketIoIdTo,
+      socketIDFrom,
+      socketIDTo,
       ...rest,
     });
   }

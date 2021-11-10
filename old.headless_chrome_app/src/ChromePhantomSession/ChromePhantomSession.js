@@ -66,8 +66,8 @@ export default class ChromePhantomSession extends ChromeZenRTCPeerMonitor {
     // Route all streams to other streams
     (() => {
       // Peer connect handling
-      this.on(EVT_PEER_CONNECTED, async (peer) => {
-        await new Promise((resolve) => setTimeout(resolve, 500));
+      this.on(EVT_PEER_CONNECTED, async peer => {
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         peer.emitSyncEvent(
           SYNC_EVT_PHANTOM_SERVER_SESSION_UPTIME,
@@ -124,13 +124,12 @@ export default class ChromePhantomSession extends ChromeZenRTCPeerMonitor {
           setTimeout(async () => {
             const introSound = new CachedHowl({
               // TODO: Make this dynamic
-              src:
-                "/audio-samples/sound-effects/myinstants.com/message/new-message-online-audio-converter.mp3",
+              src: "/audio-samples/sound-effects/myinstants.com/message/new-message-online-audio-converter.mp3",
               format: "mp3",
             });
             introSound.play();
 
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             this.speak(`${peer.getNickname()} has joined the call`);
           }, 250);
@@ -223,14 +222,14 @@ export default class ChromePhantomSession extends ChromeZenRTCPeerMonitor {
                 const destination = eventData.d;
 
                 // TODO: Receiver could be the Phantom Server itself
-                const receiver = this.getPeerWithSocketIoId(destination);
+                const receiver = this.getPeerWithSocketID(destination);
 
                 if (receiver) {
                   // Proxy the query to the receiving peer
                   receiver.emitSyncEvent(SYNC_EVT_PHANTOM_EVENT_CHANNEL_QUERY, {
                     ...eventData,
                     // TODO: Bake this parameter into PhantomEventChannel receiver
-                    s: fromPeer.getSocketIoId(),
+                    s: fromPeer.getSocketID(),
                   });
                 }
               })();
@@ -262,7 +261,7 @@ export default class ChromePhantomSession extends ChromeZenRTCPeerMonitor {
       );
 
       // Peer disconnect handling
-      this.on(EVT_PEER_DISCONNECTED, async (peer) => {
+      this.on(EVT_PEER_DISCONNECTED, async peer => {
         this.broadcastConnectedSessionInfo();
 
         const otherPeers = this.getOtherPeers(peer);
@@ -271,13 +270,12 @@ export default class ChromePhantomSession extends ChromeZenRTCPeerMonitor {
         // Don't play if no peers at all
         if (lenOtherPeers) {
           const introSound = new CachedHowl({
-            src:
-              "/audio-samples/sound-effects/myinstants.com/message/new-message-online-audio-converter.mp3",
+            src: "/audio-samples/sound-effects/myinstants.com/message/new-message-online-audio-converter.mp3",
             format: "mp3",
           });
           introSound.play();
 
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 1000));
 
           this.speak(`${peer.getNickname()} has left the call`);
         }
@@ -379,10 +377,10 @@ export default class ChromePhantomSession extends ChromeZenRTCPeerMonitor {
 
     // TODO: Refactor
     for (const peer of peers) {
-      const socketIoId = peer.getSocketIoId();
+      const socketID = peer.getSocketID();
       /** @type {ParticipantInfo} // TODO: Document type */
       ret.peers.push({
-        id: socketIoId,
+        id: socketID,
         nickname: peer.getNickname(),
         capabilities: peer.getRemoteCapabilities(),
         isVirtual: false,
@@ -390,7 +388,7 @@ export default class ChromePhantomSession extends ChromeZenRTCPeerMonitor {
         // TODO: Skip streams without tracks
         mediaStreams: peer
           .getIncomingMediaStreams()
-          .map((mediaStream) => ({
+          .map(mediaStream => ({
             id: mediaStream.id,
             trackKinds: mediaStream.getTracks().map(({ kind }) => kind),
           }))
@@ -504,7 +502,7 @@ export default class ChromePhantomSession extends ChromeZenRTCPeerMonitor {
     const otherPeers = this.getOtherPeers(fromPeer);
 
     // TODO: Make this less hackish
-    eventData.senderSocketIoId = fromPeer.getSocketIoId();
+    eventData.senderSocketID = fromPeer.getSocketID();
 
     for (const peer of otherPeers) {
       peer.emitSyncEvent(SYNC_EVT_CHAT_MESSAGE, eventData);

@@ -187,7 +187,7 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
   async sendMessage({
     serviceEntityTo,
     serviceEntityFrom,
-    socketIoId,
+    socketID,
     messageId,
     messageData,
     ...rest
@@ -228,7 +228,7 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
           {
             serviceEntityTo,
             serviceEntityFrom,
-            socketIoId,
+            socketID,
             messageId,
             messageData,
             ...rest,
@@ -250,12 +250,12 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
    * @param {Object} message TODO: Document
    */
   async receiveMessage(message) {
-    const { socketIoId } = message;
+    const { socketID } = message;
 
     // TODO: Remove
     // console.log("receiving message", message);
 
-    const ws = this.getWSInstanceWithSocketIoId(socketIoId);
+    const ws = this.getWSInstanceWithSocketID(socketID);
 
     if (ws) {
       ws.send(JSON.stringify(message));
@@ -271,29 +271,29 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
    * backend.
    *
    * @param {WebSocket} ws
-   * @param {string} socketIoId
+   * @param {string} socketID
    */
-  addWSInstance(ws, socketIoId) {
-    this._wsInstances[socketIoId] = ws;
+  addWSInstance(ws, socketID) {
+    this._wsInstances[socketID] = ws;
   }
 
   /**
    * Disassociates a WebSocket API interface instance for communicating to
    * backend.
    *
-   * @param {string} socketIoId
+   * @param {string} socketID
    */
-  removeWSInstanceWithSocketIoId(socketIoId) {
-    delete this._wsInstances[socketIoId];
+  removeWSInstanceWithSocketID(socketID) {
+    delete this._wsInstances[socketID];
   }
 
   /**
    * Utilized for communication with other WebSocket instances.
    *
-   * @param {string} socketIoId
+   * @param {string} socketID
    */
-  getWSInstanceWithSocketIoId(socketIoId) {
-    return this._wsInstances[socketIoId];
+  getWSInstanceWithSocketID(socketID) {
+    return this._wsInstances[socketID];
   }
 
   /**
@@ -344,7 +344,7 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
       // TODO: Remove
       // console.log("received message packet from backend", messagePacket);
 
-      const { realmID, channelID, socketIoId, ...rest } = messagePacket;
+      const { realmID, channelID, socketID, ...rest } = messagePacket;
 
       if (!controller) {
         // Ensure that subsequent backend WebSocket connections reach to the same
@@ -355,7 +355,7 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
         });
 
         // Associate this WebSocket connection to the controller
-        controller.addWSInstance(ws, socketIoId);
+        controller.addWSInstance(ws, socketID);
 
         // Cleanup handling
         (() => {
@@ -371,7 +371,7 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
             console.log("WebSocket closed");
 
             // Disassociate this WebSocket connection from the controller
-            controller.removeWSInstanceWithSocketIoId(socketIoId);
+            controller.removeWSInstanceWithSocketID(socketID);
 
             controller.off(EVT_DESTROYED, _destroyHandler);
 
@@ -389,7 +389,7 @@ export default class ControllerIPCMessageBroker extends IPCMessageBroker {
         })();
       }
 
-      await controller.sendMessage({ socketIoId, ...rest });
+      await controller.sendMessage({ socketID, ...rest });
     });
   });
 })();

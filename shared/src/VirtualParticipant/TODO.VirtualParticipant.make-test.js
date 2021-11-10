@@ -35,7 +35,7 @@ describe("VirtualParticipant", () => {
       foo: "bar",
       isMuted: true,
       media: {},
-      socketIoIds: ["abc123"],
+      socketIDs: ["abc123"],
     });
   });
 });
