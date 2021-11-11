@@ -15,8 +15,8 @@ export async function initTranscoderSession(args, { socket }) {
 
   const {
     networkName: name,
-    realmID,
-    channelID,
+    realmId,
+    channelId,
     isPublic,
     networkDescription: description,
     deviceAddress: transcoderDeviceAddress,
@@ -32,12 +32,12 @@ export async function initTranscoderSession(args, { socket }) {
   // TODO: try / catch and pipe error to client if not able to establish
   const network = await networkController.createNetwork({
     name,
-    realmID,
-    channelID,
+    realmId,
+    channelId,
     isPublic,
     description,
     transcoderType: SERVER_TYPE_EXTERNAL,
-    transcoderSocketID: socket.id,
+    transcoderSocketId: socket.id,
     transcoderDeviceAddress,
     transcoderUserAgent,
     transcoderCoreCount,
@@ -107,17 +107,17 @@ export async function setConnectedParticipants(
 /**
  * @return {Promise<Object[]>} // TODO: Document
  */
-export async function fetchNetworks({ realmID, channelID, isPublic = true }) {
+export async function fetchNetworks({ realmId, channelId, isPublic = true }) {
   const networkController = NetworkController.getInstance();
 
   // TODO: Refactor
   const query = (() => {
     const query = {};
-    if (realmID) {
-      query.realmID = realmID;
+    if (realmId) {
+      query.realmId = realmId;
     }
-    if (channelID) {
-      query.channelID = channelID;
+    if (channelId) {
+      query.channelId = channelId;
     }
     query.isPublic = isPublic;
 
@@ -134,13 +134,13 @@ export async function fetchNetworks({ realmID, channelID, isPublic = true }) {
  * @param {Object} socketAPIContext
  * @return {Promise<boolean>}
  */
-export async function fetchIsNetworkOnline({ realmID, channelID }) {
+export async function fetchIsNetworkOnline({ realmId, channelId }) {
   // { io, socket }
   const networkController = NetworkController.getInstance();
 
-  const hostSocketId = await networkController.fetchTranscoderSocketID({
-    realmID,
-    channelID,
+  const hostSocketId = await networkController.fetchTranscoderSocketId({
+    realmId,
+    channelId,
   });
 
   // TODO: Remove

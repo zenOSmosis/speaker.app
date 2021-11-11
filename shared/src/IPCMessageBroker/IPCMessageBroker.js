@@ -22,17 +22,17 @@ export const TYPE_WEB_RTC_SIGNAL = "web-rtc-signal";
 // Given the set of parameters passed to the constructor, implementation must figure out how to handle the routing
 export default class IPCMessageBroker extends PhantomCore {
   constructor({
-    socketIDFrom,
-    socketIDTo = null,
-    realmID = null,
-    channelID = null,
+    socketIdFrom,
+    socketIdTo = null,
+    realmId = null,
+    channelId = null,
   }) {
     super();
 
-    this._socketIDFrom = socketIDFrom;
-    this._socketIDTo = socketIDTo;
-    this._realmID = realmID;
-    this._channelID = channelID;
+    this._socketIdFrom = socketIdFrom;
+    this._socketIdTo = socketIdTo;
+    this._realmId = realmId;
+    this._channelId = channelId;
 
     // TODO: Do not use this property name
     this._isReady = false;
@@ -57,7 +57,7 @@ export default class IPCMessageBroker extends PhantomCore {
     // TODO: use class logger
     this.log.debug("receiveMessage", {
       message,
-      from: this._socketIDFrom || (message && message.socketIDFrom),
+      from: this._socketIdFrom || (message && message.socketIdFrom),
     });
 
     this.emit(EVT_MESSAGE_RECEIVED, message);

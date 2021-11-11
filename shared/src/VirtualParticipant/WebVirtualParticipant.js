@@ -5,8 +5,8 @@ import VirtualParticipant from "./VirtualParticipant";
  * web-based client device.
  */
 export default class WebVirtualParticipant extends VirtualParticipant {
-  constructor(socketID, rest = {}) {
-    super(socketID, {
+  constructor(socketId, rest = {}) {
+    super(socketId, {
       mediaStreamTracks: [],
       mediaStreams: [],
       ...rest,

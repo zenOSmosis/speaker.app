@@ -10,8 +10,8 @@ export { TYPE_WEB_IPC_MESSAGE };
  */
 export default class BackendIPCMessageBroker extends IPCMessageBroker {
   // TODO: Document
-  constructor({ realmID, channelID, io, ...rest }) {
-    super({ realmID, channelID, ...rest });
+  constructor({ realmId, channelId, io, ...rest }) {
+    super({ realmId, channelId, ...rest });
 
     this._io = io;
     this._networkController = new NetworkController();
@@ -21,31 +21,31 @@ export default class BackendIPCMessageBroker extends IPCMessageBroker {
    * @return {Promise<void>}
    */
   async sendMessage({
-    realmID = this._realmID,
-    channelID = this._channelID,
-    socketIDFrom = this._socketIDFrom,
-    socketIDTo = null,
+    realmId = this._realmId,
+    channelId = this._channelId,
+    socketIdFrom = this._socketIdFrom,
+    socketIdTo = null,
     ...rest
   }) {
     // TODO: Handle errors
 
-    if (!socketIDTo) {
-      socketIDTo = await this._networkController.fetchTranscoderSocketID({
-        realmID,
-        channelID,
+    if (!socketIdTo) {
+      socketIdTo = await this._networkController.fetchTranscoderSocketId({
+        realmId,
+        channelId,
       });
     }
 
     this.log.debug(
-      `${this.constructor.name} proxying message from ${socketIDFrom} to ${socketIDTo}`
+      `${this.constructor.name} proxying message from ${socketIdFrom} to ${socketIdTo}`
     );
 
     // Proxy to receiver Socket.io peer
-    this._io.to(socketIDTo).emit(TYPE_WEB_IPC_MESSAGE, {
-      realmID,
-      channelID,
-      socketIDFrom,
-      socketIDTo,
+    this._io.to(socketIdTo).emit(TYPE_WEB_IPC_MESSAGE, {
+      realmId,
+      channelId,
+      socketIdFrom,
+      socketIdTo,
       ...rest,
     });
   }

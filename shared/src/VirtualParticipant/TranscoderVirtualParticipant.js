@@ -7,14 +7,14 @@ const _instances = {};
  */
 export default class TranscoderVirtualParticipant extends VirtualParticipant {
   /**
-   * @param {string} socketID
+   * @param {string} socketId
    * @returns {VirtualParticipant}
    */
-  static getInstanceWithSocketID(socketID) {
+  static getInstanceWithSocketId(socketId) {
     for (const p of Object.values(_instances)) {
-      const testId = p.getSocketID();
+      const testId = p.getSocketId();
 
-      if (testId === socketID) {
+      if (testId === socketId) {
         return p;
       }
     }
@@ -22,23 +22,23 @@ export default class TranscoderVirtualParticipant extends VirtualParticipant {
 
   /**
    * @param {string} deviceAddress
-   * @param {string} socketID
+   * @param {string} socketId
    * @param {Object} rest? [optional; default = {}] The this value is passed to
    * the super VirtualParticipant class.
    */
-  constructor(deviceAddress, socketID, rest = {}) {
+  constructor(deviceAddress, socketId, rest = {}) {
     if (!deviceAddress) {
       throw new Error("deviceAddress must be defined");
     }
 
-    if (!socketID) {
-      throw new Error("initialSocketID must be defined");
+    if (!socketId) {
+      throw new Error("initialSocketId must be defined");
     }
 
     super({ ...rest });
 
     this._deviceAddress = deviceAddress;
-    this._socketID = socketID;
+    this._socketId = socketId;
 
     _instances[this._deviceAddress] = this;
   }
@@ -46,8 +46,8 @@ export default class TranscoderVirtualParticipant extends VirtualParticipant {
   /**
    * @return {string[]}
    */
-  getSocketID() {
-    return this._socketID;
+  getSocketId() {
+    return this._socketId;
   }
 
   /**

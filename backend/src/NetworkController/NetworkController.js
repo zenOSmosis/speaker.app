@@ -89,18 +89,18 @@ export default class NetworkController extends PhantomCore {
       }
     );
 
-    // TODO: Implement length validation for any client-generated strings (i.e. realmID, channelID, description, transcoder*)
+    // TODO: Implement length validation for any client-generated strings (i.e. realmId, channelId, description, transcoder*)
     this._networkSchema = new mongoose.Schema(
       {
         name: {
           type: String,
           required: true,
         },
-        realmID: {
+        realmId: {
           type: String,
           required: true,
         },
-        channelID: {
+        channelId: {
           type: String,
           required: true,
         },
@@ -131,7 +131,7 @@ export default class NetworkController extends PhantomCore {
           required: true,
           index: true,
         },
-        transcoderSocketID: {
+        transcoderSocketId: {
           // TODO: Rename to transcoder socket id
           type: String,
           required: true,
@@ -189,7 +189,7 @@ export default class NetworkController extends PhantomCore {
     );
 
     // Ensure realm and channel are unique
-    this._networkSchema.index({ realmID: 1, channelID: 1 }, { unique: true });
+    this._networkSchema.index({ realmId: 1, channelId: 1 }, { unique: true });
 
     // TODO: What is this used for?  Should it be used?
     // await this._networkSchema.syncIndexes();
@@ -203,10 +203,10 @@ export default class NetworkController extends PhantomCore {
    */
   async createNetwork({
     name,
-    realmID,
-    channelID,
+    realmId,
+    channelId,
     description,
-    transcoderSocketID,
+    transcoderSocketId,
     transcoderType,
     isPublic,
     backgroundImage = {},
@@ -226,15 +226,15 @@ export default class NetworkController extends PhantomCore {
     const network = new Network({
       name,
       controllerNodeHostname: os.hostname(),
-      realmID,
-      channelID,
+      realmId,
+      channelId,
       description,
       isPublic,
       backgroundImage,
       connectedParticipants,
       maxParticipants,
-      transcoderIsConnected: Boolean(transcoderSocketID),
-      transcoderSocketID,
+      transcoderIsConnected: Boolean(transcoderSocketId),
+      transcoderSocketId,
       transcoderType,
       transcoderDeviceAddress,
       transcoderUserAgent,
@@ -304,7 +304,7 @@ export default class NetworkController extends PhantomCore {
     await network.updateOne({
       controllerNodeHostname: null,
       transcoderIsConnected: false,
-      transcoderSocketID: null,
+      transcoderSocketId: null,
       connectedParticipants: null,
     });
 
@@ -357,17 +357,17 @@ export default class NetworkController extends PhantomCore {
    * interface, then make this a public method again.
    *
    * @typedef {Object} NetworkDBObjectQuery
-   * @property {string} realmID
-   * @property {string} channelID
+   * @property {string} realmId
+   * @property {string} channelId
    *
    * @param {NetworkDBObjectQuery}
    * @return {Promise<NetworkDBObject>}
    */
-  async _fetchNetwork({ realmID, channelID, ...rest }) {
+  async _fetchNetwork({ realmId, channelId, ...rest }) {
     // TODO: Convert to class method
     const Network = mongoose.model(NETWORK_MODEL_NAME, this._networkSchema);
 
-    const network = await Network.findOne({ realmID, channelID, ...rest });
+    const network = await Network.findOne({ realmId, channelId, ...rest });
 
     return network;
   }
@@ -375,14 +375,14 @@ export default class NetworkController extends PhantomCore {
   /**
    * @return {Promise<string>}
    */
-  async fetchTranscoderSocketID({ realmID, channelID }) {
-    const network = await this._fetchNetwork({ realmID, channelID });
+  async fetchTranscoderSocketId({ realmId, channelId }) {
+    const network = await this._fetchNetwork({ realmId, channelId });
 
     if (network) {
-      return network["transcoderSocketID"];
+      return network["transcoderSocketId"];
     } else {
       console.warn(
-        `Unable to find network with realm "${realmID}" and channel "${channelID}"`
+        `Unable to find network with realm "${realmId}" and channel "${channelId}"`
       );
     }
   }
