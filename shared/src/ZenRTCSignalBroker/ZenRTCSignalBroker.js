@@ -23,6 +23,8 @@ export const TYPE_WEB_RTC_SIGNAL = "web-rtc-signal";
 export default class ZenRTCSignalBroker extends PhantomCore {
   constructor({
     socketIdFrom,
+
+    // TODO: Keep these as optional?
     socketIdTo = null,
     realmId = null,
     channelId = null,

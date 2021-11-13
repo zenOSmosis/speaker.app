@@ -43,6 +43,7 @@ export default class SocketController {
     return _coreConnectionCount;
   }
 
+  // TODO: Document
   static initWithSocketIo(io) {
     io.use((socket, next) => {
       // NOTE: Not waiting for "connect" event to be emit due to authorization
@@ -121,11 +122,9 @@ export default class SocketController {
           });
         })();
 
-        // TODO: Move to SocketAPI route
+        // TODO: Refactor out of SocketController (can't make it a SocketAPIRoute due to arbitrary calls back and forth)
         //
-        // IPC message broker
-        //
-        // Mainly used for routing WebRTC signals to peers
+        // ZenRTCPeer signaling
         (() => {
           const zenRTCSignalBroker = new BackendZenRTCSignalBroker({
             io,
@@ -169,6 +168,7 @@ export default class SocketController {
     return io.sockets.clients().connected[socketId];
   }
 
+  // TODO: Document w/ description
   /**
    * @param {Object} socket
    * @return {string}
