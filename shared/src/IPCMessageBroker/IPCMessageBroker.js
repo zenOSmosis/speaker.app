@@ -27,17 +27,30 @@ export default class IPCMessageBroker extends PhantomCore {
     realmId = null,
     channelId = null,
   }) {
+    if (typeof socketIdFrom !== "string") {
+      throw new TypeError("socketIdFrom is not set or not a string");
+    }
+
+    /*
+    if (typeof socketIdTo !== "string") {
+      throw new TypeError("socketIdTo is not set or not a string");
+    }
+
+    if (typeof realmId !== "string") {
+      throw new TypeError("realmId is not set or not a string");
+    }
+
+    if (typeof channelId !== "string") {
+      throw new TypeError("channelId is not set or not a string");
+    }
+    */
+
     super();
 
     this._socketIdFrom = socketIdFrom;
     this._socketIdTo = socketIdTo;
     this._realmId = realmId;
     this._channelId = channelId;
-
-    // TODO: Do not use this property name
-    this._isReady = false;
-
-    this._isDestroyed = false;
   }
 
   /**
