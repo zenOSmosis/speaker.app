@@ -138,7 +138,7 @@ export default class SocketController {
 
           socket.on(
             TYPE_WEB_IPC_MESSAGE,
-            ({ realmId, channelId, /* serviceEntityTo */, ...rest }) => {
+            ({ realmId, channelId, /* serviceEntityTo, */ ...rest }) => {
               ipcMessageBroker.sendMessage({
                 realmId,
                 channelId,
