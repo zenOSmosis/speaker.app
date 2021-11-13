@@ -47,13 +47,13 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
 
 ## Browser Support Matrix
 
-|             | Chrome                 | Edge (Chromium) | Firefox | Safari | IE  |
-| ----------- | ---------------------- | --------------- | ------- | ------ | --- |
-| **Android** | ✓                      | ✓               | ✓       | N/A    | N/A |
-| **iOS**     | [transcoder host only] | N/A             | N/A     | ✓      | N/A |
-| **Linux**   | ✓                      | ✓               | ✓       | N/A    | N/A |
-| **macOS**   | ✓                      | ✓               | ✓       | ✓      | N/A |
-| **Windows** | ✓                      | ✓               | ✓       | N/A    | N/A |
+|             | Chrome                    | Edge (Chromium) | Firefox | Safari | IE  |
+| ----------- | ------------------------- | --------------- | ------- | ------ | --- |
+| **Android** | ✓                         | ✓               | ✓       | N/A    | N/A |
+| **iOS**     | [virtualServer host only] | N/A             | N/A     | ✓      | N/A |
+| **Linux**   | ✓                         | ✓               | ✓       | N/A    | N/A |
+| **macOS**   | ✓                         | ✓               | ✓       | ✓      | N/A |
+| **Windows** | ✓                         | ✓               | ✓       | N/A    | N/A |
 
 Note, on every OS except iOS, Chrome is the recommended browser;  On iOS, Safari should be used.
 
@@ -101,7 +101,7 @@ Using a topology similar to the MCU / SFU example above, Speaker.app attempts to
 
 **zenRTC** (built with simple-peer) is based on WebRTC, adding additional functionality such as user-level network strength indication, events over data channels, and P2P-based shared state syncing.
 
-**Phantom Server** is a network host which runs in your web browser, and acts as the host, shared state manager, proxy, and transcoder for all connected participants within a WebRTC network.
+**Phantom Server** is a network host which runs in your web browser, and acts as the host, shared state manager, proxy, and virtualServer for all connected participants within a WebRTC network.
 
 Every participant connects to the Phantom Server via a P2P connection and Phantom Server handles the stream negotiations / network programming with the other peers.
 

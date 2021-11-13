@@ -5,7 +5,7 @@ import NetworkController, {
 const KEY_SOCKET_NETWORK = "__network";
 
 // TODO: Document
-export async function initTranscoderSession(args, { socket }) {
+export async function initVirtualServerSession(args, { socket }) {
   const networkController = NetworkController.getInstance();
 
   // TODO: Remove
@@ -19,10 +19,10 @@ export async function initTranscoderSession(args, { socket }) {
     channelId,
     isPublic,
     networkDescription: description,
-    deviceAddress: transcoderDeviceAddress,
-    userAgent: transcoderUserAgent,
-    coreCount: transcoderCoreCount,
-    buildHash: transcoderBuildHash,
+    deviceAddress: virtualServerDeviceAddress,
+    userAgent: virtualServerUserAgent,
+    coreCount: virtualServerCoreCount,
+    buildHash: virtualServerBuildHash,
     maxParticipants,
     maxConcurrentAudioStreams,
     maxConcurrentVideoStreams,
@@ -36,19 +36,19 @@ export async function initTranscoderSession(args, { socket }) {
     channelId,
     isPublic,
     description,
-    transcoderType: SERVER_TYPE_EXTERNAL,
-    transcoderSocketId: socket.id,
-    transcoderDeviceAddress,
-    transcoderUserAgent,
-    transcoderCoreCount,
-    transcoderBuildHash,
+    virtualServerType: SERVER_TYPE_EXTERNAL,
+    virtualServerSocketId: socket.id,
+    virtualServerDeviceAddress,
+    virtualServerUserAgent,
+    virtualServerCoreCount,
+    virtualServerBuildHash,
     maxParticipants,
     maxConcurrentAudioStreams,
     maxConcurrentVideoStreams,
     maxVideoResolution,
   });
 
-  // Used for endTranscoderSession
+  // Used for endVirtualServerSession
   //
   // IMPORTANT: This is only available to the same thead; Do not try to use for
   // other purposes
@@ -56,17 +56,17 @@ export async function initTranscoderSession(args, { socket }) {
 
   // Deregister network if socket has already disconnected
   if (!socket.connected) {
-    endTranscoderSession(args, { socket });
+    endVirtualServerSession(args, { socket });
   } else {
     // TODO: Remove this event listener when network is destructed
     socket.on("disconnect", () => {
-      endTranscoderSession(args, { socket });
+      endVirtualServerSession(args, { socket });
     });
   }
 }
 
 // TODO: Document
-export async function endTranscoderSession({}, { socket }) {
+export async function endVirtualServerSession({}, { socket }) {
   if (socket[KEY_SOCKET_NETWORK]) {
     const networkController = NetworkController.getInstance();
 
@@ -138,7 +138,7 @@ export async function fetchIsNetworkOnline({ realmId, channelId }) {
   // { io, socket }
   const networkController = NetworkController.getInstance();
 
-  const hostSocketId = await networkController.fetchTranscoderSocketId({
+  const hostSocketId = await networkController.fetchVirtualServerSocketId({
     realmId,
     channelId,
   });

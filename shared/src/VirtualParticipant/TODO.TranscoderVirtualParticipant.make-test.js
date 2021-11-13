@@ -1,19 +1,19 @@
-import TranscoderVirtualParticipant from "./TranscoderVirtualParticipant";
+import VirtualServerVirtualParticipant from "./VirtualServerVirtualParticipant";
 
 /*
-describe("TranscoderVirtualParticipant", () => {
+describe("VirtualServerVirtualParticipant", () => {
   it("Adds and retrieves participants by their Socket.io IDs", () => {
-    const vp1 = new TranscoderVirtualParticipant("abc123", {
+    const vp1 = new VirtualServerVirtualParticipant("abc123", {
       foo: "bar",
     });
 
-    const vp2 = new TranscoderVirtualParticipant("abc123", {
+    const vp2 = new VirtualServerVirtualParticipant("abc123", {
       cat: "not-a-dog",
     });
 
     expect(vp1.getSocketIds()).toEqual(["abc123"]);
 
-    const vp3 = new TranscoderVirtualParticipant("def456", {
+    const vp3 = new VirtualServerVirtualParticipant("def456", {
       abc: "123",
     });
 
@@ -28,7 +28,7 @@ describe("TranscoderVirtualParticipant", () => {
   });
 
   it("Removes Socket.io ID from participants", () => {
-    const vp1 = new TranscoderVirtualParticipant("981a", {
+    const vp1 = new VirtualServerVirtualParticipant("981a", {
       foo: "bar",
     });
 

@@ -89,7 +89,7 @@ export default class NetworkController extends PhantomCore {
       }
     );
 
-    // TODO: Implement length validation for any client-generated strings (i.e. realmId, channelId, description, transcoder*)
+    // TODO: Implement length validation for any client-generated strings (i.e. realmId, channelId, description, virtualServer*)
     this._networkSchema = new mongoose.Schema(
       {
         name: {
@@ -126,40 +126,40 @@ export default class NetworkController extends PhantomCore {
           type: String,
           required: true,
         },
-        transcoderIsConnected: {
+        virtualServerIsConnected: {
           type: Boolean,
           required: true,
           index: true,
         },
-        transcoderSocketId: {
-          // TODO: Rename to transcoder socket id
+        virtualServerSocketId: {
+          // TODO: Rename to virtualServer socket id
           type: String,
           required: true,
         },
-        transcoderDeviceAddress: {
+        virtualServerDeviceAddress: {
           type: String,
           required: true,
         },
-        transcoderUserAgent: {
+        virtualServerUserAgent: {
           type: String,
           required: true,
         },
-        transcoderCoreCount: {
+        virtualServerCoreCount: {
           type: Number,
           required: false,
         },
-        transcoderBuildHash: {
+        virtualServerBuildHash: {
           type: String,
           required: true,
         },
-        // TODO: Rename to type, and use values "transcoder" / "mesh"
-        transcoderType: {
+        // TODO: Rename to type, and use values "virtualServer" / "mesh"
+        virtualServerType: {
           type: String,
           required: true,
           enum: [SERVER_TYPE_INTERNAL, SERVER_TYPE_EXTERNAL],
         },
         /*
-        transcoderLoginDates: {
+        virtualServerLoginDates: {
           type: Date[] / string?,
           required: true
         },
@@ -206,16 +206,16 @@ export default class NetworkController extends PhantomCore {
     realmId,
     channelId,
     description,
-    transcoderSocketId,
-    transcoderType,
+    virtualServerSocketId,
+    virtualServerType,
     isPublic,
     backgroundImage = {},
     connectedParticipants = 0, // The number currently connected to the network, not the max
     maxParticipants = null,
-    transcoderDeviceAddress,
-    transcoderUserAgent,
-    transcoderBuildHash,
-    transcoderCoreCount,
+    virtualServerDeviceAddress,
+    virtualServerUserAgent,
+    virtualServerBuildHash,
+    virtualServerCoreCount,
     maxConcurrentAudioStreams = null,
     maxConcurrentVideoStreams = null,
     maxVideoResolution = null,
@@ -233,13 +233,13 @@ export default class NetworkController extends PhantomCore {
       backgroundImage,
       connectedParticipants,
       maxParticipants,
-      transcoderIsConnected: Boolean(transcoderSocketId),
-      transcoderSocketId,
-      transcoderType,
-      transcoderDeviceAddress,
-      transcoderUserAgent,
-      transcoderBuildHash,
-      transcoderCoreCount,
+      virtualServerIsConnected: Boolean(virtualServerSocketId),
+      virtualServerSocketId,
+      virtualServerType,
+      virtualServerDeviceAddress,
+      virtualServerUserAgent,
+      virtualServerBuildHash,
+      virtualServerCoreCount,
       maxConcurrentAudioStreams,
       maxConcurrentVideoStreams,
       maxVideoResolution,
@@ -303,8 +303,8 @@ export default class NetworkController extends PhantomCore {
 
     await network.updateOne({
       controllerNodeHostname: null,
-      transcoderIsConnected: false,
-      transcoderSocketId: null,
+      virtualServerIsConnected: false,
+      virtualServerSocketId: null,
       connectedParticipants: null,
     });
 
@@ -322,7 +322,9 @@ export default class NetworkController extends PhantomCore {
 
   // TODO: Document
   // TODO: Only fetch networks available to the given client
-  async fetchNetworks(query = { isPublic: true, transcoderIsConnected: true }) {
+  async fetchNetworks(
+    query = { isPublic: true, virtualServerIsConnected: true }
+  ) {
     try {
       // TODO: Convert to class method
       const Network = mongoose.model(NETWORK_MODEL_NAME, this._networkSchema);
@@ -375,11 +377,11 @@ export default class NetworkController extends PhantomCore {
   /**
    * @return {Promise<string>}
    */
-  async fetchTranscoderSocketId({ realmId, channelId }) {
+  async fetchVirtualServerSocketId({ realmId, channelId }) {
     const network = await this._fetchNetwork({ realmId, channelId });
 
     if (network) {
-      return network["transcoderSocketId"];
+      return network["virtualServerSocketId"];
     } else {
       console.warn(
         `Unable to find network with realm "${realmId}" and channel "${channelId}"`

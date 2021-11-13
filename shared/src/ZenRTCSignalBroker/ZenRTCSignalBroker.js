@@ -7,7 +7,7 @@ export { EVT_DESTROYED };
 // export const BACKEND_SERVICE_ENTITY = "backend-service-entity";
 // export const CONTROLLER_SERVICE_ENTITY = "controller-service-entity";
 // export const CHROME_SERVICE_ENTITY = "chrome-service-entity";
-// export const TRANSCODER_SERVICE_ENTITY = "transcoder-service-entity";
+// export const VIRTUAL_SERVER_SERVICE_ENTITY = "virtual-server-service-entity";
 // export const WEB_SERVICE_ENTITY = "web-service-entity";
 
 export const EVT_READY = "ready";

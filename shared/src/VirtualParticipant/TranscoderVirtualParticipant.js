@@ -3,9 +3,9 @@ import VirtualParticipant from "./VirtualParticipant";
 const _instances = {};
 
 /**
- * A virtual participant from the perspective of the transcoder.
+ * A virtual participant from the perspective of the virtualServer.
  */
-export default class TranscoderVirtualParticipant extends VirtualParticipant {
+export default class VirtualServerVirtualParticipant extends VirtualParticipant {
   /**
    * @param {string} socketId
    * @returns {VirtualParticipant}

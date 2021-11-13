@@ -29,12 +29,13 @@ export const SOCKET_API_ROUTE_FETCH_ICE_SERVERS = "fetch-ice-servers";
 
 // TODO: Document
 /** @type {Object} */
-export const SOCKET_API_ROUTE_INIT_TRANSCODER_SESSION =
-  "init-transcoder-session";
+export const SOCKET_API_ROUTE_INIT_VIRTUAL_SERVER_SESSION =
+  "init-virtualServer-session";
 
 // TODO: Document
 /** @type {void} */
-export const SOCKET_API_ROUTE_END_TRANSCODER_SESSION = "end-transcoder-session";
+export const SOCKET_API_ROUTE_END_VIRTUAL_SERVER_SESSION =
+  "end-virtualServer-session";
 
 // TODO: Document
 /** @type {Object} */

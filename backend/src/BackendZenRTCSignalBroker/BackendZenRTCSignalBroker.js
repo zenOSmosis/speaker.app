@@ -30,7 +30,7 @@ export default class BackendZenRTCSignalBroker extends ZenRTCSignalBroker {
     // TODO: Handle errors
 
     if (!socketIdTo) {
-      socketIdTo = await this._networkController.fetchTranscoderSocketId({
+      socketIdTo = await this._networkController.fetchVirtualServerSocketId({
         realmId,
         channelId,
       });

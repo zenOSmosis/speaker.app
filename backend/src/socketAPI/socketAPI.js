@@ -3,9 +3,9 @@ import {
   SOCKET_API_ROUTE_FETCH_NETWORKS,
   SOCKET_API_ROUTE_FETCH_NETWORK_EXISTS,
   SOCKET_API_ROUTE_FETCH_ICE_SERVERS,
-  SOCKET_API_ROUTE_INIT_TRANSCODER_SESSION,
+  SOCKET_API_ROUTE_INIT_VIRTUAL_SERVER_SESSION,
   SOCKET_API_ROUTE_CAPTURE_NETWORK_TOTAL_PARTICIPANTS,
-  SOCKET_API_ROUTE_END_TRANSCODER_SESSION,
+  SOCKET_API_ROUTE_END_VIRTUAL_SERVER_SESSION,
   SOCKET_API_ROUTE_SET_NETWORK_BACKGROUND_IMAGE,
   SOCKET_API_ROUTE_GENERATE_PROFILE_AVATAR,
   SOCKET_API_ROUTE_GENERATE_PROFILE_NAME,
@@ -15,9 +15,9 @@ import {
 } from "@shared/socketAPIRoutes";
 
 import {
-  initTranscoderSession,
+  initVirtualServerSession,
   setConnectedParticipants,
-  endTranscoderSession,
+  endVirtualServerSession,
   fetchNetworks,
   fetchIsNetworkOnline,
   fetchICEServers,
@@ -128,8 +128,8 @@ export default function initSocketAPI(io, socket) {
 
   // TODO: Extend to handle mesh networks
   addSocketAPIRoute(
-    SOCKET_API_ROUTE_INIT_TRANSCODER_SESSION,
-    initTranscoderSession
+    SOCKET_API_ROUTE_INIT_VIRTUAL_SERVER_SESSION,
+    initVirtualServerSession
   );
 
   addSocketAPIRoute(
@@ -139,8 +139,8 @@ export default function initSocketAPI(io, socket) {
 
   // TODO: Extend to handle mesh networks
   addSocketAPIRoute(
-    SOCKET_API_ROUTE_END_TRANSCODER_SESSION,
-    endTranscoderSession
+    SOCKET_API_ROUTE_END_VIRTUAL_SERVER_SESSION,
+    endVirtualServerSession
   );
 
   addSocketAPIRoute(
