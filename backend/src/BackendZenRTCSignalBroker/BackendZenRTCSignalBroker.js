@@ -1,9 +1,9 @@
 import ZenRTCSignalBroker, {
-  TYPE_WEB_IPC_MESSAGE,
+  TYPE_ZEN_RTC_SIGNAL,
 } from "../shared/ZenRTCSignalBroker";
 import NetworkController from "../NetworkController";
 
-export { TYPE_WEB_IPC_MESSAGE };
+export { TYPE_ZEN_RTC_SIGNAL };
 
 /**
  * Works as a ZenRTCSignalBroker proxy between socket.io peers.
@@ -41,7 +41,7 @@ export default class BackendZenRTCSignalBroker extends ZenRTCSignalBroker {
     );
 
     // Proxy to receiver Socket.io peer
-    this._io.to(socketIdTo).emit(TYPE_WEB_IPC_MESSAGE, {
+    this._io.to(socketIdTo).emit(TYPE_ZEN_RTC_SIGNAL, {
       realmId,
       channelId,
       socketIdFrom,

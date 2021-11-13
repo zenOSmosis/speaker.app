@@ -1,6 +1,6 @@
 import BackendZenRTCSignalBroker, {
-  TYPE_WEB_IPC_MESSAGE,
+  TYPE_ZEN_RTC_SIGNAL,
 } from "./BackendZenRTCSignalBroker";
 
 export default BackendZenRTCSignalBroker;
-export { TYPE_WEB_IPC_MESSAGE };
+export { TYPE_ZEN_RTC_SIGNAL };

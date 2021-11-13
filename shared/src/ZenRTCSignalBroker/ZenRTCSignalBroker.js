@@ -15,7 +15,7 @@ export const EVT_READY_STATE_CHANGED = "ready-state-changed";
 
 export const EVT_MESSAGE_RECEIVED = "message-received";
 
-export const TYPE_WEB_IPC_MESSAGE = SOCKET_EVT_IPC_MESSAGE;
+export const TYPE_ZEN_RTC_SIGNAL = SOCKET_EVT_IPC_MESSAGE;
 export const TYPE_WEB_RTC_SIGNAL = "web-rtc-signal";
 
 // TODO: Document

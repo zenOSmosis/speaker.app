@@ -4,7 +4,7 @@ import NetworkController, {
   EVT_NETWORK_UPDATED,
 } from "@src/NetworkController";
 import BackendZenRTCSignalBroker, {
-  TYPE_WEB_IPC_MESSAGE,
+  TYPE_ZEN_RTC_SIGNAL,
 } from "@src/BackendZenRTCSignalBroker";
 import initSocketAPI from "@src/socketAPI";
 import {
@@ -137,7 +137,7 @@ export default class SocketController {
           });
 
           socket.on(
-            TYPE_WEB_IPC_MESSAGE,
+            TYPE_ZEN_RTC_SIGNAL,
             ({ realmId, channelId, /* serviceEntityTo, */ ...rest }) => {
               zenRTCSignalBroker.sendMessage({
                 realmId,
