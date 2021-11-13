@@ -20,7 +20,7 @@ export const TYPE_WEB_RTC_SIGNAL = "web-rtc-signal";
 
 // TODO: Document
 // Given the set of parameters passed to the constructor, implementation must figure out how to handle the routing
-export default class IPCMessageBroker extends PhantomCore {
+export default class ZenRTCSignalBroker extends PhantomCore {
   constructor({
     socketIdFrom,
     socketIdTo = null,

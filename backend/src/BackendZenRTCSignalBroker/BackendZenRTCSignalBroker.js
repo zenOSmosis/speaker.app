@@ -1,14 +1,14 @@
-import IPCMessageBroker, {
+import ZenRTCSignalBroker, {
   TYPE_WEB_IPC_MESSAGE,
-} from "../shared/IPCMessageBroker";
+} from "../shared/ZenRTCSignalBroker";
 import NetworkController from "../NetworkController";
 
 export { TYPE_WEB_IPC_MESSAGE };
 
 /**
- * Works as a IPCMessageBroker proxy between socket.io peers.
+ * Works as a ZenRTCSignalBroker proxy between socket.io peers.
  */
-export default class BackendIPCMessageBroker extends IPCMessageBroker {
+export default class BackendZenRTCSignalBroker extends ZenRTCSignalBroker {
   // TODO: Document
   constructor({ realmId, channelId, io, ...rest }) {
     super({ realmId, channelId, ...rest });

@@ -1,4 +1,4 @@
-import IPCMessageBroker, {
+import ZenRTCSignalBroker, {
   // BACKEND_SERVICE_ENTITY,
   // CONTROLLER_SERVICE_ENTITY,
   // CHROME_SERVICE_ENTITY,
@@ -10,9 +10,9 @@ import IPCMessageBroker, {
   EVT_MESSAGE_RECEIVED,
   TYPE_WEB_IPC_MESSAGE,
   TYPE_WEB_RTC_SIGNAL,
-} from "./IPCMessageBroker";
+} from "./ZenRTCSignalBroker";
 
-export default IPCMessageBroker;
+export default ZenRTCSignalBroker;
 export {
   // BACKEND_SERVICE_ENTITY,
   // CONTROLLER_SERVICE_ENTITY,

@@ -3,9 +3,9 @@ import NetworkController, {
   EVT_NETWORK_DESTROYED,
   EVT_NETWORK_UPDATED,
 } from "@src/NetworkController";
-import BackendIPCMessageBroker, {
+import BackendZenRTCSignalBroker, {
   TYPE_WEB_IPC_MESSAGE,
-} from "@src/BackendIPCMessageBroker";
+} from "@src/BackendZenRTCSignalBroker";
 import initSocketAPI from "@src/socketAPI";
 import {
   SOCKET_EVT_CLIENT_AUTHORIZATION_GRANTED,
@@ -127,19 +127,19 @@ export default class SocketController {
         //
         // Mainly used for routing WebRTC signals to peers
         (() => {
-          const ipcMessageBroker = new BackendIPCMessageBroker({
+          const zenRTCSignalBroker = new BackendZenRTCSignalBroker({
             io,
             socketIdFrom: socket.id,
           });
 
           socket.on("disconnect", () => {
-            ipcMessageBroker.destroy();
+            zenRTCSignalBroker.destroy();
           });
 
           socket.on(
             TYPE_WEB_IPC_MESSAGE,
             ({ realmId, channelId, /* serviceEntityTo, */ ...rest }) => {
-              ipcMessageBroker.sendMessage({
+              zenRTCSignalBroker.sendMessage({
                 realmId,
                 channelId,
                 senderDeviceAddress: socket[KEY_CLIENT_DEVICE_ADDRESS],
