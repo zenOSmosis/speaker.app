@@ -10,9 +10,6 @@ export { EVT_DESTROYED };
 // export const VIRTUAL_SERVER_SERVICE_ENTITY = "virtual-server-service-entity";
 // export const WEB_SERVICE_ENTITY = "web-service-entity";
 
-export const EVT_READY = "ready";
-export const EVT_READY_STATE_CHANGED = "ready-state-changed";
-
 export const EVT_MESSAGE_RECEIVED = "message-received";
 
 export const TYPE_ZEN_RTC_SIGNAL = SOCKET_EVT_IPC_MESSAGE;
