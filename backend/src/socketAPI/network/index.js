@@ -155,17 +155,15 @@ export async function fetchIsNetworkOnline({ realmId, channelId }) {
  * @return {Promise<Object>}
  */
 export async function fetchICEServers() {
-  const hostname =
-    process.env.REACT_APP_COTURN_HOSTNAME || process.env.COTURN_HOSTNAME;
+  const hostname = process.env.COTURN_HOSTNAME;
 
-  const username =
-    process.env.REACT_APP_COTURN_USERNAME || process.env.COTURN_USERNAME;
-  const credential =
-    process.env.REACT_APP_COTURN_PASSWORD || process.env.COTURN_PASSWORD;
+  const username = process.env.COTURN_USERNAME;
+  const credential = process.env.COTURN_PASSWORD;
 
   // TODO: Document type
   const iceServers = [
     {
+      // TODO: Don't hardcode ports
       urls: [`turn:${hostname}:3478`, `stun:${hostname}:3478`],
       username,
       credential,
