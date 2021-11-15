@@ -1,5 +1,8 @@
 import EthCrypto from "eth-crypto";
 import SparkMD5 from "spark-md5";
+
+// TODO: Rework so that client generates its own identity; server just validates it
+
 /**
  * @param {Object} handshakeAuthentication
  * @return {Object}
