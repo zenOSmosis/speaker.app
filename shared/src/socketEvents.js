@@ -12,14 +12,8 @@
 export const SOCKET_EVT_CLIENT_AUTHORIZATION_GRANTED =
   "client-authorization-granted";
 
-/**
- * Can emit from any where to anywhere.
- *
- * Passed to / from IPCMessage instances.
- *
- * @type {any}
- */
-export const SOCKET_EVT_IPC_MESSAGE = "ipc-message";
+// TODO: Document
+export const SOCKET_EVT_ZENRTC_SIGNAL = "zenrtc-signal";
 
 /**
  * Emit from BE to FE when a network has been created, updated, or deleted.
