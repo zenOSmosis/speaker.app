@@ -138,7 +138,7 @@ export default class SocketController {
           socket.on(
             SOCKET_EVT_ZENRTC_SIGNAL,
             ({ realmId, channelId, /* serviceEntityTo, */ ...rest }) => {
-              zenRTCSignalBroker.sendMessage({
+              zenRTCSignalBroker.signal({
                 realmId,
                 channelId,
                 senderDeviceAddress: socket[KEY_CLIENT_DEVICE_ADDRESS],

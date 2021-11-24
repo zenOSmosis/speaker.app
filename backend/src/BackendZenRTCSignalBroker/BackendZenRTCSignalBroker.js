@@ -20,7 +20,7 @@ export default class BackendZenRTCSignalBroker extends ZenRTCSignalBroker {
   /**
    * @return {Promise<void>}
    */
-  async sendMessage({
+  async signal({
     realmId = this._realmId,
     channelId = this._channelId,
     socketIdFrom = this._socketIdFrom,

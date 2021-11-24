@@ -10,10 +10,8 @@ export { EVT_DESTROYED };
 // export const VIRTUAL_SERVER_SERVICE_ENTITY = "virtual-server-service-entity";
 // export const WEB_SERVICE_ENTITY = "web-service-entity";
 
-// TODO: Rename?  This is confusing when mixing w/ ZenRTC's EVT_ZENRTC_SIGNAL
-export const EVT_MESSAGE_RECEIVED = "message-received";
+export const EVT_ZENRTC_SIGNAL = "zenrtc-signal";
 
-// TODO: Rename?
 export { SOCKET_EVT_ZENRTC_SIGNAL };
 
 // TODO: Document
@@ -56,25 +54,25 @@ export default class ZenRTCSignalBroker extends PhantomCore {
   }
 
   /**
-   * @param {Object} message // TODO: Document
+   * @param {Object} signal // TODO: Document
    * @return {Promise<void>}
    */
-  async sendMessage(message) {
+  async signal(signal) {
     // TODO: Replace with socket.io event send?
-    throw new Error("sendMessage must be overridden");
+    throw new Error("signal must be overridden");
   }
 
   /**
-   * @param {Object} message TODO: Document
+   * @param {Object} signal TODO: Document
    * @return {Promise<void>}
    */
-  async receiveMessage(message) {
-    // TODO: use class logger
-    this.log.debug("receiveMessage", {
+  async receiveSignal(signal) {
+    // TODO: Remove?
+    this.log.debug("receiveSignal", {
       message,
       from: this._socketIdFrom || (message && message.socketIdFrom),
     });
 
-    this.emit(EVT_MESSAGE_RECEIVED, message);
+    this.emit(EVT_ZENRTC_SIGNAL, message);
   }
 }
