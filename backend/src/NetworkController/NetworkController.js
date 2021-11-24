@@ -47,7 +47,7 @@ export default class NetworkController extends PhantomCore {
       return _instance;
     }
 
-    super({ isReady: false });
+    super({ isAsync: true });
 
     _instance = this;
 
