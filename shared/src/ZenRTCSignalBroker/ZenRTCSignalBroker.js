@@ -14,7 +14,7 @@ export { EVT_DESTROYED };
 export const EVT_MESSAGE_RECEIVED = "message-received";
 
 // TODO: Rename?
-export const TYPE_ZEN_RTC_SIGNAL = SOCKET_EVT_ZENRTC_SIGNAL;
+export { SOCKET_EVT_ZENRTC_SIGNAL };
 
 // TODO: Document
 // Given the set of parameters passed to the constructor, implementation must figure out how to handle the routing

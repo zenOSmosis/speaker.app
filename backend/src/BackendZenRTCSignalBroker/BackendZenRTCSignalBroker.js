@@ -1,9 +1,9 @@
 import ZenRTCSignalBroker, {
-  TYPE_ZEN_RTC_SIGNAL,
+  SOCKET_EVT_ZENRTC_SIGNAL,
 } from "../shared/ZenRTCSignalBroker";
 import NetworkController from "../NetworkController";
 
-export { TYPE_ZEN_RTC_SIGNAL };
+export { SOCKET_EVT_ZENRTC_SIGNAL };
 
 /**
  * Works as a ZenRTCSignalBroker proxy between socket.io peers.
@@ -41,7 +41,7 @@ export default class BackendZenRTCSignalBroker extends ZenRTCSignalBroker {
     );
 
     // Proxy to receiver Socket.io peer
-    this._io.to(socketIdTo).emit(TYPE_ZEN_RTC_SIGNAL, {
+    this._io.to(socketIdTo).emit(SOCKET_EVT_ZENRTC_SIGNAL, {
       realmId,
       channelId,
       socketIdFrom,
