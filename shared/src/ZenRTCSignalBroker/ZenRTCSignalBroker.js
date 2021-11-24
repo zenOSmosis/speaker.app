@@ -50,6 +50,7 @@ export default class ZenRTCSignalBroker extends PhantomCore {
     this._socketIdTo = socketIdTo;
     this._realmId = realmId;
     this._channelId = channelId;
+    this._signalBrokerId = this.getUUID();
   }
 
   /**
