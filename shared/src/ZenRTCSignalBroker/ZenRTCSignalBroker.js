@@ -10,10 +10,11 @@ export { EVT_DESTROYED };
 // export const VIRTUAL_SERVER_SERVICE_ENTITY = "virtual-server-service-entity";
 // export const WEB_SERVICE_ENTITY = "web-service-entity";
 
+// TODO: Rename?  This is confusing when mixing w/ ZenRTC's EVT_ZENRTC_SIGNAL
 export const EVT_MESSAGE_RECEIVED = "message-received";
 
+// TODO: Rename?
 export const TYPE_ZEN_RTC_SIGNAL = SOCKET_EVT_IPC_MESSAGE;
-export const TYPE_WEB_RTC_SIGNAL = "web-rtc-signal";
 
 // TODO: Document
 // Given the set of parameters passed to the constructor, implementation must figure out how to handle the routing
@@ -30,6 +31,7 @@ export default class ZenRTCSignalBroker extends PhantomCore {
       throw new TypeError("socketIdFrom is not set or not a string");
     }
 
+    // TODO: Uncomment conditionals?
     /*
     if (typeof socketIdTo !== "string") {
       throw new TypeError("socketIdTo is not set or not a string");

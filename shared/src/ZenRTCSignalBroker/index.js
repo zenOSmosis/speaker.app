@@ -7,7 +7,6 @@ import ZenRTCSignalBroker, {
   EVT_DESTROYED,
   EVT_MESSAGE_RECEIVED,
   TYPE_ZEN_RTC_SIGNAL,
-  TYPE_WEB_RTC_SIGNAL,
 } from "./ZenRTCSignalBroker";
 
 export default ZenRTCSignalBroker;
@@ -20,5 +19,4 @@ export {
   EVT_DESTROYED,
   EVT_MESSAGE_RECEIVED,
   TYPE_ZEN_RTC_SIGNAL,
-  TYPE_WEB_RTC_SIGNAL,
 };
