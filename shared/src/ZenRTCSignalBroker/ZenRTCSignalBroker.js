@@ -69,10 +69,10 @@ export default class ZenRTCSignalBroker extends PhantomCore {
   async receiveSignal(signal) {
     // TODO: Remove?
     this.log.debug("receiveSignal", {
-      message,
-      from: this._socketIdFrom || (message && message.socketIdFrom),
+      signal,
+      from: this._socketIdFrom || (signal && signal.socketIdFrom),
     });
 
-    this.emit(EVT_ZENRTC_SIGNAL, message);
+    this.emit(EVT_ZENRTC_SIGNAL, signal);
   }
 }
