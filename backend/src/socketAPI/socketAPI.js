@@ -4,7 +4,7 @@ import {
   SOCKET_API_ROUTE_FETCH_NETWORK_EXISTS,
   SOCKET_API_ROUTE_FETCH_ICE_SERVERS,
   SOCKET_API_ROUTE_INIT_VIRTUAL_SERVER_SESSION,
-  SOCKET_API_ROUTE_CAPTURE_NETWORK_TOTAL_PARTICIPANTS,
+  SOCKET_API_ROUTE_SET_NETWORK_PARTICIPANT_COUNT,
   SOCKET_API_ROUTE_END_VIRTUAL_SERVER_SESSION,
   SOCKET_API_ROUTE_SET_NETWORK_BACKGROUND_IMAGE,
   SOCKET_API_ROUTE_GENERATE_PROFILE_AVATAR,
@@ -16,7 +16,7 @@ import {
 
 import {
   initVirtualServerSession,
-  setConnectedParticipants,
+  setParticipantCount,
   endVirtualServerSession,
   fetchNetworks,
   fetchIsNetworkOnline,
@@ -133,8 +133,8 @@ export default function initSocketAPI(io, socket) {
   );
 
   addSocketAPIRoute(
-    SOCKET_API_ROUTE_CAPTURE_NETWORK_TOTAL_PARTICIPANTS,
-    setConnectedParticipants
+    SOCKET_API_ROUTE_SET_NETWORK_PARTICIPANT_COUNT,
+    setParticipantCount
   );
 
   // TODO: Extend to handle mesh networks

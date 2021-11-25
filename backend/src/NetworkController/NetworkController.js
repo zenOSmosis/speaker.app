@@ -257,7 +257,7 @@ export default class NetworkController extends PhantomCore {
    * @param {number} connectedParticipants
    * @return {Promise<void>}
    */
-  async setConnectedParticipants(network, connectedParticipants) {
+  async setParticipantCount(network, connectedParticipants) {
     network.connectedParticipants = connectedParticipants;
 
     await network.save();

@@ -44,8 +44,8 @@ export const SOCKET_API_ROUTE_SET_NETWORK_BACKGROUND_IMAGE =
 
 // TODO: Document
 /** @type {number} */
-export const SOCKET_API_ROUTE_CAPTURE_NETWORK_TOTAL_PARTICIPANTS =
-  "fetch-network-total-participants";
+export const SOCKET_API_ROUTE_SET_NETWORK_PARTICIPANT_COUNT =
+  "set-network-participant-count";
 
 // TODO: Document
 /** @type {string} */
