@@ -31,17 +31,23 @@ export default class SDPAdapter {
    * @param {string[]} preferredAudioCodecs? [default=["opus"]]
    * @param {number} maxAverageBitrate? [default=510000] Currently only affects
    * Opus codec.
+   * @param {boolean} isStereo? [default=true]
    * @return {string}
    */
   static setPreferredAudioCodecs(
     sdp,
     preferredAudioCodecs = ["opus"],
-    maxAverageBitrate = 510000
+    maxAverageBitrate = 510000,
+    isStereo = true
   ) {
     // Normalize the array w/ uppercase entries
     preferredAudioCodecs = preferredAudioCodecs.map(codec =>
       codec.toUpperCase()
     );
+
+    // Type-case to integer (this value will be run inline to configure fmtp
+    // below)
+    maxAverageBitrate = parseInt(maxAverageBitrate, 10);
 
     const parsedSDP = sdpTransform.parse(sdp);
 
@@ -71,7 +77,9 @@ export default class SDPAdapter {
             // @see https://tools.ietf.org/html/rfc7587
             fmtp.config = fmtp.config.replace(
               "useinbandfec=1",
-              `useinbandfec=1;maxaveragebitrate=${maxAverageBitrate}`
+              `useinbandfec=1;maxaveragebitrate=${maxAverageBitrate};stereo=${
+                Boolean(isStereo) ? 1 : 0
+              }`
             );
 
             return fmtp;
