@@ -247,7 +247,13 @@ export default function useAppMenuItems() {
         </div>
       ),
     }),
-    [publishableAudioInputControllerCollection, isMuted, isMicOff, toggleMute]
+    [
+      publishableAudioInputControllerCollection,
+      allAudioInputMediaStreamTracks,
+      isMuted,
+      isMicOff,
+      toggleMute,
+    ]
   );
 
   /*
