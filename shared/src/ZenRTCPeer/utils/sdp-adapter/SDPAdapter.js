@@ -1,6 +1,7 @@
 import sdpTransform from "sdp-transform";
 
 export default class SDPAdapter {
+  // TODO: Rename
   /**
    * Returns a modified SDP with the preferred audio codecs.
    *
