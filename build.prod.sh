@@ -32,10 +32,10 @@ cd backend/src \
   && cd ../../
 
 echo "*** Linking shared modules with frontend ***"
-cd frontend.web/src \
+cd frontend.web/src/portals/SpeakerAppPortal \
   && mkdir -p tmp.shared \
   && cp -r shared/* tmp.shared \
-  && cd ../../
+  && cd ../../../../
 
 echo "*** Building production Docker Compose config ***"
 docker-compose \
