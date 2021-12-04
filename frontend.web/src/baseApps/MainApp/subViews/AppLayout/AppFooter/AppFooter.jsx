@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Footer, Row, Column } from "@components/Layout";
 import ButtonTransparent from "@components/ButtonTransparent";
 import Center from "@components/Center";
