@@ -86,12 +86,10 @@ export default class SocketController {
 
         next();
       } catch (err) {
-        // TODO: Handle different error types here
+        // TODO: Use Phantom logger
+        console.error("Caught authentication error", err);
 
-        console.warn("Caught authentication error", err);
-
-        // TODO: Use string constant here
-        next(new Error("Authentication error"));
+        socket.disconnect();
       }
     });
 

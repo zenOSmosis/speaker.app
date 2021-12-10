@@ -34,7 +34,17 @@ export function generateClientAuthentication(
   };
 }
 
-// TODO: Document
+/**
+ * Validates returned response from server (help ensure we're not connected to
+ * a fake server).
+ *
+ * @param {string} clientAuthorization Client authorization string as received
+ * from server.
+ * @param {string} clientPublicKey
+ * @param {string} clientDeviceAddress
+ * @return {void}
+ * @throws {ReferenceError} Throws if validation is not successful.
+ */
 export function validateClientAuthorization(
   clientAuthorization,
   clientPublicKey,
