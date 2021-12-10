@@ -11,7 +11,7 @@ import {
   SOCKET_EVT_CLIENT_AUTHORIZATION_GRANTED,
   SOCKET_EVT_NETWORKS_UPDATED,
 } from "@shared/socketEvents";
-import { receiveHandshakeAuthentication } from "@shared/adapters/serviceAuthorization/server";
+import { receiveHandshakeAuthentication } from "@shared//serviceAuthorization/server";
 
 // Property which rides on top of socket object (ONLY AVAILABLE ON THIS THREAD)
 const KEY_CLIENT_DEVICE_ADDRESS = "__clientDeviceAddress";
