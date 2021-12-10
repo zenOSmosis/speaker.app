@@ -2,7 +2,6 @@ import SparkMD5 from "spark-md5";
 
 const CLIENT_SOFTWARE_HASH = process.env.REACT_APP_GIT_HASH;
 
-// TODO: Rename
 /**
  * Adapts the cached authorization, which also contains the client identity, to
  * be transmitted to the backend.
