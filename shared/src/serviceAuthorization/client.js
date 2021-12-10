@@ -1,5 +1,8 @@
 import SparkMD5 from "spark-md5";
 
+const CLIENT_SOFTWARE_HASH = process.env.REACT_APP_GIT_HASH;
+
+// TODO: Rename
 /**
  * Adapts the cached authorization, which also contains the client identity, to
  * be transmitted to the backend.
@@ -7,57 +10,45 @@ import SparkMD5 from "spark-md5";
  * IMPORTANT: This should only be used between client and server and nothing
  * else!
  *
- * @param {Object} cachedAuthorization
+ * @param {string} clientPublicKey
+ * @param {string} clientDeviceAddress
  * @return {Object}
  */
-export function sendCachedAuthorization(cachedAuthorization) {
-  // Deep copy, so that we don't mutate the original object
-  cachedAuthorization = JSON.parse(JSON.stringify(cachedAuthorization));
+export function generateClientAuthentication(
+  clientPublicKey,
+  clientDeviceAddress
+) {
+  const anticipatedServerSoftwareHash = CLIENT_SOFTWARE_HASH;
 
-  const ret = {
-    buildHash: process.env.REACT_APP_GIT_HASH,
+  return {
+    clientPublicKey,
+
+    // TODO: Use SHA-256?
+    clientDeviceAddressHash: SparkMD5.hash(clientDeviceAddress),
+
+    clientSoftwareHash: CLIENT_SOFTWARE_HASH,
+
+    // TODO: Use SHA-256?
+    clientHash: SparkMD5.hash(
+      `${clientPublicKey}${clientDeviceAddress}${CLIENT_SOFTWARE_HASH}${anticipatedServerSoftwareHash}`
+    ),
   };
-
-  if (
-    cachedAuthorization &&
-    cachedAuthorization.clientIdentity &&
-    cachedAuthorization.clientIdentity.privateKey
-  ) {
-    // The client identity emit over the wire to the server
-    ret.clientIdentity = {
-      // TODO: Re-encrypt based on socket id as key?
-      p: cachedAuthorization.clientIdentity.privateKey,
-
-      // TODO: Use SHA-256?
-      h: SparkMD5.hash(
-        `${cachedAuthorization.clientIdentity.address}${cachedAuthorization.clientIdentity.publicKey}${cachedAuthorization.clientIdentity.privateKey}`
-      ),
-    };
-  }
-
-  return ret;
 }
 
-/**
- * Retrieves merged authorization of cached and received authorization.
- *
- * For existing clients, the received authorization will contain less data
- * than new clients.
- *
- * @param {Object} cachedAuthorization
- * @param {Object} receivedAuthorization
- * @return {Object}
- */
-export function getMergedAuthorization(
-  cachedAuthorization,
-  receivedAuthorization
+// TODO: Document
+export function validateClientAuthorization(
+  clientAuthorization,
+  clientPublicKey,
+  clientDeviceAddress
 ) {
-  return {
-    ...cachedAuthorization,
-    ...receivedAuthorization,
-    clientIdentity: {
-      ...(cachedAuthorization.clientIdentity || {}),
-      ...(receivedAuthorization.clientIdentity || {}),
-    },
-  };
+  if (
+    clientAuthorization !==
+    SparkMD5.hash(
+      SparkMD5.hash(
+        `${clientPublicKey}${clientDeviceAddress}${CLIENT_SOFTWARE_HASH}${CLIENT_SOFTWARE_HASH}`
+      )
+    )
+  ) {
+    throw new ReferenceError("Invalid client authorization");
+  }
 }

@@ -1,5 +1,5 @@
 import { sendCachedAuthorization, getMergedAuthorization } from "./client";
-import { receiveHandshakeAuthentication } from "./server";
+import { receiveClientAuthentication } from "./server";
 
 describe("serviceAuthorization", () => {
   const OLD_ENV = process.env;
@@ -24,7 +24,7 @@ describe("serviceAuthorization", () => {
     const authentication = sendCachedAuthorization({});
 
     const { clientAuthorization, clientDeviceAddress } =
-      receiveHandshakeAuthentication(authentication);
+      receiveClientAuthentication(authentication);
 
     expect(clientAuthorization).toHaveProperty("clientIdentity");
     expect(clientAuthorization.clientIdentity).toHaveProperty("address");
@@ -51,7 +51,7 @@ describe("serviceAuthorization", () => {
     const authentication = sendCachedAuthorization(cachedAuthorization);
 
     const { clientAuthorization, clientDeviceAddress } =
-      receiveHandshakeAuthentication(authentication);
+      receiveClientAuthentication(authentication);
 
     expect(clientAuthorization.isExisting).toBe(true);
     expect(clientDeviceAddress).toBe(
@@ -115,7 +115,7 @@ describe("serviceAuthorization", () => {
     for (const cachedAuthorization of cachedAuthorizations) {
       const authentication = sendCachedAuthorization(cachedAuthorization);
 
-      expect(() => receiveHandshakeAuthentication(authentication)).toThrow(
+      expect(() => receiveClientAuthentication(authentication)).toThrow(
         "Invalid checksum"
       );
     }
@@ -124,7 +124,7 @@ describe("serviceAuthorization", () => {
   /*
   it("Errors if client build hash does not match server build hash", () => {
     expect(() =>
-      receiveHandshakeAuthentication({
+      receiveClientAuthentication({
         buildHash: "a9348",
       })
     ).toThrow("Client build hash does not match server");

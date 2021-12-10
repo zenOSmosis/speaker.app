@@ -1,69 +1,51 @@
 import EthCrypto from "eth-crypto";
 import SparkMD5 from "spark-md5";
 
-// TODO: Rework so that client generates its own identity; server just validates it
-
 /**
- * @param {Object} handshakeAuthentication
+ * // TODO: Document types
+ * @param {Object} clientAuthentication
  * @return {Object}
  */
-export function receiveHandshakeAuthentication(handshakeAuthentication) {
-  const SERVER_BUILD_HASH = process.env.GIT_HASH;
+export function receiveClientAuthentication(clientAuthentication) {
+  // TODO: Use Phantom logger
+  console.log("Validating client identity");
 
-  // Existing client identity, if exists
-  const clientIdentity = handshakeAuthentication.clientIdentity;
+  const {
+    clientPublicKey,
+    clientDeviceAddressHash,
+    clientSoftwareHash,
+    clientHash,
+  } = clientAuthentication;
 
-  // TODO: Implement server-side build hash checking later
-  //
-  // Ensure the client is running the latest version of the software
-  /*
-  if (handshakeAuthentication.buildHash !== SERVER_BUILD_HASH) {
-    // TODO: Use an extended error type
-    throw new Error("Client build hash does not match server");
+  const clientDeviceAddress = EthCrypto.publicKey.toAddress(clientPublicKey);
+
+  // TODO: Use SHA-256?
+  if (clientDeviceAddressHash !== SparkMD5.hash(clientDeviceAddress)) {
+    throw new ReferenceError("clientDeviceAddressHash is incorrect");
   }
-  */
 
-  // Base authorization object
-  const clientAuthorization = {
-    serverBuildHash: SERVER_BUILD_HASH,
-  };
+  const SERVER_SOFTWARE_HASH = process.env.GIT_HASH;
 
-  let clientDeviceAddress = null;
+  // IMPORTANT: While this can be improved, it locks the checksum against the
+  // server version, so as new updates become available, the client will not be
+  // able to authenticate with the server, and will need to update /
+  // reauthenticate
+  //
+  // TODO: Use SHA-256?
+  const serverChecksumHash = SparkMD5.hash(
+    `${clientPublicKey}${clientDeviceAddress}${clientSoftwareHash}${SERVER_SOFTWARE_HASH}`
+  );
 
-  if (clientIdentity) {
-    console.log("Validating existing client");
+  // TODO: Remove
+  console.log({ clientSoftwareHash, SERVER_SOFTWARE_HASH });
 
-    const privateKey = clientIdentity.p;
-    const publicKey = EthCrypto.publicKeyByPrivateKey(privateKey);
-    const address = EthCrypto.publicKey.toAddress(publicKey);
-
-    clientDeviceAddress = address;
-
-    const clientHash = clientIdentity.h;
-
-    // TODO: Use SHA-256?
-    const ourChecksumHash = SparkMD5.hash(
-      `${address}${publicKey}${privateKey}`
-    );
-
-    if (clientHash !== ourChecksumHash) {
-      throw new Error("Invalid checksum");
-    }
-
-    clientAuthorization.isExisting = true;
-
-    console.log("Existing client validated!");
-  } else {
-    console.log("Generating new client identity");
-    clientAuthorization.clientIdentity = EthCrypto.createIdentity();
-    clientDeviceAddress = clientAuthorization.clientIdentity.address;
-    console.log("Client identity generated");
-
-    clientAuthorization.isExisting = false;
+  if (serverChecksumHash !== clientHash) {
+    throw new ReferenceError("Server checksum hash does not match clientHash");
   }
 
   return {
-    clientAuthorization,
+    // Re-encode server checksum hash
+    clientAuthorization: SparkMD5.hash(serverChecksumHash),
     clientDeviceAddress,
   };
 }
