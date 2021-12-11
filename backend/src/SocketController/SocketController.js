@@ -11,7 +11,7 @@ import {
   SOCKET_EVT_CLIENT_AUTHORIZATION_GRANTED,
   SOCKET_EVT_NETWORKS_UPDATED,
 } from "@shared/socketEvents";
-import { receiveHandshakeAuthentication } from "@shared/adapters/serviceAuthorization/server";
+import { receiveClientAuthentication } from "@shared/serviceAuthorization/server";
 
 // Property which rides on top of socket object (ONLY AVAILABLE ON THIS THREAD)
 const KEY_CLIENT_DEVICE_ADDRESS = "__clientDeviceAddress";
@@ -25,6 +25,7 @@ function _logCoreConnectionCount() {
   // TODO: Include metric for how many total network Socket connections there
   // are
 
+  // TODO: Use Phantom logger
   console.log(
     `Per CPU Socket.io connection count [CPU #${process.env.CPU_NO}]: ${lenCPUConnections}`
   );
@@ -72,8 +73,10 @@ export default class SocketController {
     // Service authorization middleware
     io.use((socket, next) => {
       try {
+        // TODO: Emit nonce?
+
         const { clientAuthorization, clientDeviceAddress } =
-          receiveHandshakeAuthentication(socket.handshake.auth);
+          receiveClientAuthentication(socket.handshake.auth);
 
         socket.emit(
           SOCKET_EVT_CLIENT_AUTHORIZATION_GRANTED,
@@ -84,12 +87,10 @@ export default class SocketController {
 
         next();
       } catch (err) {
-        // TODO: Handle different error types here
+        // TODO: Use Phantom logger
+        console.error("Caught authentication error", err);
 
-        console.warn("Caught authentication error", err);
-
-        // TODO: Use string constant here
-        next(new Error("Authentication error"));
+        socket.disconnect();
       }
     });
 
@@ -110,6 +111,7 @@ export default class SocketController {
           networkController.on(EVT_NETWORK_UPDATED, _handleNetworksUpdated);
           networkController.on(EVT_NETWORK_DESTROYED, _handleNetworksUpdated);
 
+          // TODO: Use event constant
           socket.on("disconnect", () => {
             networkController.off(EVT_NETWORK_CREATED, _handleNetworksUpdated);
             networkController.off(EVT_NETWORK_UPDATED, _handleNetworksUpdated);
@@ -118,6 +120,7 @@ export default class SocketController {
               _handleNetworksUpdated
             );
 
+            // TODO: Use Phantom logger
             console.log(`Socket.io client disconnected with id ${socket.id}`);
           });
         })();
@@ -131,6 +134,7 @@ export default class SocketController {
             socketIdFrom: socket.id,
           });
 
+          // TODO: Use event constant
           socket.on("disconnect", () => {
             zenRTCSignalBroker.destroy();
           });
