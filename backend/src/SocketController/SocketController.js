@@ -25,6 +25,7 @@ function _logCoreConnectionCount() {
   // TODO: Include metric for how many total network Socket connections there
   // are
 
+  // TODO: Use Phantom logger
   console.log(
     `Per CPU Socket.io connection count [CPU #${process.env.CPU_NO}]: ${lenCPUConnections}`
   );
@@ -110,6 +111,7 @@ export default class SocketController {
           networkController.on(EVT_NETWORK_UPDATED, _handleNetworksUpdated);
           networkController.on(EVT_NETWORK_DESTROYED, _handleNetworksUpdated);
 
+          // TODO: Use event constant
           socket.on("disconnect", () => {
             networkController.off(EVT_NETWORK_CREATED, _handleNetworksUpdated);
             networkController.off(EVT_NETWORK_UPDATED, _handleNetworksUpdated);
@@ -118,6 +120,7 @@ export default class SocketController {
               _handleNetworksUpdated
             );
 
+            // TODO: Use Phantom logger
             console.log(`Socket.io client disconnected with id ${socket.id}`);
           });
         })();
@@ -131,6 +134,7 @@ export default class SocketController {
             socketIdFrom: socket.id,
           });
 
+          // TODO: Use event constant
           socket.on("disconnect", () => {
             zenRTCSignalBroker.destroy();
           });
