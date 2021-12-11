@@ -10,7 +10,7 @@ import SparkMD5 from "spark-md5";
  * @return {Object}
  */
 export function receiveClientAuthentication(clientAuthentication) {
-  logger.log("Validating client identity");
+  console.log("Validating client identity");
 
   const {
     clientPublicKey,
@@ -42,7 +42,7 @@ export function receiveClientAuthentication(clientAuthentication) {
     throw new ReferenceError("Server checksum hash does not match clientHash");
   }
 
-  logger.log("Client identity validated");
+  console.log("Client identity validated");
 
   return {
     // Re-encode server checksum hash
