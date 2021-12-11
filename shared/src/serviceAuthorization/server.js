@@ -1,4 +1,3 @@
-import { logger } from "phantom-core";
 import EthCrypto from "eth-crypto";
 import SparkMD5 from "spark-md5";
 
