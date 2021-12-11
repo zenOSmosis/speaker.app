@@ -26,7 +26,7 @@ export function receiveClientAuthentication(clientAuthentication) {
     throw new ReferenceError("clientDeviceAddressHash is incorrect");
   }
 
-  const SERVER_SOFTWARE_HASH = process.env.GIT_HASH;
+  const serverSoftwareHash = process.env.GIT_HASH;
 
   // IMPORTANT: While this can be improved, it locks the checksum against the
   // server version, so as new updates become available, the client will not be
@@ -35,7 +35,7 @@ export function receiveClientAuthentication(clientAuthentication) {
   //
   // TODO: Use SHA-256?
   const serverChecksumHash = SparkMD5.hash(
-    `${clientPublicKey}${clientDeviceAddress}${clientSoftwareHash}${SERVER_SOFTWARE_HASH}`
+    `${clientPublicKey}${clientDeviceAddress}${clientSoftwareHash}${serverSoftwareHash}`
   );
 
   if (serverChecksumHash !== clientHash) {

@@ -1,7 +1,5 @@
 import SparkMD5 from "spark-md5";
 
-const CLIENT_SOFTWARE_HASH = process.env.REACT_APP_GIT_HASH;
-
 /**
  * Client-side authentication method.
  *
@@ -16,19 +14,23 @@ export function generateClientAuthentication(
   clientPublicKey,
   clientDeviceAddress
 ) {
-  const anticipatedServerSoftwareHash = CLIENT_SOFTWARE_HASH;
+  const clientSoftwareHash = process.env.REACT_APP_GIT_HASH;
+  const anticipatedServerSoftwareHash = clientSoftwareHash;
 
+  // IMPORTANT: Not sending clientDeviceAddress itself (only a hash of it) to
+  // the server. The server should be able to decode the clientDeviceAddress
+  // from the clientPublicKey.
   return {
     clientPublicKey,
 
     // TODO: Use SHA-256?
     clientDeviceAddressHash: SparkMD5.hash(clientDeviceAddress),
 
-    clientSoftwareHash: CLIENT_SOFTWARE_HASH,
+    clientSoftwareHash: clientSoftwareHash,
 
     // TODO: Use SHA-256?
     clientHash: SparkMD5.hash(
-      `${clientPublicKey}${clientDeviceAddress}${CLIENT_SOFTWARE_HASH}${anticipatedServerSoftwareHash}`
+      `${clientPublicKey}${clientDeviceAddress}${clientSoftwareHash}${anticipatedServerSoftwareHash}`
     ),
   };
 }
@@ -48,12 +50,14 @@ export function validateClientAuthorization(
   clientPublicKey,
   clientDeviceAddress
 ) {
+  const clientSoftwareHash = process.env.REACT_APP_GIT_HASH;
+
   if (
     clientAuthorization !==
     // NOTE: The double-hashing is due to the server re-hashing its own version
     SparkMD5.hash(
       SparkMD5.hash(
-        `${clientPublicKey}${clientDeviceAddress}${CLIENT_SOFTWARE_HASH}${CLIENT_SOFTWARE_HASH}`
+        `${clientPublicKey}${clientDeviceAddress}${clientSoftwareHash}${clientSoftwareHash}`
       )
     )
   ) {
