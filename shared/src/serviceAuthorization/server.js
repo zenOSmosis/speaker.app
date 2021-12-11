@@ -1,3 +1,4 @@
+import { logger } from "phantom-core";
 import EthCrypto from "eth-crypto";
 import SparkMD5 from "spark-md5";
 
@@ -9,8 +10,7 @@ import SparkMD5 from "spark-md5";
  * @return {Object}
  */
 export function receiveClientAuthentication(clientAuthentication) {
-  // TODO: Use Phantom logger
-  console.log("Validating client identity");
+  logger.log("Validating client identity");
 
   const {
     clientPublicKey,
@@ -42,8 +42,7 @@ export function receiveClientAuthentication(clientAuthentication) {
     throw new ReferenceError("Server checksum hash does not match clientHash");
   }
 
-  // TODO: Use Phantom logger
-  console.log("Client identity validated");
+  logger.log("Client identity validated");
 
   return {
     // Re-encode server checksum hash
