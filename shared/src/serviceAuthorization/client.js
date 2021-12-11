@@ -3,8 +3,7 @@ import SparkMD5 from "spark-md5";
 const CLIENT_SOFTWARE_HASH = process.env.REACT_APP_GIT_HASH;
 
 /**
- * Adapts the cached authorization, which also contains the client identity, to
- * be transmitted to the backend.
+ * Client-side authentication method.
  *
  * IMPORTANT: This should only be used between client and server and nothing
  * else!
@@ -35,8 +34,7 @@ export function generateClientAuthentication(
 }
 
 /**
- * Validates returned response from server (help ensure we're not connected to
- * a fake server).
+ * Client-side server response check (helps ensure the server is legit).
  *
  * @param {string} clientAuthorization Client authorization string as received
  * from server.
@@ -52,6 +50,7 @@ export function validateClientAuthorization(
 ) {
   if (
     clientAuthorization !==
+    // NOTE: The double-hashing is due to the server re-hashing its own version
     SparkMD5.hash(
       SparkMD5.hash(
         `${clientPublicKey}${clientDeviceAddress}${CLIENT_SOFTWARE_HASH}${CLIENT_SOFTWARE_HASH}`

@@ -2,7 +2,9 @@ import EthCrypto from "eth-crypto";
 import SparkMD5 from "spark-md5";
 
 /**
- * // TODO: Document types
+ * Server-side client authentication method.
+ *
+ * TODO: Document types
  * @param {Object} clientAuthentication
  * @return {Object}
  */
@@ -36,12 +38,12 @@ export function receiveClientAuthentication(clientAuthentication) {
     `${clientPublicKey}${clientDeviceAddress}${clientSoftwareHash}${SERVER_SOFTWARE_HASH}`
   );
 
-  // TODO: Remove
-  console.log({ clientSoftwareHash, SERVER_SOFTWARE_HASH });
-
   if (serverChecksumHash !== clientHash) {
     throw new ReferenceError("Server checksum hash does not match clientHash");
   }
+
+  // TODO: Use Phantom logger
+  console.log("Client identity validated");
 
   return {
     // Re-encode server checksum hash
