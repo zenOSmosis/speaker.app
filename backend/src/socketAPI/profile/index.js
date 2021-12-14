@@ -4,7 +4,12 @@ import RandomStringGenerator from "@shared/string/RandomStringGenerator";
 import axios from "axios";
 import faker from "faker";
 
-export async function generateAvatar({ string, engine, size }) {
+// TODO: Document
+export async function generateAvatar({
+  string = new Date().getTime(),
+  engine = "male8bit",
+  size = 200,
+}) {
   try {
     const avatar = await axios.get(
       // TODO: Replace hardcoded config
@@ -24,6 +29,7 @@ export async function generateAvatar({ string, engine, size }) {
   }
 }
 
+// TODO: Document
 export function generateName() {
   return `${faker.name.firstName()} ${faker.name.lastName()}`;
 }
@@ -35,6 +41,7 @@ const descriptionWordList = fs
 const descriptionTemplate =
   "🚀  [adj] [job] 📈 [jobdescbase] [field] and [field] 🤩 [action] [celebrity] [location] once 🗣 [field]/[field]/[field] 💪 [moti1] [moti2] [moti3] that drive [moti4]";
 
+// TODO: Document
 export function generateDescription() {
   const generator = new RandomStringGenerator(
     descriptionWordList,
