@@ -26,9 +26,6 @@ let _instance = null;
 
 const NETWORK_MODEL_NAME = "Network";
 
-// TODO: On thread startup deactivate all existing networks with this
-// controller node hostname?
-
 // Singleton
 export default class NetworkController extends PhantomCore {
   /**
@@ -62,9 +59,9 @@ export default class NetworkController extends PhantomCore {
 
   /**
    * IMPORTANT: Most usages of this should not shut this down directly.
-   * 
+   *
    * TODO: Refactor accordingly.
-   * 
+   *
    * @return {Promise<void>}
    */
   async destroy() {

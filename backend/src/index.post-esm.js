@@ -25,6 +25,9 @@ const { EXPRESS_PORT, REDIS_HOST, REDIS_PORT } = process.env;
 if (cluster.isMaster) {
   (async () => {
     // Remove existing dangling networks for this host
+    //
+    // This fixes an issue where servers would stay persistent after the server
+    // is restarted
     await (async () => {
       const danglingHostNetworkController = new NetworkController();
       await danglingHostNetworkController.onceReady();
