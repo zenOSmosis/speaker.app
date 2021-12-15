@@ -14,7 +14,14 @@ export default class BackendZenRTCSignalBroker extends ZenRTCSignalBroker {
     super({ realmId, channelId, ...rest });
 
     this._io = io;
+
     this._networkController = new NetworkController();
+
+    this.registerShutdownHandler(() => {
+      // IMPORTANT: The network controller shouldn't be shut down as it is a
+      // singleton, so we're just disassociating it
+      this._networkController = null;
+    });
   }
 
   /**
