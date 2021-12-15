@@ -96,6 +96,8 @@ export default class SocketController {
 
     io.on("connect", async socket => {
       try {
+        // IMPORTANT: The network controller shouldn't be shut down on
+        // disconnect because it is a singleton
         const networkController = new NetworkController();
 
         // Preliminary network sync

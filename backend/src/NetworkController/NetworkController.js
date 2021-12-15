@@ -61,6 +61,10 @@ export default class NetworkController extends PhantomCore {
   }
 
   /**
+   * IMPORTANT: Most usages of this should not shut this down directly.
+   * 
+   * TODO: Refactor accordingly.
+   * 
    * @return {Promise<void>}
    */
   async destroy() {
