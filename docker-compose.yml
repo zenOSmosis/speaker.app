@@ -68,7 +68,7 @@ services:
   frontend:
     build:
       context: ./frontend.web
-      dockerfile: Dockerfile.speaker.app
+      dockerfile: src/portals/SpeakerAppPortal/Dockerfile.speaker.app
     restart: unless-stopped
     environment:
       NODE_ENV: production
