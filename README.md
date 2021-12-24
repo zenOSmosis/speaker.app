@@ -36,6 +36,7 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
   - [Testing](#testing)
   - [Contributing / Forking](#contributing--forking)
   - [Troubleshooting / Miscellaneous](#troubleshooting--miscellaneous)
+    - [gyp ERR! stack Error: not found: make](#gyp-err-stack-error-not-found-make)
     - [Invalid MongoDB Permissions (or some other missing environment variable)](#invalid-mongodb-permissions-or-some-other-missing-environment-variable)
     - [Invalid Elf header (farmhash)](#invalid-elf-header-farmhash)
     - [Error: ENOSPC: System limit for number of file watchers reached](#error-enospc-system-limit-for-number-of-file-watchers-reached)
@@ -217,6 +218,20 @@ For ideas of what to contribute, take a look at our [open issues](https://github
 To contribute, fork the repository, create a new branch, add some code or documentation updates, then submit a PR.
 
 ## Troubleshooting / Miscellaneous
+
+### gyp ERR! stack Error: not found: make
+
+On Ubuntu:
+
+```bash
+$ sudo apt-get install build-essential
+```
+
+CENTOS / RHEL 7
+
+```bash
+$ RUN yum install -y make gcc*
+```
 
 ### Invalid MongoDB Permissions (or some other missing environment variable)
 
