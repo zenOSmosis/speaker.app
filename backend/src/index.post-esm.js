@@ -151,6 +151,8 @@ if (cluster.isMaster) {
     // Prototype Socket.io
     (() => {
       const io = socketIo(server, {
+        // NOTE: A goal of Speaker.app is to not use cookies and provide as
+        // little state as possible
         cookie: false,
       });
 
@@ -164,6 +166,7 @@ if (cluster.isMaster) {
         })
       );
 
+      // Manages the individual Socket.io connections
       SocketController.initWithSocketIo(io);
     })();
   })();
