@@ -21,6 +21,10 @@ export { EVT_DESTROYED, SOCKET_EVT_ZENRTC_SIGNAL };
 /**
  * Establishes a pathway between two peers for ZenRTC signaling.
  *
+ * Various extensions of this utility use a combination of socketIdFrom/To and
+ * signalIdFrom/To to handle multiplexing within a browser, so that the signal
+ * can reach the correct ZenRTCPeer instance.
+ *
  * IMPORTANT: Given the set of parameters passed to the constructor, the
  * implementation must figure out how to handle the routing.
  */
