@@ -14,6 +14,7 @@
  */
 export const SOCKET_API_ROUTE_LOOPBACK = "loopback";
 
+// TODO: Document
 /**
  * @return {Object[]}
  */
