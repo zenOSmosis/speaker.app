@@ -14,7 +14,7 @@
 
 # Speaker.app / zenRTC / Phantom Server
 
-**Development Status: Nov. 3, 2021: Undergoing UI transitioning. Might take a couple of more months to complete. New UI will be more modularized so it can fit in with other projects.**
+**Development Status (Jan 1, 2022): Work on modularized UI which will replace current UI is being performed here: https://github.com/zenOSmosis/speaker.app/pull/96**
 
 **NOTE: This program is a work in progress, the console may be spammy, and it may not work at all, however, [a stable version should be running here](https://speaker.app).**
 
