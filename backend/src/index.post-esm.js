@@ -22,6 +22,7 @@ const lenCPUs = cpus().length;
 
 const { EXPRESS_PORT, REDIS_HOST, REDIS_PORT } = process.env;
 
+// TODO: isMaster is deprecated; use isPrimary on Node v16+
 if (cluster.isMaster) {
   (async () => {
     // Remove existing dangling networks for this host
