@@ -33,9 +33,6 @@ export const SYNC_EVT_SYNC_OBJECT_PARTIAL_SYNC = "s0";
 export const SYNC_EVT_SYNC_OBJECT_FULL_SYNC = "s1";
 export const SYNC_EVT_SYNC_OBJECT_UPDATE_HASH = "s2";
 
-// TODO: Document
-export const SYNC_EVT_DATA_CHANNEL_MESSAGE = "d";
-
 /**
  * TODO: Create data channel support
  *
