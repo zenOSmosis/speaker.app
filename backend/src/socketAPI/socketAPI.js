@@ -8,8 +8,13 @@ import initSocketAPIRoutes from "./initSocketAPIRoutes";
 initSocketAPIRoutes();
 
 /**
- * @param {Object} io
- * @param {Object} socket
+ * @typedef {import('socket.io').Server} Server
+ * @typedef {import('socket.io').Socket} Socket
+ */
+
+/**
+ * @param {Server} io Instantiated Socket server
+ * @param {Socket} socket Instantiated Socket
  * @return {void}
  */
 export default function initSocketAPI(io, socket) {
@@ -27,6 +32,7 @@ export default function initSocketAPI(io, socket) {
    *
    * @param {string} routeName
    * @param {function(any): Promise<any>} routeHandler
+   * @return {void}
    */
   const registerSocketAPIRoute = (routeName, routeHandler) => {
     // Socket.io event from demo.frontend

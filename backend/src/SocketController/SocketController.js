@@ -51,7 +51,7 @@ export default class SocketController {
   }
 
   /**
-   * @param {Server} io onstructed Socket.io server
+   * @param {Server} io Instantiated Socket.io server
    * (@link https://socket.io/docs/v4/server-api/)
    * @return {void}
    */
