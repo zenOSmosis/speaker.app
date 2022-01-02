@@ -1,6 +1,8 @@
 /**
  * Events which are sent / received over Socket.io.
  *
+ * @see socketAPIRoutes.js for additional Socket.io events which expect ack
+ * callbacks.
  * @see syncEvents.js for events emit over WebRTC data channel.
  */
 
