@@ -1,11 +1,16 @@
 import NetworkController from "@src/NetworkController";
 
 /**
+ * @param {string} realmId? [default = null] If set, filter to networks with
+ * this realmId
+ * @param {string} channelId? [default = null] If set, filter to networks with
+ * this channelId
+ * @param {boolean} isPublic? [default = true]
  * @return {Promise<Object[]>} // TODO: Document
  */
 export default async function fetchNetworks({
-  realmId,
-  channelId,
+  realmId = null,
+  channelId = null,
   isPublic = true,
 }) {
   const networkController = NetworkController.getInstance();
