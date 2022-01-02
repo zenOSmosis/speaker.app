@@ -163,23 +163,4 @@ export default class SocketController {
       }
     });
   }
-
-  /**
-   * Consideration: Surely this isn't very memory efficient?
-   *
-   * @param {string} socketId
-   * @param {Object} io // TODO: Document
-   */
-  static getSocketWithId(socketId, io) {
-    return io.sockets.clients().connected[socketId];
-  }
-
-  // TODO: Document w/ description
-  /**
-   * @param {Object} socket
-   * @return {string}
-   */
-  static getSocketDeviceAddress(socket) {
-    return socket[KEY_CLIENT_DEVICE_ADDRESS];
-  }
 }
