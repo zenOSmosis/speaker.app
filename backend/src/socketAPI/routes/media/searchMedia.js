@@ -7,7 +7,7 @@ const unsplash = createApi({
 
 global.fetch = fetch;
 
-export async function searchMedia({
+export default async function searchMedia({
   query,
   queryEngine,
   page = 1,

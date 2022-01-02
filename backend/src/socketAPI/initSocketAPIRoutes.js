@@ -17,22 +17,21 @@ import {
   SOCKET_API_ROUTE_FETCH_DEVICE_DETECTION,
 } from "@shared/socketAPIRoutes";
 
-import { searchMedia } from "./routes/media";
-import {
-  generateAvatar,
-  generateName,
-  generateDescription,
-} from "./routes/profile";
-import { parseUserAgent } from "./routes/device";
-import {
-  initVirtualServerSession,
-  setParticipantCount,
-  endVirtualServerSession,
-  fetchNetworks,
-  fetchIsNetworkOnline,
-  fetchICEServers,
-  setBackgroundImage,
-} from "./routes/network";
+import searchMedia from "./routes/media/searchMedia";
+
+import generateAvatar from "./routes/profile/generateAvatar";
+import generateName from "./routes/profile/generateName";
+import generateDescription from "./routes/profile/generateDescription";
+
+import parseUserAgent from "./routes/device/parseUserAgent";
+
+import initVirtualServerSession from "./routes/network/initVirtualServerSession";
+import setParticipantCount from "./routes/network/setParticipantCount";
+import endVirtualServerSession from "./routes/network/endVirtualServerSession";
+import fetchNetworks from "./routes/network/fetchNetworks";
+import fetchIsNetworkOnline from "./routes/network/fetchIsNetworkOnline";
+import fetchICEServers from "./routes/network/fetchICEServers";
+import setBackgroundImage from "./routes/network/setBackgroundImage";
 
 import addSocketAPIRoute from "./addSocketAPIRoute";
 
