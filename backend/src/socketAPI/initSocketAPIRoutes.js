@@ -1,11 +1,4 @@
-// TODO: Move routes into "routes" subdirectory
 // TODO: Bonus credits, make utility which shows list of registered routes (bonus if able to show their props as well)
-
-import { searchMedia } from "./media";
-
-import { generateAvatar, generateName, generateDescription } from "./profile";
-
-import { parseUserAgent } from "./device";
 
 // TODO: Don't import routes here; add socketAPIRoute on the routes themselves...
 import {
@@ -24,6 +17,13 @@ import {
   SOCKET_API_ROUTE_FETCH_DEVICE_DETECTION,
 } from "@shared/socketAPIRoutes";
 
+import { searchMedia } from "./routes/media";
+import {
+  generateAvatar,
+  generateName,
+  generateDescription,
+} from "./routes/profile";
+import { parseUserAgent } from "./routes/device";
 import {
   initVirtualServerSession,
   setParticipantCount,
@@ -32,7 +32,7 @@ import {
   fetchIsNetworkOnline,
   fetchICEServers,
   setBackgroundImage,
-} from "./network";
+} from "./routes/network";
 
 import addSocketAPIRoute from "./addSocketAPIRoute";
 

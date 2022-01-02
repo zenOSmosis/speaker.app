@@ -1,6 +1,7 @@
-import initSocketAPIRoutes from "./initSocketAPIRoutes";
 import { getSocketAPIRouteHandlers } from "./addSocketAPIRoute";
 
+// TODO: Remove these after routes can register themselves
+import initSocketAPIRoutes from "./initSocketAPIRoutes";
 initSocketAPIRoutes();
 
 /**
