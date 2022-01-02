@@ -3,7 +3,18 @@ import ZenRTCSignalBroker, {
 } from "../shared/ZenRTCSignalBroker";
 import NetworkController from "../NetworkController";
 
+/**
+ * @typedef {import('socket.io').Server} Server
+ */
+
 export { SOCKET_EVT_ZENRTC_SIGNAL };
+
+/**
+ * @typedef {Object} BackendZenRTCSignalBrokerProps
+ * @property {Server} io Constructed Socket.io server
+ * (@link https://socket.io/docs/v4/server-api/)
+ * @property {socketIdFrom} string
+ */
 
 /**
  * Acts as a proxy for client-based ZenRTCSignalBroker extensions can
@@ -12,7 +23,9 @@ export { SOCKET_EVT_ZENRTC_SIGNAL };
  * It is also used for signaling to help establish a ZenRTC connection.
  */
 export default class BackendZenRTCSignalBroker extends ZenRTCSignalBroker {
-  // TODO: Document
+  /**
+   * @param {BackendZenRTCSignalBrokerProps} props
+   */
   constructor({ io, socketIdFrom }) {
     super({ socketIdFrom });
 
