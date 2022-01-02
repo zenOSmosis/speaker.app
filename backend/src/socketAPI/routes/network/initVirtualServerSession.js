@@ -26,7 +26,7 @@ export default async function initVirtualServerSession(props, { socket }) {
     maxVideoResolution,
   } = props;
 
-  // TODO: try / catch and pipe error to client if not able to establish
+  // TODO: try / catch and pipe decorated error to client if not able to establish
   const network = await networkController.createNetwork({
     name,
     realmId,
@@ -54,7 +54,9 @@ export default async function initVirtualServerSession(props, { socket }) {
   if (!socket.connected) {
     endVirtualServerSession(props, { socket });
   } else {
-    // TODO: Remove this event listener when network is destructed
+    // FIXME: (jh) Remove this event listener when network is destructed
+    // (otherwise it should unregister once the socket disconnects, so it's not
+    // a huge deal if this FIXME is not even implemented)
     socket.on("disconnect", () => {
       endVirtualServerSession(props, { socket });
     });

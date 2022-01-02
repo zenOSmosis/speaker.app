@@ -1,5 +1,5 @@
 /**
- * @return {Promise<Object>}
+ * @return {Promise<Object>} // TODO: Document structure
  */
 export default async function fetchICEServers() {
   const hostname = process.env.COTURN_HOSTNAME;
@@ -7,7 +7,6 @@ export default async function fetchICEServers() {
   const username = process.env.COTURN_USERNAME;
   const credential = process.env.COTURN_PASSWORD;
 
-  // TODO: Document type
   const iceServers = [
     {
       // TODO: Don't hardcode ports
