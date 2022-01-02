@@ -23,6 +23,7 @@ let _instance = null;
 
 const NETWORK_MODEL_NAME = "Network";
 
+// TODO: Refactor so that the networks themselves are PhantomCore instances
 /**
  * IMPORTANT: This should be treated as a singleton.
  *
@@ -201,6 +202,8 @@ export default class NetworkController extends PhantomCore {
     */
   }
 
+  // TODO: Implement lifecycle support for this (return something derived from
+  // a PhantomCore instance) and plumb back up to the SocketAPI route handler
   /**
    * @param {Object} networkParams TODO: Document
    * @return {Promise<Network>} TODO: Document
