@@ -37,6 +37,8 @@ function _logCoreConnectionCount() {
 /**
  * Handles Socket.io authentication, SocketAPI and BackendZenRTCSignalBroker
  * (ZenRTC signal routing) initialization.
+ *
+ * @abstract (just contains static methods; not ever instantiated)
  */
 export default class SocketController {
   /**
