@@ -170,6 +170,7 @@ export default function initSocketAPI(io, socket) {
 
   addSocketAPIRoute(SOCKET_API_ROUTE_FETCH_DEVICE_DETECTION, parseUserAgent);
 
+  // TODO: Use event constant
   socket.on("disconnect", () => {
     console.log(`BYE to socket id: ${socket.id}`);
   });
