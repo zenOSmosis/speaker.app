@@ -1,12 +1,13 @@
 import { getSocketAPIRouteHandlers } from "./addSocketAPIRoute";
-
-// TODO: Remove these after routes can register themselves
 import initSocketAPIRoutes from "./initSocketAPIRoutes";
+
+// Pre-register the list of routes before the SocketAPI is init.
 initSocketAPIRoutes();
 
 /**
  * @param {Object} io
  * @param {Object} socket
+ * @return {void}
  */
 export default function initSocketAPI(io, socket) {
   console.log(`HELLO to socket id: ${socket.id}`);
@@ -38,12 +39,6 @@ export default function initSocketAPI(io, socket) {
 
       // Fix issue where same _taskNumberIdx was reported for concurrent tasks
       const taskNumber = _taskNumberIdx;
-
-      /*
-      if (!ack) {
-        ack = () => null;
-      }
-      */
 
       let error = null;
       let resp = null;

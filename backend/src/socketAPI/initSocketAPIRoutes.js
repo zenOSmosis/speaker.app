@@ -1,6 +1,3 @@
-// TODO: Bonus credits, make utility which shows list of registered routes (bonus if able to show their props as well)
-
-// TODO: Don't import routes here; add socketAPIRoute on the routes themselves...
 import {
   SOCKET_API_ROUTE_LOOPBACK,
   SOCKET_API_ROUTE_FETCH_NETWORKS,
@@ -35,13 +32,14 @@ import setBackgroundImage from "./routes/network/setBackgroundImage";
 
 import addSocketAPIRoute from "./addSocketAPIRoute";
 
+// FIXME: (jh) A consideration would be to have the routes auto-register
+// themselves, and / or extract the SocketAPI into a separate library so it can
+// be better tested and better tooling written for it
 export default function initSocketAPIRoutes() {
-  // Loopback - Whatever is sent is returned
   addSocketAPIRoute(SOCKET_API_ROUTE_LOOPBACK, data => {
     return data;
   });
 
-  // TODO: Add query interface
   addSocketAPIRoute(SOCKET_API_ROUTE_FETCH_NETWORKS, fetchNetworks);
 
   addSocketAPIRoute(
@@ -51,7 +49,6 @@ export default function initSocketAPIRoutes() {
 
   addSocketAPIRoute(SOCKET_API_ROUTE_FETCH_ICE_SERVERS, fetchICEServers);
 
-  // TODO: Extend to handle mesh networks
   addSocketAPIRoute(
     SOCKET_API_ROUTE_INIT_VIRTUAL_SERVER_SESSION,
     initVirtualServerSession
@@ -62,7 +59,6 @@ export default function initSocketAPIRoutes() {
     setParticipantCount
   );
 
-  // TODO: Extend to handle mesh networks
   addSocketAPIRoute(
     SOCKET_API_ROUTE_END_VIRTUAL_SERVER_SESSION,
     endVirtualServerSession
