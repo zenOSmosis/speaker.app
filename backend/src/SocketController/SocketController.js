@@ -13,6 +13,10 @@ import {
 } from "@shared/socketEvents";
 import { receiveClientAuthentication } from "@shared/serviceAuthorization/server";
 
+/**
+ * @typedef {import('socket.io').Server} Server
+ */
+
 // Property which rides on top of socket object (ONLY AVAILABLE ON THIS THREAD)
 const KEY_CLIENT_DEVICE_ADDRESS = "__clientDeviceAddress";
 
@@ -22,21 +26,23 @@ let _coreConnectionCount = 0;
 function _logCoreConnectionCount() {
   const lenCPUConnections = SocketController.getCoreConnectionCount();
 
-  // TODO: Include metric for how many total network Socket connections there
+  // FIXME: (jh) Include metric for how many total network Socket connections there
   // are
 
-  // TODO: Use Phantom logger
   console.log(
     `Per CPU Socket.io connection count [CPU #${process.env.CPU_NO}]: ${lenCPUConnections}`
   );
 }
 
 /**
- * Handles Socket.io connectivity and signal routing.
+ * Handles Socket.io authentication, SocketAPI and BackendZenRTCSignalBroker
+ * (ZenRTC signal routing) initialization.
+ *
+ * @abstract (just contains static methods; not ever instantiated)
  */
 export default class SocketController {
   /**
-   * Retrieves the number of Socket.io connections on this CPU.
+   * Retrieves the number of Socket.io connections on this CPU thread.
    *
    * @return {number}
    */
@@ -44,7 +50,11 @@ export default class SocketController {
     return _coreConnectionCount;
   }
 
-  // TODO: Document
+  /**
+   * @param {Server} io Instantiated Socket.io server
+   * (@link https://socket.io/docs/v4/server-api/)
+   * @return {void}
+   */
   static initWithSocketIo(io) {
     io.use((socket, next) => {
       // NOTE: Not waiting for "connect" event to be emit due to authorization
@@ -54,15 +64,16 @@ export default class SocketController {
       ++_coreConnectionCount;
 
       // Log connection count after other startup work has been performed
-      // TODO: Replace w/ setImmediate?
+      // FIXME: (jh) Replace w/ setImmediate?
       // @see https://github.com/zenOSmosis/phantom-core/issues/76
       process.nextTick(_logCoreConnectionCount);
 
+      // FIXME: (jh) Use event constant
       socket.on("disconnect", () => {
         --_coreConnectionCount;
 
         // Log connection count after other cleanup work has been performed
-        // TODO: Replace w/ setImmediate?
+        // FIXME: (jh) Replace w/ setImmediate?
         // @see https://github.com/zenOSmosis/phantom-core/issues/76
         process.nextTick(_logCoreConnectionCount);
       });
@@ -73,27 +84,28 @@ export default class SocketController {
     // Service authorization middleware
     io.use((socket, next) => {
       try {
-        // TODO: Emit nonce?
-
         const { clientAuthorization, clientDeviceAddress } =
           receiveClientAuthentication(socket.handshake.auth);
 
+        // Tell the client they are authorized
         socket.emit(
           SOCKET_EVT_CLIENT_AUTHORIZATION_GRANTED,
           clientAuthorization
         );
 
+        // Add the device address to the socket property so that it can be
+        // retrieved elsewhere in the program, so long as within same thread
         socket[KEY_CLIENT_DEVICE_ADDRESS] = clientDeviceAddress;
 
         next();
       } catch (err) {
-        // TODO: Use Phantom logger
         console.error("Caught authentication error", err);
 
         socket.disconnect();
       }
     });
 
+    // FIXME: (jh) Use event constant
     io.on("connect", async socket => {
       try {
         // IMPORTANT: The network controller shouldn't be shut down on
@@ -102,7 +114,7 @@ export default class SocketController {
 
         // Preliminary network sync
         //
-        // TODO: Only emit to interested listeners
+        // FIXME: (jh) Only emit to interested listeners
         (() => {
           const _handleNetworksUpdated = () => {
             // Broadcast
@@ -113,7 +125,7 @@ export default class SocketController {
           networkController.on(EVT_NETWORK_UPDATED, _handleNetworksUpdated);
           networkController.on(EVT_NETWORK_DESTROYED, _handleNetworksUpdated);
 
-          // TODO: Use event constant
+          // FIXME: (jh) Use event constant
           socket.on("disconnect", () => {
             networkController.off(EVT_NETWORK_CREATED, _handleNetworksUpdated);
             networkController.off(EVT_NETWORK_UPDATED, _handleNetworksUpdated);
@@ -122,13 +134,10 @@ export default class SocketController {
               _handleNetworksUpdated
             );
 
-            // TODO: Use Phantom logger
             console.log(`Socket.io client disconnected with id ${socket.id}`);
           });
         })();
 
-        // TODO: Refactor out of SocketController (can't make it a SocketAPIRoute due to arbitrary calls back and forth)
-        //
         // ZenRTCPeer signaling
         (() => {
           const zenRTCSignalBroker = new BackendZenRTCSignalBroker({
@@ -136,7 +145,7 @@ export default class SocketController {
             socketIdFrom: socket.id,
           });
 
-          // TODO: Use event constant
+          // FIXME: (jh) Use event constant
           socket.on("disconnect", () => {
             zenRTCSignalBroker.destroy();
           });
@@ -162,24 +171,5 @@ export default class SocketController {
         socket.disconnect();
       }
     });
-  }
-
-  /**
-   * Consideration: Surely this isn't very memory efficient?
-   *
-   * @param {string} socketId
-   * @param {Object} io // TODO: Document
-   */
-  static getSocketWithId(socketId, io) {
-    return io.sockets.clients().connected[socketId];
-  }
-
-  // TODO: Document w/ description
-  /**
-   * @param {Object} socket
-   * @return {string}
-   */
-  static getSocketDeviceAddress(socket) {
-    return socket[KEY_CLIENT_DEVICE_ADDRESS];
   }
 }

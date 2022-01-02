@@ -1,11 +1,14 @@
-// TODO: [host-bridge] Look into Node.js Cluster adapter
-// @see https://socket.io/docs/v4/cluster-adapter/
-
 /**
  * Node clustering with Socket.io based on information obtained from:
+ * @link https://github.com/elad/node-cluster-socket.io
  *
- * @see https://github.com/elad/node-cluster-socket.io
+ *
+ * Potentially with ReShell's "host-bridge" support, the Socket.io Cluster
+ * adapter might be of better use, and / or parts of it can be used to improve
+ * this current setup.
+ * @link https://socket.io/docs/v4/cluster-adapter/
  */
+
 import "./node.console";
 import cluster from "cluster";
 import express from "express";
@@ -22,6 +25,7 @@ const lenCPUs = cpus().length;
 
 const { EXPRESS_PORT, REDIS_HOST, REDIS_PORT } = process.env;
 
+// TODO: isMaster is deprecated; use isPrimary on Node v16+
 if (cluster.isMaster) {
   (async () => {
     // Remove existing dangling networks for this host
@@ -150,6 +154,8 @@ if (cluster.isMaster) {
     // Prototype Socket.io
     (() => {
       const io = socketIo(server, {
+        // NOTE: A goal of Speaker.app is to not use cookies and provide as
+        // little state as possible
         cookie: false,
       });
 
@@ -163,6 +169,7 @@ if (cluster.isMaster) {
         })
       );
 
+      // Manages the individual Socket.io connections
       SocketController.initWithSocketIo(io);
     })();
   })();

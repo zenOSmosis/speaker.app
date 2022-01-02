@@ -3,15 +3,31 @@ import ZenRTCSignalBroker, {
 } from "../shared/ZenRTCSignalBroker";
 import NetworkController from "../NetworkController";
 
+/**
+ * @typedef {import('socket.io').Server} Server
+ */
+
 export { SOCKET_EVT_ZENRTC_SIGNAL };
 
 /**
- * Works as a ZenRTCSignalBroker proxy between socket.io peers.
+ * @typedef {Object} BackendZenRTCSignalBrokerProps
+ * @property {Server} io Constructed Socket.io server
+ * (@link https://socket.io/docs/v4/server-api/)
+ * @property {socketIdFrom} string
+ */
+
+/**
+ * Acts as a proxy for client-based ZenRTCSignalBroker extensions can
+ * communicate with each other outside of a ZenRTC connection.
+ *
+ * It is also used for signaling to help establish a ZenRTC connection.
  */
 export default class BackendZenRTCSignalBroker extends ZenRTCSignalBroker {
-  // TODO: Document
-  constructor({ realmId, channelId, io, ...rest }) {
-    super({ realmId, channelId, ...rest });
+  /**
+   * @param {BackendZenRTCSignalBrokerProps} props
+   */
+  constructor({ io, socketIdFrom }) {
+    super({ socketIdFrom });
 
     this._io = io;
 
@@ -25,16 +41,13 @@ export default class BackendZenRTCSignalBroker extends ZenRTCSignalBroker {
   }
 
   /**
+   * @param {Object} data TODO: Document structure
    * @return {Promise<void>}
    */
-  async signal({
-    realmId = this._realmId,
-    channelId = this._channelId,
-    socketIdFrom = this._socketIdFrom,
-    socketIdTo = null,
-    ...rest
-  }) {
+  async signal({ realmId, channelId, socketIdTo, ...rest }) {
     // TODO: Handle errors
+
+    const socketIdFrom = this._socketIdFrom;
 
     if (!socketIdTo) {
       socketIdTo = await this._networkController.fetchVirtualServerSocketId({

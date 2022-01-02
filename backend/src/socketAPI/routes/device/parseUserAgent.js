@@ -7,6 +7,6 @@ const deviceDetector = new DeviceDetector();
 /**
  * @see https://www.npmjs.com/package/device-detector-js
  */
-export function parseUserAgent({ userAgent }) {
+export default function parseUserAgent({ userAgent }) {
   return deviceDetector.parse(userAgent);
 }
