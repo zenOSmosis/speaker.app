@@ -7,12 +7,16 @@
 /**
  * Emits from the FE to the BE with service authorization.
  *
+ * @event client-authorization-granted
  * @type {Object} // TODO: Document structure
  */
 export const SOCKET_EVT_CLIENT_AUTHORIZATION_GRANTED =
   "client-authorization-granted";
 
-// TODO: Document
+/**
+ * @event zenrtc-signal
+ * @type {Object} // TODO: Document structure
+ */
 export const SOCKET_EVT_ZENRTC_SIGNAL = "zenrtc-signal";
 
 /**
@@ -20,6 +24,7 @@ export const SOCKET_EVT_ZENRTC_SIGNAL = "zenrtc-signal";
  *
  * At this time, it doesn't currently carry any event information with it.
  *
+ * @event networks-updated
  * @type {void}
  */
 export const SOCKET_EVT_NETWORKS_UPDATED = "networks-updated";
