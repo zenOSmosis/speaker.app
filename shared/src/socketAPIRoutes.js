@@ -20,6 +20,12 @@
  * - (at)type: Represents the request data from the client
  * - (at)property: {function: --type--} ack Represents the response data from
  * the server
+ * 
+ * IMPORTANT: Though a reasonable attempt to document these properties was
+ * made, there is no guarantee that the properties are / will be current, and
+ * the actual usages of these should be handled in a single wrapper, per route.
+ * Having the implementation in one place is the sole source of truth for how
+ * these properties are actually utilized.
  */
 
 /**
