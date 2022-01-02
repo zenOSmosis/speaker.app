@@ -1,42 +1,55 @@
 /**
  * Speaker.app SocketAPI Routes used in SocketAPIClient and BE.
  *
- * Socket.io-based query abstraction layer.
+ * Socket.io-based query abstraction layer,
  */
-
-// TODO: Document this better
 
 /**
  * Whatever is sent is returned.
  *
- * @param {any} inbound
- * @return {any} outbound
+ * @event loopback
+ * @type {any} Data which will be sent to the server
+ * @return {Promise<any>} Mirrored data which is sent back from the server
  */
 export const SOCKET_API_ROUTE_LOOPBACK = "loopback";
 
-// TODO: Document
 /**
- * @return {Object[]}
+ * @event fetch-networks
+ * @type {Object | void} Optional object to query networks with.
+ * TODO: Document structure
+ * @return {Promise<Object[]>} // TODO: Document structure
  */
 export const SOCKET_API_ROUTE_FETCH_NETWORKS = "fetch-networks";
 
-// TODO: Document
-/** @type {boolean} */
+/**
+ * @event fetch-network-exists
+ * @type {Object} Network query // TODO: Document structure
+ * @return {Promise<boolean>}
+ **/
 export const SOCKET_API_ROUTE_FETCH_NETWORK_EXISTS = "fetch-network-exists";
 
-// TODO: Document
-/** @type {Object} */
+/**
+ * @event fetch-ice-servers
+ * @type {void}
+ * @return {Promise<Object>}
+ **/
 export const SOCKET_API_ROUTE_FETCH_ICE_SERVERS = "fetch-ice-servers";
 
-// TODO: Document
-/** @type {Object} */
+/**
+ * @event init-virtual-server-session
+ * @type {Object} // TODO: Document query structure
+ * @return {Promise<void>}
+ **/
 export const SOCKET_API_ROUTE_INIT_VIRTUAL_SERVER_SESSION =
   "init-virtualServer-session";
 
-// TODO: Document
-/** @type {void} */
+/**
+ * @event end-virtual-server-session
+ * @type {Object} // TODO: Document query structure
+ * @return {Promise<void>}
+ **/
 export const SOCKET_API_ROUTE_END_VIRTUAL_SERVER_SESSION =
-  "end-virtualServer-session";
+  "end-virtual-server-session";
 
 // TODO: Document
 /** @type {Object} */
@@ -62,6 +75,7 @@ export const SOCKET_API_ROUTE_GENERATE_PROFILE_NAME = "generate-profile-name";
 export const SOCKET_API_ROUTE_GENERATE_PROFILE_DESCRIPTION =
   "generate-profile-description";
 
+// TODO: Is this still used?
 // TODO: Document
 /** @type {Object} */
 export const SOCKET_API_ROUTE_MEDIA_SEARCH = "media-search";
