@@ -1,10 +1,9 @@
-// TODO: [host-bridge] Look into Node.js Cluster adapter
-// @see https://socket.io/docs/v4/cluster-adapter/
-
 /**
  * Node clustering with Socket.io based on information obtained from:
+ * @link https://github.com/elad/node-cluster-socket.io
  *
- * @see https://github.com/elad/node-cluster-socket.io
+ * TODO: [host-bridge] Look into Node.js Cluster adapter:
+ * @link https://socket.io/docs/v4/cluster-adapter/
  */
 import "./node.console";
 import cluster from "cluster";
