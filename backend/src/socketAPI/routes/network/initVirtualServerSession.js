@@ -2,12 +2,12 @@ import NetworkController from "@src/NetworkController";
 import { KEY_SOCKET_NETWORK } from "./__constants";
 
 // TODO: Document
-export default async function initVirtualServerSession(args, { socket }) {
+export default async function initVirtualServerSession(props, { socket }) {
   const networkController = NetworkController.getInstance();
 
   // TODO: Remove
   console.log({
-    args,
+    props,
   });
 
   const {
@@ -24,7 +24,7 @@ export default async function initVirtualServerSession(args, { socket }) {
     maxConcurrentAudioStreams,
     maxConcurrentVideoStreams,
     maxVideoResolution,
-  } = args;
+  } = props;
 
   // TODO: try / catch and pipe error to client if not able to establish
   const network = await networkController.createNetwork({
@@ -52,11 +52,11 @@ export default async function initVirtualServerSession(args, { socket }) {
 
   // Deregister network if socket has already disconnected
   if (!socket.connected) {
-    endVirtualServerSession(args, { socket });
+    endVirtualServerSession(props, { socket });
   } else {
     // TODO: Remove this event listener when network is destructed
     socket.on("disconnect", () => {
-      endVirtualServerSession(args, { socket });
+      endVirtualServerSession(props, { socket });
     });
   }
 }
