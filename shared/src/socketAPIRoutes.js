@@ -2,10 +2,6 @@
  * Speaker.app SocketAPI Routes used in SocketAPIClient and BE.
  *
  * Socket.io-based query abstraction layer,
- *
- * For frontend usage, @see SocketIOService.js (fetchSocketAPICall).
- *
- * TODO: Document backend usage
  */
 
 /**
@@ -45,7 +41,6 @@
  */
 export const SOCKET_API_ROUTE_LOOPBACK = "loopback";
 
-// TODO: Document default network types, etc.
 /**
  * @event fetch-networks
  * @type {Object | void} Optional object to query networks with
@@ -53,7 +48,7 @@ export const SOCKET_API_ROUTE_LOOPBACK = "loopback";
  * @property {string} channelId? [default = null]
  * @property {boolean} isPublic? [default = true]
  *
- * @property {function: Object[]} ack // TODO: Document response object
+ * @property {function: Object[]} ack
  */
 export const SOCKET_API_ROUTE_FETCH_NETWORKS = "fetch-networks";
 
