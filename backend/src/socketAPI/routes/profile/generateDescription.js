@@ -9,8 +9,11 @@ const descriptionWordList = fs
 const descriptionTemplate =
   "🚀  [adj] [job] 📈 [jobdescbase] [field] and [field] 🤩 [action] [celebrity] [location] once 🗣 [field]/[field]/[field] 💪 [moti1] [moti2] [moti3] that drive [moti4]";
 
-// TODO: Rename to generateRandomDescription?
-// TODO: Document
+/**
+ * Generates a random profile description.
+ *
+ * @return {string}
+ */
 export default function generateDescription() {
   const generator = new RandomStringGenerator(
     descriptionWordList,

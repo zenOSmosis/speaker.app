@@ -26,6 +26,13 @@
  * the actual usages of these should be handled in a single wrapper, per route.
  * Having the implementation in one place is the sole source of truth for how
  * these properties are actually utilized.
+ *
+ * As a final word, many objects in here don't have their schemas documented
+ * simply for the sake that maintaining them here would be more trouble than
+ * it's worth than to just look up the token (event constant name) directly and
+ * see how it's utilized throughout the program. There should not be many
+ * instances of any of them, typically one for the frontend and another for the
+ * backend, with the exception of this "shared" file.
  */
 
 /**
@@ -69,13 +76,17 @@ export const SOCKET_API_ROUTE_FETCH_NETWORK_EXISTS = "fetch-network-exists";
  * @property {string} iceServers.username
  * @property {string} iceServers.credential
  *
- * @property {function: Object} ack // TODO: Document structure
+ * @property {function: Object} ack
  **/
 export const SOCKET_API_ROUTE_FETCH_ICE_SERVERS = "fetch-ice-servers";
 
 /**
+ * Signals to the backend that the virtual server wishes to start its session.
+ *
+ * IMPORTANT: This should only be utilized by the virtual server.
+ *
  * @event init-virtual-server-session
- * @type {Object} // TODO: Document query structure
+ * @type {Object}
  *
  * @property {function: void} ack
  **/
@@ -83,8 +94,12 @@ export const SOCKET_API_ROUTE_INIT_VIRTUAL_SERVER_SESSION =
   "init-virtualServer-session";
 
 /**
+ * Signals to the backend that the virtual server is ending its session.
+ *
+ * IMPORTANT: This should only be utilized by the virtual server.
+ *
  * @event end-virtual-server-session
- * @type {Object} // TODO: Document query structure
+ * @type {Object}
  *
  * @property {function: void} ack
  **/
@@ -92,25 +107,32 @@ export const SOCKET_API_ROUTE_END_VIRTUAL_SERVER_SESSION =
   "end-virtual-server-session";
 
 /**
- * @event set-network-participant-count
- * @type {Object} // TODO: Document query structure
+ * Sets the participant count for the given network.
  *
- * @property {function: void} ack // TODO: Ensure correct return
+ * IMPORTANT: This should only be utilized by the virtual server.
+ *
+ * @event set-network-participant-count
+ * @type {Object}
+ *
+ * @property {function: void} ack
  **/
 export const SOCKET_API_ROUTE_SET_NETWORK_PARTICIPANT_COUNT =
   "set-network-participant-count";
 
 /**
+ * Generates a profile avatar.
+ *
  * @event generate-profile-avatar
- * @type {Object} // TODO: Document query structure
+ * @type {Object}
  *
  * @property {function: string} ack Base64 image representation of avatar
  **/
 export const SOCKET_API_ROUTE_GENERATE_PROFILE_AVATAR =
   "generate-profile-avatar";
 
-// TODO: Rename to generate-random-profile-name?
 /**
+ * Generates a random profile name.
+ *
  * @event generate-profile-name
  * @type {string}
  *
@@ -118,8 +140,9 @@ export const SOCKET_API_ROUTE_GENERATE_PROFILE_AVATAR =
  **/
 export const SOCKET_API_ROUTE_GENERATE_PROFILE_NAME = "generate-profile-name";
 
-// TODO: Rename to generate-random-profile-description?
 /**
+ * Generates a random profile description.
+ *
  * @event generate-profile-description
  * @type {string}
  *
@@ -129,25 +152,28 @@ export const SOCKET_API_ROUTE_GENERATE_PROFILE_DESCRIPTION =
   "generate-profile-description";
 
 /**
- * Parse UserAgent strings.
+ * Parse a UserAgent string.
  *
  * @event fetch-device-detection
  * @type {string} userAgent
  *
- * @property {function: Object} ack // TODO: Document object structure
+ * @property {function: Object} ack
  */
 export const SOCKET_API_ROUTE_FETCH_DEVICE_DETECTION = "fetch-device-detection";
 
 /**
  * @event set-network-background-image
- * @type {Object} // TODO: Document query structure
+ * @type {Object}
  *
- * @property {function: void} ack // TODO: Ensure correct return
+ * @property {function: void} ack
  **/
 export const SOCKET_API_ROUTE_SET_NETWORK_BACKGROUND_IMAGE =
   "set-network-background-image";
 
-// TODO: Rename (or remove?) (currently used for searching Unsplash photos)
-// TODO: Document
-/** @type {Object} */
+/**
+ * @event media-search
+ * @type {Object}
+ *
+ * @property {function: Object} ack
+ **/
 export const SOCKET_API_ROUTE_MEDIA_SEARCH = "media-search";
