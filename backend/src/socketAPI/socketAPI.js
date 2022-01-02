@@ -1,3 +1,7 @@
+// TODO: Move routes into "routes" subdirectory
+// TODO: Bonus credits, make utility which shows list of registered routes (bonus if able to show their props as well)
+
+// TODO: Don't import routes here; add socketAPIRoute on the routes themselves...
 import {
   SOCKET_API_ROUTE_LOOPBACK,
   SOCKET_API_ROUTE_FETCH_NETWORKS,
@@ -48,23 +52,28 @@ export default function initSocketAPI(io, socket) {
    * for error handling and responses.
    *
    * @param {string} routeName
-   * @param {Function} routeHandler
+   * @param {function(any): Promise<any>} routeHandler
    */
   const addSocketAPIRoute = (routeName, routeHandler) => {
     // Socket.io event from demo.frontend
     //
-    // TODO: Use single socket event for all SocketAPI routes
-    socket.on(routeName, async (clientArgs = {}, ack) => {
+    // TODO: Use single socket event for all SocketAPI routes to avoid
+    // potential name collisions w/ non-socketAPI routes
+    socket.on(routeName, async (clientArgs = {}, ack = () => null) => {
+      // Keep track of the current task, for logging purposes
       ++_taskNumberIdx;
 
+      // Currently running tasks, on this thread
       ++totalRunningTasks;
 
       // Fix issue where same _taskNumberIdx was reported for concurrent tasks
       const taskNumber = _taskNumberIdx;
 
+      /*
       if (!ack) {
         ack = () => null;
       }
+      */
 
       let error = null;
       let resp = null;
@@ -99,7 +108,7 @@ export default function initSocketAPI(io, socket) {
         // TODO: Measure time spent performing task?
         // @see https://nodejs.org/api/perf_hooks.html#perf_hooks_performance_measurement_apis
 
-        // Deincrement total running tasks because this task has ended
+        // De-increment total running tasks because this task has ended
         --totalRunningTasks;
 
         console[!errMessage ? "log" : "error"](

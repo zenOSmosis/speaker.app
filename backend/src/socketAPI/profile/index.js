@@ -21,6 +21,7 @@ export async function generateAvatar({
       )}&outputType=base64`
     );
 
+    // Base64 representation of avatar
     return avatar.data;
   } catch (err) {
     console.error(err);
@@ -29,6 +30,7 @@ export async function generateAvatar({
   }
 }
 
+// TODO: Rename to generateRandomName?
 // TODO: Document
 export function generateName() {
   return `${faker.name.firstName()} ${faker.name.lastName()}`;
@@ -41,6 +43,7 @@ const descriptionWordList = fs
 const descriptionTemplate =
   "🚀  [adj] [job] 📈 [jobdescbase] [field] and [field] 🤩 [action] [celebrity] [location] once 🗣 [field]/[field]/[field] 💪 [moti1] [moti2] [moti3] that drive [moti4]";
 
+// TODO: Rename to generateRandomDescription?
 // TODO: Document
 export function generateDescription() {
   const generator = new RandomStringGenerator(
