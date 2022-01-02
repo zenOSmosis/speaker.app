@@ -26,7 +26,12 @@ let _instance = null;
 
 const NETWORK_MODEL_NAME = "Network";
 
-// Singleton
+/**
+ * IMPORTANT: This should be treated as a singleton.
+ *
+ * TODO: Utilize singleton option if it ever becomes available in PhantomCore
+ * (@link https://github.com/zenOSmosis/phantom-core/issues/72).
+ */
 export default class NetworkController extends PhantomCore {
   /**
    * @return {NetworkController}
