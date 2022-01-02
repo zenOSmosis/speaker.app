@@ -6,7 +6,7 @@ export const EVT_ZENRTC_SIGNAL = "zenrtc-signal";
 export { EVT_DESTROYED, SOCKET_EVT_ZENRTC_SIGNAL };
 
 /**
- * @typedef {Object} ZenRTCSignalBrokerArgs
+ * @typedef {Object} ZenRTCSignalBrokerProps
  * @property {string} socketIdFrom The socket ID (Socket.io) from the peer the
  * signal broker instance is associated with. The remote end will use this
  * socket ID as socketIdTo to route messages back to this peer.
@@ -30,7 +30,7 @@ export { EVT_DESTROYED, SOCKET_EVT_ZENRTC_SIGNAL };
  */
 export default class ZenRTCSignalBroker extends PhantomCore {
   /**
-   * @param {ZenRTCSignalBrokerArgs} args
+   * @param {ZenRTCSignalBrokerProps} props
    */
   constructor({
     socketIdFrom,
