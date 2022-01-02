@@ -15,9 +15,6 @@ const {
 
 export { EVT_READY };
 
-export const SERVER_TYPE_INTERNAL = "internal";
-export const SERVER_TYPE_EXTERNAL = "external";
-
 export const EVT_NETWORK_CREATED = "network-created";
 export const EVT_NETWORK_UPDATED = "network-updated";
 export const EVT_NETWORK_DESTROYED = "network-destroyed";
@@ -63,25 +60,9 @@ export default class NetworkController extends PhantomCore {
   }
 
   /**
-   * IMPORTANT: Most usages of this should not shut this down directly.
-   *
-   * TODO: Refactor accordingly.
-   *
-   * @return {Promise<void>}
-   */
-  async destroy() {
-    if (this._db) {
-      this._db.connection.close();
-
-      this._db = null;
-    }
-  }
-
-  /**
    * @return {Promise<void>}
    */
   async _init() {
-    // TODO: Replace hardcoded password
     this._db = await mongoose.connect(
       `mongodb://${MONGO_APP_USERNAME}:${MONGO_APP_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_APP_DB_NAME}`,
       {
@@ -95,7 +76,8 @@ export default class NetworkController extends PhantomCore {
       }
     );
 
-    // TODO: Implement length validation for any client-generated strings (i.e. realmId, channelId, description, virtualServer*)
+    // TODO: Implement input / length validation for any client-generated
+    // strings (i.e. realmId, channelId, description, virtualServer)
     this._networkSchema = new mongoose.Schema(
       {
         name: {
@@ -138,7 +120,6 @@ export default class NetworkController extends PhantomCore {
           index: true,
         },
         virtualServerSocketId: {
-          // TODO: Rename to virtualServer socket id
           type: String,
           required: true,
         },
@@ -157,12 +138,6 @@ export default class NetworkController extends PhantomCore {
         virtualServerBuildHash: {
           type: String,
           required: true,
-        },
-        // TODO: Rename to type, and use values "virtualServer" / "mesh"
-        virtualServerType: {
-          type: String,
-          required: true,
-          enum: [SERVER_TYPE_INTERNAL, SERVER_TYPE_EXTERNAL],
         },
         /*
         virtualServerLoginDates: {
@@ -204,6 +179,29 @@ export default class NetworkController extends PhantomCore {
   }
 
   /**
+   * IMPORTANT: Most usages of this should not shut this down directly.
+   *
+   * @return {Promise<void>}
+   */
+  async destroy() {
+    this.log.warn(
+      `${this.getClassName()} is a singleton and cannot be shut down directly`
+    );
+
+    /*
+    if (this._db) {
+      // NOTE: (jh) I'm not sure if this is a promise type but it doesn't need
+      // to be awaited for because we're not going to use it again.
+      this._db.connection.close();
+
+      this._db = null;
+    }
+
+    return super.destroy();
+    */
+  }
+
+  /**
    * @param {Object} networkParams TODO: Document
    * @return {Promise<Network>} TODO: Document
    */
@@ -213,7 +211,6 @@ export default class NetworkController extends PhantomCore {
     channelId,
     description,
     virtualServerSocketId,
-    virtualServerType,
     isPublic,
     backgroundImage = {},
     connectedParticipants = 0, // The number currently connected to the network, not the max
@@ -241,7 +238,6 @@ export default class NetworkController extends PhantomCore {
       maxParticipants,
       virtualServerIsConnected: Boolean(virtualServerSocketId),
       virtualServerSocketId,
-      virtualServerType,
       virtualServerDeviceAddress,
       virtualServerUserAgent,
       virtualServerBuildHash,
@@ -303,26 +299,30 @@ export default class NetworkController extends PhantomCore {
   }
 
   async deactivateNetwork(network) {
-    /*
-    // TODO: Update verbiage
-    console.log("Handling network socket deregister");
+    // FIXME: (jh) There's two ways of possibly going about this, either
+    // deleting the network entirely (which it currently does now) or adding a
+    // flag that it is deregistered.  I think the best approach is to delete it
+    // entirely in order to keep things as stateless as possible, but that also
+    // means that someone else could potentially create the same network, unless
+    // realmId is pinned to the device address.
 
+    /*
+    // Deregister network
     await network.updateOne({
       controllerNodeHostname: null,
       virtualServerIsConnected: false,
       virtualServerSocketId: null,
       connectedParticipants: null,
     });
-
     await network.save();
+    //
+    // .... or... (delete, like it is doing now)
     */
 
-    // TODO: Keep it like this?
     await network.delete();
 
     this.emit(EVT_NETWORK_DESTROYED, network);
 
-    // TODO: Update verbiage
     console.log("Successfully deregistered network");
   }
 
@@ -381,6 +381,12 @@ export default class NetworkController extends PhantomCore {
   }
 
   /**
+   * Fetches the Socket ID of the virtual server which is hosting the network.
+   *
+   * This information is used to set up signaling communications via
+   * ZenRTCSignalBroker so that clients can connect to the network.
+   *
+   * @param {Object} // TODO: Define realmId / channelId props
    * @return {Promise<string>}
    */
   async fetchVirtualServerSocketId({ realmId, channelId }) {

@@ -1,6 +1,4 @@
-import NetworkController, {
-  SERVER_TYPE_EXTERNAL,
-} from "@src/NetworkController";
+import NetworkController from "@src/NetworkController";
 
 const KEY_SOCKET_NETWORK = "__network";
 
@@ -36,7 +34,6 @@ export async function initVirtualServerSession(args, { socket }) {
     channelId,
     isPublic,
     description,
-    virtualServerType: SERVER_TYPE_EXTERNAL,
     virtualServerSocketId: socket.id,
     virtualServerDeviceAddress,
     virtualServerUserAgent,
