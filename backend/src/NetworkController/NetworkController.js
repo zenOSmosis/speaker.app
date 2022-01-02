@@ -24,12 +24,13 @@ const NETWORK_MODEL_NAME = "Network";
 /**
  * IMPORTANT: This should be treated as a singleton.
  *
- * TODO: Utilize singleton option if it ever becomes available in PhantomCore
- * (@link https://github.com/zenOSmosis/phantom-core/issues/72).
+ * TODO: Utilize singleton option if it ever becomes available in PhantomCore:
+ * @link https://github.com/zenOSmosis/phantom-core/issues/72
  *
  * NOTE: Networks themselves are not PhantomCore instances because multiple
  * instances of this class may span threads / CPUs and orchestrating that would
- * be a major challenge.
+ * be a major challenge:
+ * @link https://github.com/zenOSmosis/speaker.app/issues/101
  */
 export default class NetworkController extends PhantomCore {
   /**
