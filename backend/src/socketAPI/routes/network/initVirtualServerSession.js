@@ -1,4 +1,5 @@
 import NetworkController from "@src/NetworkController";
+import endVirtualServerSession from "./endVirtualServerSession";
 import { KEY_SOCKET_NETWORK } from "./__constants";
 
 // TODO: Document
