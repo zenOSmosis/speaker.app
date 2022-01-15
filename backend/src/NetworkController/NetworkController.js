@@ -1,7 +1,6 @@
 import os from "os";
-import PhantomCore, { EVT_READY } from "phantom-core";
+import PhantomCore, { EVT_READY, sleep } from "phantom-core";
 import mongoose from "mongoose";
-import sleep from "@shared/sleep";
 
 const {
   MONGO_HOSTNAME,
