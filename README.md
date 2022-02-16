@@ -1,12 +1,20 @@
 [![GPL-3.0 License][license-image]][license-url]
 [![ci][ci-image]][ci-url]
+[![CodeFactor][codefactor-image]][codefactor-url]
+[![tweet-url][tweet-image]][tweet-url]
 
 [license-image]: https://img.shields.io/github/license/zenosmosis/speaker.app
 [license-url]: https://raw.githubusercontent.com/zenOSmosis/speaker.app/master/LICENSE.txt
 [ci-image]: https://github.com/zenosmosis/speaker.app/actions/workflows/ci.yml/badge.svg
 [ci-url]: https://github.com/zenOSmosis/speaker.app/actions
+[codefactor-image]: https://www.codefactor.io/repository/github/zenOSmosis/speaker.app/badge
+[codefactor-url]: https://www.codefactor.io/repository/github/zenOSmosis/speaker.app
+[tweet-image]: https://img.shields.io/twitter/url/http/shields.io.svg?style=social
+[tweet-url]: https://twitter.com/intent/tweet?text=Private%20audio%20chat%20rooms%20using%20your%20browser%20as%20a%20virtual%20server&url=https://github.com/zenOSmosis/speaker.app&hashtags=webrtc,audio,screensharing,virtual-server,group-chat,communications,private
 
 # Speaker.app / zenRTC / Phantom Server
+
+**Development Status (Jan 1, 2022): Work on modularized UI which will replace current UI is being performed here: https://github.com/zenOSmosis/speaker.app/pull/96**
 
 **NOTE: This program is a work in progress, the console may be spammy, and it may not work at all, however, [a stable version should be running here](https://speaker.app).**
 
