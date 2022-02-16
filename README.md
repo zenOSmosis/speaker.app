@@ -14,9 +14,9 @@
 
 # Speaker.app / zenRTC / Phantom Server
 
-**Development Status (Jan 1, 2022): Work on modularized UI which will replace current UI is being performed here: https://github.com/zenOSmosis/speaker.app/pull/96**
+**This program is a work in progress, the console may be spammy, and it may not work at all, however, [a stable version should be running here](https://speaker.app).**
 
-**NOTE: This program is a work in progress, the console may be spammy, and it may not work at all, however, [a stable version should be running here](https://speaker.app).**
+**This branch contains a highly experimental user interface (UI); For the original Speaker.app, use this branch: https://github.com/zenOSmosis/speaker.app/tree/original-speaker-app**
 
 [Speaker.app](https://speaker.app) is a [batteries-included](#whats-in-the-box), quasi-decentralized, alternative free speech audio platform that is compatible on any device that supports a modern web browser.
 
@@ -69,7 +69,7 @@ Note, on every OS except iOS, Chrome is the recommended browser;  On iOS, Safari
 
 ## What's in the Box
 
-**Frontend**:  Built with [create-react-app](https://github.com/facebook/create-react-app); state is managed with multiple Providers and accessible via useContext hooks.
+**Frontend**:  Built with [create-react-app](https://github.com/facebook/create-react-app).
 
 **Backend:** Node.js app, using [Socket.io](https://github.com/socketio/socket.io) and [Express](https://github.com/expressjs/express).  Cluster module is utilized to utilize multiple CPUs and a Redis store is utilize to scale Socket.io across the CPUs.
 
