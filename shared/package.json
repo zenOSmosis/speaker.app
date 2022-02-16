@@ -1,14 +1,18 @@
 {
   "name": "speaker.app-shared",
-  "version": "1.0.1-alpha",
+  "version": "2.0.0-alpha",
+  "author": {
+    "name": "zenOSmosis",
+    "email": "info@zenosmosis.com",
+    "url": "https://zenosmosis.com"
+  },
   "private": true,
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "jest --verbose"
   },
-  "author": "",
-  "license": "ISC",
+  "license": "GPL 3.0",
   "__NOTE:devDependencies": "These are intentionally only used during development as the shared directory gets copied into the backend, frontend, etc. during build time",
   "devDependencies": {
     "@babel/preset-env": "^7.14.2",
@@ -17,10 +21,9 @@
     "flat": "^5.0.2",
     "jest": "^27.0.1",
     "jest-environment-jsdom": "^27.0.1",
-    "phantom-core": "github:zenosmosis/phantom-core#v1.0.0",
+    "phantom-core": "github:zenosmosis/phantom-core#v2.6.0",
     "sdp-transform": "^2.14.1",
     "spark-md5": "^3.0.1",
     "uuid": "^8.3.2"
-  },
-  "dependencies": {}
+  }
 }

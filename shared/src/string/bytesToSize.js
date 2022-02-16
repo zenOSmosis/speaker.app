@@ -10,7 +10,7 @@
  * @param {number} bytes
  * @return {string}
  */
-const bytesToSize = (bytes) => {
+const bytesToSize = bytes => {
   const sizes = ["bytes", "kB", "MB", "GB", "TB"];
   if (bytes === 0) return `0 ${sizes[0]}`;
   const i = parseInt(

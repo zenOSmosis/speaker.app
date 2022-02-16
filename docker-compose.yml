@@ -32,7 +32,10 @@ services:
       MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
     volumes:
       - ./scripts/mongo.init:/docker-entrypoint-initdb.d
-      # TODO: Persistent volume for storage
+      # FIXME: (jh) Consideration was made to use persistent storage for this,
+      # however, I think that Speaker.app itself should be as stateless as
+      # possible, and eventually ditching the MongoDB network routing for
+      # something else might be more ideal
     networks:
       - zen-rtc-service-network
     expose:
@@ -56,13 +59,19 @@ services:
       MONGO_APP_USERNAME: ${MONGO_APP_USERNAME}
       MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
       UNSPLASH_ACCESS_KEY: ${UNSPLASH_ACCESS_KEY}
+      COTURN_HOSTNAME: ${COTURN_HOSTNAME}
+      COTURN_USERNAME: ${COTURN_USERNAME}
+      COTURN_PASSWORD: ${COTURN_PASSWORD}
+      COTURN_REALM=: ${COTURN_REALM}
     networks:
       - zen-rtc-service-network
     expose:
       - 3001
 
   frontend:
-    build: ./frontend.web
+    build:
+      context: ./frontend.web
+      dockerfile: src/portals/SpeakerAppPortal/Dockerfile.speaker.app
     restart: unless-stopped
     environment:
       NODE_ENV: production
@@ -76,6 +85,7 @@ services:
 
   avatar_server:
     build: ./avatar_server
+    restart: unless-stopped
     networks:
       - zen-rtc-service-network
     expose:
