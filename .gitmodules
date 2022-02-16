@@ -6,4 +6,4 @@
 	url = https://github.com/jzombie/node-avatar-builder.git
 [submodule "frontend.web"]
 	path = frontend.web
-	url = git@github.com:jzombie/pre-re-shell.git
+	url = https://github.com/jzombie/pre-re-shell.git
