@@ -3,15 +3,19 @@ import NetworkController, {
   EVT_NETWORK_DESTROYED,
   EVT_NETWORK_UPDATED,
 } from "@src/NetworkController";
-import BackendIPCMessageBroker, {
-  TYPE_WEB_IPC_MESSAGE,
-} from "@src/BackendIPCMessageBroker";
+import BackendZenRTCSignalBroker, {
+  SOCKET_EVT_ZENRTC_SIGNAL,
+} from "@src/BackendZenRTCSignalBroker";
 import initSocketAPI from "@src/socketAPI";
 import {
   SOCKET_EVT_CLIENT_AUTHORIZATION_GRANTED,
   SOCKET_EVT_NETWORKS_UPDATED,
 } from "@shared/socketEvents";
-import { receiveHandshakeAuthentication } from "@shared/adapters/serviceAuthorization/server";
+import { receiveClientAuthentication } from "@shared/serviceAuthorization/server";
+
+/**
+ * @typedef {import('socket.io').Server} Server
+ */
 
 // Property which rides on top of socket object (ONLY AVAILABLE ON THIS THREAD)
 const KEY_CLIENT_DEVICE_ADDRESS = "__clientDeviceAddress";
@@ -22,7 +26,7 @@ let _coreConnectionCount = 0;
 function _logCoreConnectionCount() {
   const lenCPUConnections = SocketController.getCoreConnectionCount();
 
-  // TODO: Include metric for how many total network Socket connections there
+  // FIXME: (jh) Include metric for how many total network Socket connections there
   // are
 
   console.log(
@@ -31,11 +35,14 @@ function _logCoreConnectionCount() {
 }
 
 /**
- * Handles Socket.io connectivity and signal routing.
+ * Handles Socket.io authentication, SocketAPI and BackendZenRTCSignalBroker
+ * (ZenRTC signal routing) initialization.
+ *
+ * @abstract (just contains static methods; not ever instantiated)
  */
 export default class SocketController {
   /**
-   * Retrieves the number of Socket.io connections on this CPU.
+   * Retrieves the number of Socket.io connections on this CPU thread.
    *
    * @return {number}
    */
@@ -43,6 +50,11 @@ export default class SocketController {
     return _coreConnectionCount;
   }
 
+  /**
+   * @param {Server} io Instantiated Socket.io server
+   * (@link https://socket.io/docs/v4/server-api/)
+   * @return {void}
+   */
   static initWithSocketIo(io) {
     io.use((socket, next) => {
       // NOTE: Not waiting for "connect" event to be emit due to authorization
@@ -52,12 +64,17 @@ export default class SocketController {
       ++_coreConnectionCount;
 
       // Log connection count after other startup work has been performed
+      // FIXME: (jh) Replace w/ setImmediate?
+      // @see https://github.com/zenOSmosis/phantom-core/issues/76
       process.nextTick(_logCoreConnectionCount);
 
+      // FIXME: (jh) Use event constant
       socket.on("disconnect", () => {
         --_coreConnectionCount;
 
         // Log connection count after other cleanup work has been performed
+        // FIXME: (jh) Replace w/ setImmediate?
+        // @see https://github.com/zenOSmosis/phantom-core/issues/76
         process.nextTick(_logCoreConnectionCount);
       });
 
@@ -68,33 +85,36 @@ export default class SocketController {
     io.use((socket, next) => {
       try {
         const { clientAuthorization, clientDeviceAddress } =
-          receiveHandshakeAuthentication(socket.handshake.auth);
+          receiveClientAuthentication(socket.handshake.auth);
 
+        // Tell the client they are authorized
         socket.emit(
           SOCKET_EVT_CLIENT_AUTHORIZATION_GRANTED,
           clientAuthorization
         );
 
+        // Add the device address to the socket property so that it can be
+        // retrieved elsewhere in the program, so long as within same thread
         socket[KEY_CLIENT_DEVICE_ADDRESS] = clientDeviceAddress;
 
         next();
       } catch (err) {
-        // TODO: Handle different error types here
+        console.error("Caught authentication error", err);
 
-        console.warn("Caught authentication error", err);
-
-        // TODO: Use string constant here
-        next(new Error("Authentication error"));
+        socket.disconnect();
       }
     });
 
+    // FIXME: (jh) Use event constant
     io.on("connect", async socket => {
       try {
+        // IMPORTANT: The network controller shouldn't be shut down on
+        // disconnect because it is a singleton
         const networkController = new NetworkController();
 
         // Preliminary network sync
         //
-        // TODO: Only emit to interested listeners
+        // FIXME: (jh) Only emit to interested listeners
         (() => {
           const _handleNetworksUpdated = () => {
             // Broadcast
@@ -105,6 +125,7 @@ export default class SocketController {
           networkController.on(EVT_NETWORK_UPDATED, _handleNetworksUpdated);
           networkController.on(EVT_NETWORK_DESTROYED, _handleNetworksUpdated);
 
+          // FIXME: (jh) Use event constant
           socket.on("disconnect", () => {
             networkController.off(EVT_NETWORK_CREATED, _handleNetworksUpdated);
             networkController.off(EVT_NETWORK_UPDATED, _handleNetworksUpdated);
@@ -117,23 +138,24 @@ export default class SocketController {
           });
         })();
 
-        // IPC message broker
-        //
-        // Mainly used for routing WebRTC signals to peers
+        // ZenRTCPeer signaling
         (() => {
-          const ipcMessageBroker = new BackendIPCMessageBroker({
+          const zenRTCSignalBroker = new BackendZenRTCSignalBroker({
             io,
-            socketIoIdFrom: socket.id,
+            socketIdFrom: socket.id,
           });
 
+          // FIXME: (jh) Use event constant
           socket.on("disconnect", () => {
-            ipcMessageBroker.destroy();
+            if (!zenRTCSignalBroker.getIsDestroying()) {
+              zenRTCSignalBroker.destroy();
+            }
           });
 
           socket.on(
-            TYPE_WEB_IPC_MESSAGE,
-            ({ realmId, channelId, serviceEntityTo, ...rest }) => {
-              ipcMessageBroker.sendMessage({
+            SOCKET_EVT_ZENRTC_SIGNAL,
+            ({ realmId, channelId, /* serviceEntityTo, */ ...rest }) => {
+              zenRTCSignalBroker.signal({
                 realmId,
                 channelId,
                 senderDeviceAddress: socket[KEY_CLIENT_DEVICE_ADDRESS],
@@ -151,23 +173,5 @@ export default class SocketController {
         socket.disconnect();
       }
     });
-  }
-
-  /**
-   * Consideration: Surely this isn't very memory efficient?
-   *
-   * @param {string} socketIoId
-   * @param {Object} io // TODO: Document
-   */
-  static getSocketWithId(socketIoId, io) {
-    return io.sockets.clients().connected[socketIoId];
-  }
-
-  /**
-   * @param {Object} socket
-   * @return {string}
-   */
-  static getSocketDeviceAddress(socket) {
-    return socket[KEY_CLIENT_DEVICE_ADDRESS];
   }
 }

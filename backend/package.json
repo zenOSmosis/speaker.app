@@ -1,16 +1,21 @@
 {
   "name": "speaker.app-backend",
-  "version": "1.0.2-alpha",
+  "version": "2.0.0-alpha",
+  "author": {
+    "name": "zenOSmosis",
+    "email": "info@zenosmosis.com",
+    "url": "https://zenosmosis.com"
+  },
   "private": true,
   "description": "",
   "main": "./src",
   "scripts": {
     "start": "node -r esm src/index.js",
     "start:dev": "GIT_BRANCH=$(git symbolic-ref --short HEAD) GIT_HASH=$(git rev-parse --short=5 HEAD) nodemon -r esm -L",
-    "test": "GIT_BRANCH=$(git symbolic-ref --short HEAD) GIT_HASH=$(git rev-parse --short=5 HEAD) echo \"Error: no test specified\" && exit 1"
+    "test": "GIT_BRANCH=$(git symbolic-ref --short HEAD) GIT_HASH=$(git rev-parse --short=5 HEAD) echo \"Error: no test specified\" && exit 1",
+    "lint": "prettier --write '(**/)*.js'"
   },
-  "author": "",
-  "license": "ISC",
+  "license": "GPL 3.0",
   "dependencies": {
     "axios": "^0.21.1",
     "dayjs": "^1.10.6",
@@ -25,7 +30,7 @@
     "mongoose": "^5.12.11",
     "net": "^1.0.2",
     "node-fetch": "^3.1.1",
-    "phantom-core": "github:zenosmosis/phantom-core#v1.0.0",
+    "phantom-core": "github:zenosmosis/phantom-core#v2.6.0",
     "socket.io": "^4.1.2",
     "socket.io-redis": "^6.1.1",
     "spark-md5": "^3.0.1",
@@ -36,5 +41,8 @@
   "_moduleAliases": {
     "@src": "src",
     "@shared": "src/shared"
+  },
+  "devDependencies": {
+    "prettier": "^2.4.1"
   }
 }

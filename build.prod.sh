@@ -32,10 +32,10 @@ cd backend/src \
   && cd ../../
 
 echo "*** Linking shared modules with frontend ***"
-cd frontend.web/src \
+cd frontend.web/src/portals/SpeakerAppPortal \
   && mkdir -p tmp.shared \
   && cp -r shared/* tmp.shared \
-  && cd ../../
+  && cd ../../../../
 
 echo "*** Building production Docker Compose config ***"
 docker-compose \
@@ -44,9 +44,6 @@ docker-compose \
   build \
   --build-arg GIT_HASH="$GIT_HASH" \
   --build-arg GIT_BRANCH="$GIT_BRANCH" \
-  --build-arg COTURN_HOSTNAME="$COTURN_HOSTNAME" \
-  --build-arg COTURN_USERNAME="$COTURN_USERNAME" \
-  --build-arg COTURN_PASSWORD="$COTURN_PASSWORD" \
   --build-arg BUILD_ENV="production"
 
 echo "*** Removing shared module temporary directories ***"

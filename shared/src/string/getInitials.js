@@ -7,7 +7,7 @@ export default function getInitials(name) {
     name &&
     name
       .split(" ")
-      .map((name) => name.substring(0, 1).toUpperCase())
+      .map(name => name.substring(0, 1).toUpperCase())
       .join("")
   );
 }
