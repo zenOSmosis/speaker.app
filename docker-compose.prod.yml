@@ -10,6 +10,8 @@ volumes:
   letsencrypt-cache:
 
 services:
+  # TODO: Implement wildcard cert so that www subdomain can be used
+  # https://letsencrypt.org/docs/faq/#does-let-s-encrypt-issue-wildcard-certificates
   letsencrypt:
     image: linuxserver/swag
     container_name: letsencrypt

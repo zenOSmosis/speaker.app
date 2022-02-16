@@ -1,36 +1,21 @@
-import {
-  SOCKET_API_ROUTE_LOOPBACK,
-  SOCKET_API_ROUTE_FETCH_NETWORKS,
-  SOCKET_API_ROUTE_FETCH_NETWORK_EXISTS,
-  SOCKET_API_ROUTE_INIT_TRANSCODER_SESSION,
-  SOCKET_API_ROUTE_CAPTURE_NETWORK_TOTAL_PARTICIPANTS,
-  SOCKET_API_ROUTE_END_TRANSCODER_SESSION,
-  SOCKET_API_ROUTE_SET_NETWORK_BACKGROUND_IMAGE,
-  SOCKET_API_ROUTE_GENERATE_PROFILE_AVATAR,
-  SOCKET_API_ROUTE_GENERATE_PROFILE_NAME,
-  SOCKET_API_ROUTE_GENERATE_PROFILE_DESCRIPTION,
-  SOCKET_API_ROUTE_MEDIA_SEARCH,
-  SOCKET_API_ROUTE_FETCH_DEVICE_DETECTION,
-} from "@shared/socketAPIRoutes";
+// TODO: Combine forces w/ ReShell's HostBridge SocketAPI:
+// @link https://github.com/jzombie/pre-re-shell/blob/master/host.bridge-prototype/src/SocketAPI.js
 
-import {
-  initTranscoderSession,
-  setConnectedParticipants,
-  endTranscoderSession,
-  fetchNetworks,
-  fetchIsNetworkOnline,
-  setBackgroundImage,
-} from "./network";
+import { getSocketAPIRouteHandlers } from "./addSocketAPIRoute";
+import initSocketAPIRoutes from "./initSocketAPIRoutes";
 
-import { searchMedia } from "./media";
-
-import { generateAvatar, generateName, generateDescription } from "./profile";
-
-import { parseUserAgent } from "./device";
+// Pre-register the list of routes before the SocketAPI is init.
+initSocketAPIRoutes();
 
 /**
- * @param {Object} io
- * @param {Object} socket
+ * @typedef {import('socket.io').Server} Server
+ * @typedef {import('socket.io').Socket} Socket
+ */
+
+/**
+ * @param {Server} io Instantiated Socket server
+ * @param {Socket} socket Instantiated Socket
+ * @return {void}
  */
 export default function initSocketAPI(io, socket) {
   console.log(`HELLO to socket id: ${socket.id}`);
@@ -46,23 +31,23 @@ export default function initSocketAPI(io, socket) {
    * for error handling and responses.
    *
    * @param {string} routeName
-   * @param {Function} routeHandler
+   * @param {function(any): Promise<any>} routeHandler
+   * @return {void}
    */
-  const addSocketAPIRoute = (routeName, routeHandler) => {
+  const registerSocketAPIRoute = (routeName, routeHandler) => {
     // Socket.io event from demo.frontend
     //
-    // TODO: Use single socket event for all SocketAPI routes
-    socket.on(routeName, async (clientArgs = {}, ack) => {
+    // TODO: Use single socket event for all SocketAPI routes to avoid
+    // potential name collisions w/ non-socketAPI routes
+    socket.on(routeName, async (clientArgs = {}, ack = () => null) => {
+      // Keep track of the current task, for logging purposes
       ++_taskNumberIdx;
 
+      // Currently running tasks, on this thread
       ++totalRunningTasks;
 
       // Fix issue where same _taskNumberIdx was reported for concurrent tasks
       const taskNumber = _taskNumberIdx;
-
-      if (!ack) {
-        ack = () => null;
-      }
 
       let error = null;
       let resp = null;
@@ -97,7 +82,7 @@ export default function initSocketAPI(io, socket) {
         // TODO: Measure time spent performing task?
         // @see https://nodejs.org/api/perf_hooks.html#perf_hooks_performance_measurement_apis
 
-        // Deincrement total running tasks because this task has ended
+        // De-increment total running tasks because this task has ended
         --totalRunningTasks;
 
         console[!errMessage ? "log" : "error"](
@@ -109,54 +94,15 @@ export default function initSocketAPI(io, socket) {
     });
   };
 
-  // Loopback - Whatever is sent is returned
-  addSocketAPIRoute(SOCKET_API_ROUTE_LOOPBACK, data => {
-    return data;
-  });
+  (() => {
+    const routeHandlers = getSocketAPIRouteHandlers();
 
-  // TODO: Add query interface
-  addSocketAPIRoute(SOCKET_API_ROUTE_FETCH_NETWORKS, fetchNetworks);
+    for (const [routeName, routeHandler] of Object.entries(routeHandlers)) {
+      registerSocketAPIRoute(routeName, routeHandler);
+    }
+  })();
 
-  addSocketAPIRoute(
-    SOCKET_API_ROUTE_FETCH_NETWORK_EXISTS,
-    fetchIsNetworkOnline
-  );
-
-  // TODO: Extend to handle mesh networks
-  addSocketAPIRoute(
-    SOCKET_API_ROUTE_INIT_TRANSCODER_SESSION,
-    initTranscoderSession
-  );
-
-  addSocketAPIRoute(
-    SOCKET_API_ROUTE_CAPTURE_NETWORK_TOTAL_PARTICIPANTS,
-    setConnectedParticipants
-  );
-
-  // TODO: Extend to handle mesh networks
-  addSocketAPIRoute(
-    SOCKET_API_ROUTE_END_TRANSCODER_SESSION,
-    endTranscoderSession
-  );
-
-  addSocketAPIRoute(
-    SOCKET_API_ROUTE_SET_NETWORK_BACKGROUND_IMAGE,
-    setBackgroundImage
-  );
-
-  addSocketAPIRoute(SOCKET_API_ROUTE_GENERATE_PROFILE_AVATAR, generateAvatar);
-
-  addSocketAPIRoute(SOCKET_API_ROUTE_GENERATE_PROFILE_NAME, generateName);
-
-  addSocketAPIRoute(
-    SOCKET_API_ROUTE_GENERATE_PROFILE_DESCRIPTION,
-    generateDescription
-  );
-
-  addSocketAPIRoute(SOCKET_API_ROUTE_MEDIA_SEARCH, searchMedia);
-
-  addSocketAPIRoute(SOCKET_API_ROUTE_FETCH_DEVICE_DETECTION, parseUserAgent);
-
+  // TODO: Use event constant
   socket.on("disconnect", () => {
     console.log(`BYE to socket id: ${socket.id}`);
   });

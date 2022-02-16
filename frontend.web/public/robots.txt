@@ -1,6 +1,0 @@
-# https://www.robotstxt.org/robotstxt.html
-User-agent: *
-Allow: /
-
-# Sitemaps must be a fully qualified URL
-Sitemap: https://speaker.app/sitemap.xml

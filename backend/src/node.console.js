@@ -2,6 +2,7 @@ import path from "path";
 import dayjs from "dayjs";
 
 // TODO: Use global PhantomLogger instead
+// TODO: Apply yellow coloring for warnings; red for errors
 
 /**
  * Node.js console debugger.

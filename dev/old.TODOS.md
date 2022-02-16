@@ -133,7 +133,7 @@ Current issues are available at https://github.com/zenOSmosis/speaker.app/issues
   - [done] Ensure underlying Chrome session is removed
 - [done] Fix ChromePhantomSession MaxListenersExceededWarning
 - [done] Add connection timer
-- [done] Rename all reSocketId to socketIoId
+- [done] Rename all reSocketId to socketId
 - [done] (Initial ChromePhantomSession) Create WebRTCMessageBroker (or something), extending IPCMessageBroker. Use it for enabling multiple peers to talk to one another in the Chrome server
 - [done] Connect WebRTC from client to server
 - [done] Fix audio issues
