@@ -48,13 +48,13 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
 
 ## Browser Support Matrix
 
-|             | Chrome                      | Edge (Chromium) | Firefox | Safari | IE  |
-| ----------- | --------------------------- | --------------- | ------- | ------ | --- |
-| **Android** | ✓                           | ✓               | ✓       | N/A    | N/A |
-| **iOS**     | [Virtual Server host only]  | N/A             | N/A     | ✓      | N/A |
-| **Linux**   | ✓                           | ✓               | ✓       | N/A    | N/A |
-| **macOS**   | ✓                           | ✓               | ✓       | ✓      | N/A |
-| **Windows** | ✓                           | ✓               | ✓       | N/A    | N/A |
+|             | Chrome                     | Edge (Chromium) | Firefox | Safari | IE  |
+| ----------- | -------------------------- | --------------- | ------- | ------ | --- |
+| **Android** | ✓                          | ✓               | ✓       | N/A    | N/A |
+| **iOS**     | [Virtual Server host only] | N/A             | N/A     | ✓      | N/A |
+| **Linux**   | ✓                          | ✓               | ✓       | N/A    | N/A |
+| **macOS**   | ✓                          | ✓               | ✓       | ✓      | N/A |
+| **Windows** | ✓                          | ✓               | ✓       | N/A    | N/A |
 
 Note, on every OS except iOS, Chrome is the recommended browser;  On iOS, Safari should be used.
 
@@ -83,14 +83,14 @@ These experiments are mostly dormant and commented-out, but have made for some i
 
 ### Conventional WebRTC Network Topologies
 
-![Mesh Network](frontend.web/public/assets/network/mesh.svg) 
+![Mesh Network](/assets/network/mesh.svg) 
 
 *Mesh network example. (Illustration borrowed from [simple-peer](https://www.npmjs.com/package/simple-peer))*
 
 Most group-based WebRTC calls, which don't have a centralized MCU /  SFU rely on each peer to send out an extra stream to multiple peer.  This is not very efficient as for every participant added, every device connected must send out additional streams.
 
 
-![SFU](frontend.web/public/assets/network/sfu.svg) 
+![SFU](/assets/network/sfu.svg) 
 
 *Centralized MCU / SFU example.*
 
