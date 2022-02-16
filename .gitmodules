@@ -4,3 +4,6 @@
 [submodule "avatar_server"]
 	path = avatar_server
 	url = https://github.com/jzombie/node-avatar-builder.git
+[submodule "frontend.web"]
+	path = frontend.web
+	url = https://github.com/jzombie/pre-re-shell.git
