@@ -69,7 +69,7 @@ services:
       NODE_ENV: development
       # Note: These are intentionally only supplied to the development; the production version uses them via the Dockerfile when building
       REACT_APP_GIT_HASH: ${GIT_HASH}
-    command: ["npm", "run", "start:no-ssl"]
+    command: ["npm", "run", "start:no-ssl", "SpeakerAppPortal"]
 
   # NOTE (jh): I didn't mount a volume here intentionally and it may need some
   # work to get it to work w/ a volume
