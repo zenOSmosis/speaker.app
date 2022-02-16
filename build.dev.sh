@@ -24,6 +24,11 @@ echo "*** Starting development modules install ***" \
   && $NPM_INSTALL_CMD \
   && cd .. \
   \
+  && echo "*** Installing npm modules in shared ***" \
+  && cd shared \
+  && $NPM_INSTALL_CMD \
+  && cd .. \
+  \
   && echo "*** Installing npm modules in frontend.web ***" \
   && cd frontend.web \
   && $NPM_INSTALL_CMD \

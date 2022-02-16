@@ -34,7 +34,7 @@ services:
       driver: none # Disable spammy logs
 
   # Web-based, administrative interface deployed to manage MongoDB databases
-  # interactively.
+  # interactively
   mongo-express:
     image: mongo-express
     restart: unless-stopped
@@ -42,6 +42,8 @@ services:
       - mongo
     environment:
       ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_APP_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_APP_PASSWORD}
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       # ME_CONFIG_SITE_BASEURL: /mongo-express
@@ -66,10 +68,8 @@ services:
     environment:
       NODE_ENV: development
       # Note: These are intentionally only supplied to the development; the production version uses them via the Dockerfile when building
-      REACT_APP_COTURN_HOSTNAME: ${COTURN_HOSTNAME}
-      REACT_APP_COTURN_USERNAME: ${COTURN_USERNAME}
-      REACT_APP_COTURN_PASSWORD: ${COTURN_PASSWORD}
-    command: ["npm", "run", "start"]
+      REACT_APP_GIT_HASH: ${GIT_HASH}
+    command: ["npm", "run", "start:no-ssl", "SpeakerAppPortal"]
 
   # NOTE (jh): I didn't mount a volume here intentionally and it may need some
   # work to get it to work w/ a volume

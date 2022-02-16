@@ -14,9 +14,9 @@
 
 # Speaker.app / zenRTC / Phantom Server
 
-**Development Status (Jan 1, 2022): Work on modularized UI which will replace current UI is being performed here: https://github.com/zenOSmosis/speaker.app/pull/96**
+**This program is a work in progress, the console may be spammy, and it may not work at all, however, [a stable version should be running here](https://speaker.app).**
 
-**NOTE: This program is a work in progress, the console may be spammy, and it may not work at all, however, [a stable version should be running here](https://speaker.app).**
+**This branch contains a highly experimental user interface (UI); For the original Speaker.app, use this branch: https://github.com/zenOSmosis/speaker.app/tree/original-speaker-app**
 
 [Speaker.app](https://speaker.app) is a [batteries-included](#whats-in-the-box), quasi-decentralized, alternative free speech audio platform that is compatible on any device that supports a modern web browser.
 
@@ -44,6 +44,7 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
   - [Testing](#testing)
   - [Contributing / Forking](#contributing--forking)
   - [Troubleshooting / Miscellaneous](#troubleshooting--miscellaneous)
+    - [gyp ERR! stack Error: not found: make](#gyp-err-stack-error-not-found-make)
     - [Invalid MongoDB Permissions (or some other missing environment variable)](#invalid-mongodb-permissions-or-some-other-missing-environment-variable)
     - [Invalid Elf header (farmhash)](#invalid-elf-header-farmhash)
     - [Error: ENOSPC: System limit for number of file watchers reached](#error-enospc-system-limit-for-number-of-file-watchers-reached)
@@ -55,20 +56,20 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
 
 ## Browser Support Matrix
 
-|             | Chrome                 | Edge (Chromium) | Firefox | Safari | IE  |
-| ----------- | ---------------------- | --------------- | ------- | ------ | --- |
-| **Android** | ✓                      | ✓               | ✓       | N/A    | N/A |
-| **iOS**     | [transcoder host only] | N/A             | N/A     | ✓      | N/A |
-| **Linux**   | ✓                      | ✓               | ✓       | N/A    | N/A |
-| **macOS**   | ✓                      | ✓               | ✓       | ✓      | N/A |
-| **Windows** | ✓                      | ✓               | ✓       | N/A    | N/A |
+|             | Chrome                     | Edge (Chromium) | Firefox | Safari | IE  |
+| ----------- | -------------------------- | --------------- | ------- | ------ | --- |
+| **Android** | ✓                          | ✓               | ✓       | N/A    | N/A |
+| **iOS**     | [Virtual Server host only] | N/A             | N/A     | ✓      | N/A |
+| **Linux**   | ✓                          | ✓               | ✓       | N/A    | N/A |
+| **macOS**   | ✓                          | ✓               | ✓       | ✓      | N/A |
+| **Windows** | ✓                          | ✓               | ✓       | N/A    | N/A |
 
 Note, on every OS except iOS, Chrome is the recommended browser;  On iOS, Safari should be used.
 
 
 ## What's in the Box
 
-**Frontend**:  Built with [create-react-app](https://github.com/facebook/create-react-app); state is managed with multiple Providers and accessible via useContext hooks.
+**Frontend**:  Built with [create-react-app](https://github.com/facebook/create-react-app).
 
 **Backend:** Node.js app, using [Socket.io](https://github.com/socketio/socket.io) and [Express](https://github.com/expressjs/express).  Cluster module is utilized to utilize multiple CPUs and a Redis store is utilize to scale Socket.io across the CPUs.
 
@@ -90,14 +91,14 @@ These experiments are mostly dormant and commented-out, but have made for some i
 
 ### Conventional WebRTC Network Topologies
 
-![Mesh Network](frontend.web/public/assets/network/mesh.svg) 
+![Mesh Network](/assets/network/mesh.svg) 
 
 *Mesh network example. (Illustration borrowed from [simple-peer](https://www.npmjs.com/package/simple-peer))*
 
 Most group-based WebRTC calls, which don't have a centralized MCU /  SFU rely on each peer to send out an extra stream to multiple peer.  This is not very efficient as for every participant added, every device connected must send out additional streams.
 
 
-![SFU](frontend.web/public/assets/network/sfu.svg) 
+![SFU](/assets/network/sfu.svg) 
 
 *Centralized MCU / SFU example.*
 
@@ -109,7 +110,7 @@ Using a topology similar to the MCU / SFU example above, Speaker.app attempts to
 
 **zenRTC** (built with simple-peer) is based on WebRTC, adding additional functionality such as user-level network strength indication, events over data channels, and P2P-based shared state syncing.
 
-**Phantom Server** is a network host which runs in your web browser, and acts as the host, shared state manager, proxy, and transcoder for all connected participants within a WebRTC network.
+**Phantom Server** is a network host which runs in your web browser, and acts as the host, shared state manager, proxy, and virtualServer for all connected participants within a WebRTC network.
 
 Every participant connects to the Phantom Server via a P2P connection and Phantom Server handles the stream negotiations / network programming with the other peers.
 
@@ -225,6 +226,20 @@ For ideas of what to contribute, take a look at our [open issues](https://github
 To contribute, fork the repository, create a new branch, add some code or documentation updates, then submit a PR.
 
 ## Troubleshooting / Miscellaneous
+
+### gyp ERR! stack Error: not found: make
+
+On Ubuntu:
+
+```bash
+$ sudo apt-get install build-essential
+```
+
+CENTOS / RHEL 7
+
+```bash
+$ RUN yum install -y make gcc*
+```
 
 ### Invalid MongoDB Permissions (or some other missing environment variable)
 

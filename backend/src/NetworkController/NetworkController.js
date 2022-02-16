@@ -1,9 +1,6 @@
 import os from "os";
-import PhantomCore, { EVT_READY } from "phantom-core";
+import PhantomCore, { EVT_READY, sleep } from "phantom-core";
 import mongoose from "mongoose";
-import sleep from "@shared/sleep";
-
-// const { ObjectId } = mongoose;
 
 const {
   MONGO_HOSTNAME,
@@ -15,9 +12,6 @@ const {
 
 export { EVT_READY };
 
-export const SERVER_TYPE_INTERNAL = "internal";
-export const SERVER_TYPE_EXTERNAL = "external";
-
 export const EVT_NETWORK_CREATED = "network-created";
 export const EVT_NETWORK_UPDATED = "network-updated";
 export const EVT_NETWORK_DESTROYED = "network-destroyed";
@@ -26,12 +20,21 @@ let _instance = null;
 
 const NETWORK_MODEL_NAME = "Network";
 
-// TODO: On thread startup deactivate all existing networks with this
-// controller node hostname?
-
-// Singleton
+/**
+ * IMPORTANT: This should be treated as a singleton.
+ *
+ * TODO: Utilize singleton option if it ever becomes available in PhantomCore:
+ * @link https://github.com/zenOSmosis/phantom-core/issues/72
+ *
+ * NOTE: Networks themselves are not PhantomCore instances because multiple
+ * instances of this class may span threads / CPUs and orchestrating that would
+ * be a major challenge:
+ * @link https://github.com/zenOSmosis/speaker.app/issues/101
+ */
 export default class NetworkController extends PhantomCore {
   /**
+   * Retrieves the singleton instance of the NetworkController.
+   *
    * @return {NetworkController}
    */
   static getInstance() {
@@ -47,7 +50,7 @@ export default class NetworkController extends PhantomCore {
       return _instance;
     }
 
-    super({ isReady: false });
+    super({ isAsync: true });
 
     _instance = this;
 
@@ -55,7 +58,7 @@ export default class NetworkController extends PhantomCore {
     this.setMaxListeners(1000);
 
     this._db = null;
-    this._networkSchema = null;
+    this._mongooseNetworkSchema = null;
 
     this._init();
   }
@@ -63,19 +66,7 @@ export default class NetworkController extends PhantomCore {
   /**
    * @return {Promise<void>}
    */
-  async destroy() {
-    if (this._db) {
-      this._db.connection.close();
-
-      this._db = null;
-    }
-  }
-
-  /**
-   * @return {Promise<void>}
-   */
   async _init() {
-    // TODO: Replace hardcoded password
     this._db = await mongoose.connect(
       `mongodb://${MONGO_APP_USERNAME}:${MONGO_APP_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_APP_DB_NAME}`,
       {
@@ -89,8 +80,9 @@ export default class NetworkController extends PhantomCore {
       }
     );
 
-    // TODO: Implement length validation for any client-generated strings (i.e. realmId, channelId, description, transcoder*)
-    this._networkSchema = new mongoose.Schema(
+    // TODO: Implement input / length validation for any client-generated
+    // strings (i.e. realmId, channelId, description, virtualServer)
+    this._mongooseNetworkSchema = new mongoose.Schema(
       {
         name: {
           type: String,
@@ -126,40 +118,33 @@ export default class NetworkController extends PhantomCore {
           type: String,
           required: true,
         },
-        transcoderIsConnected: {
+        virtualServerIsConnected: {
           type: Boolean,
           required: true,
           index: true,
         },
-        transcoderSocketId: {
-          // TODO: Rename to transcoder socket id
+        virtualServerSocketId: {
           type: String,
           required: true,
         },
-        transcoderDeviceAddress: {
+        virtualServerDeviceAddress: {
           type: String,
           required: true,
         },
-        transcoderUserAgent: {
+        virtualServerUserAgent: {
           type: String,
           required: true,
         },
-        transcoderCoreCount: {
+        virtualServerCoreCount: {
           type: Number,
           required: false,
         },
-        transcoderBuildHash: {
+        virtualServerBuildHash: {
           type: String,
           required: true,
-        },
-        // TODO: Rename to type, and use values "transcoder" / "mesh"
-        transcoderType: {
-          type: String,
-          required: true,
-          enum: [SERVER_TYPE_INTERNAL, SERVER_TYPE_EXTERNAL],
         },
         /*
-        transcoderLoginDates: {
+        virtualServerLoginDates: {
           type: Date[] / string?,
           required: true
         },
@@ -189,41 +174,68 @@ export default class NetworkController extends PhantomCore {
     );
 
     // Ensure realm and channel are unique
-    this._networkSchema.index({ realmId: 1, channelId: 1 }, { unique: true });
+    this._mongooseNetworkSchema.index(
+      { realmId: 1, channelId: 1 },
+      { unique: true }
+    );
 
     // TODO: What is this used for?  Should it be used?
-    // await this._networkSchema.syncIndexes();
+    // await this._mongooseNetworkSchema.syncIndexes();
 
     await super._init();
   }
 
   /**
-   * @param {Object} networkParams TODO: Document
-   * @return {Promise<Network>} TODO: Document
+   * IMPORTANT: Most usages of this should not shut this down directly.
+   *
+   * @return {Promise<void>}
+   */
+  async destroy() {
+    this.log.warn(
+      `${this.getClassName()} is a singleton and cannot be shut down directly`
+    );
+
+    /*
+    if (this._db) {
+      // NOTE: (jh) I'm not sure if this is a promise type but it doesn't need
+      // to be awaited for because we're not going to use it again.
+      this._db.connection.close();
+
+      this._db = null;
+    }
+
+    return super.destroy();
+    */
+  }
+
+  /**
+   * @param {Object} networkParams TODO: Document structure
+   * @return {Promise<mongoose.Model>}
    */
   async createNetwork({
     name,
     realmId,
     channelId,
     description,
-    transcoderSocketId,
-    transcoderType,
+    virtualServerSocketId,
     isPublic,
     backgroundImage = {},
     connectedParticipants = 0, // The number currently connected to the network, not the max
     maxParticipants = null,
-    transcoderDeviceAddress,
-    transcoderUserAgent,
-    transcoderBuildHash,
-    transcoderCoreCount,
+    virtualServerDeviceAddress,
+    virtualServerUserAgent,
+    virtualServerBuildHash,
+    virtualServerCoreCount,
     maxConcurrentAudioStreams = null,
     maxConcurrentVideoStreams = null,
     maxVideoResolution = null,
   }) {
-    // TODO: Convert to class method
-    const Network = mongoose.model(NETWORK_MODEL_NAME, this._networkSchema);
+    const MongooseNetwork = mongoose.model(
+      NETWORK_MODEL_NAME,
+      this._mongooseNetworkSchema
+    );
 
-    const network = new Network({
+    const mongooseNetwork = new MongooseNetwork({
       name,
       controllerNodeHostname: os.hostname(),
       realmId,
@@ -233,49 +245,49 @@ export default class NetworkController extends PhantomCore {
       backgroundImage,
       connectedParticipants,
       maxParticipants,
-      transcoderIsConnected: Boolean(transcoderSocketId),
-      transcoderSocketId,
-      transcoderType,
-      transcoderDeviceAddress,
-      transcoderUserAgent,
-      transcoderBuildHash,
-      transcoderCoreCount,
+      virtualServerIsConnected: Boolean(virtualServerSocketId),
+      virtualServerSocketId,
+      virtualServerDeviceAddress,
+      virtualServerUserAgent,
+      virtualServerBuildHash,
+      virtualServerCoreCount,
       maxConcurrentAudioStreams,
       maxConcurrentVideoStreams,
       maxVideoResolution,
     });
 
-    await network.save();
+    await mongooseNetwork.save();
 
-    this.emit(EVT_NETWORK_CREATED, network);
+    this.emit(EVT_NETWORK_CREATED, mongooseNetwork);
 
-    return network;
+    return mongooseNetwork;
   }
 
   /**
-   * @param {Object} network
+   * @param {mongoose.Model} mongooseNetwork
    * @param {number} connectedParticipants
    * @return {Promise<void>}
    */
-  async setConnectedParticipants(network, connectedParticipants) {
-    network.connectedParticipants = connectedParticipants;
+  async setParticipantCount(mongooseNetwork, connectedParticipants) {
+    mongooseNetwork.connectedParticipants = connectedParticipants;
 
-    await network.save();
+    await mongooseNetwork.save();
 
-    this.emit(EVT_NETWORK_UPDATED, network);
+    this.emit(EVT_NETWORK_UPDATED, mongooseNetwork);
   }
 
   /**
-   * @param {Object} network
+   * @param {mongoose.Model} mongooseNetwork
    * @param {Object | string} backgroundImage
+   * @return {Promise<void>}
    */
-  async setBackgroundImage(network, backgroundImage) {
+  async setBackgroundImage(mongooseNetwork, backgroundImage) {
     try {
-      network.backgroundImage = backgroundImage;
+      mongooseNetwork.backgroundImage = backgroundImage;
 
-      await network.save();
+      await mongooseNetwork.save();
 
-      this.emit(EVT_NETWORK_UPDATED, network);
+      this.emit(EVT_NETWORK_UPDATED, mongooseNetwork);
     } catch (err) {
       console.warn("Caught", err);
     }
@@ -289,49 +301,69 @@ export default class NetworkController extends PhantomCore {
    * @return {Promise<void>}
    */
   async deactivateHostNetworks() {
-    const networks = await this.fetchNetworks({
+    const mongooseNetworks = await this.fetchNetworks({
       controllerNodeHostname: os.hostname(),
     });
 
-    await Promise.all(networks.map(network => this.deactivateNetwork(network)));
+    await Promise.all(
+      mongooseNetworks.map(mongooseNetwork =>
+        this.deactivateNetwork(mongooseNetwork)
+      )
+    );
   }
 
-  async deactivateNetwork(network) {
-    /*
-    // TODO: Update verbiage
-    console.log("Handling network socket deregister");
+  /**
+   * @param {mongoose.Model} mongooseNetwork
+   * @return {Promise<void>}
+   */
+  async deactivateNetwork(mongooseNetwork) {
+    // FIXME: (jh) There's two ways of possibly going about this, either
+    // deleting the network entirely (which it currently does now) or adding a
+    // flag that it is deregistered.  I think the best approach is to delete it
+    // entirely in order to keep things as stateless as possible, but that also
+    // means that someone else could potentially create the same network, unless
+    // realmId is pinned to the device address.
 
+    /*
+    // Deregister network
     await network.updateOne({
       controllerNodeHostname: null,
-      transcoderIsConnected: false,
-      transcoderSocketId: null,
+      virtualServerIsConnected: false,
+      virtualServerSocketId: null,
       connectedParticipants: null,
     });
-
     await network.save();
+    //
+    // .... or... (delete, like it is doing now)
     */
 
-    // TODO: Keep it like this?
-    await network.delete();
+    await mongooseNetwork.delete();
 
-    this.emit(EVT_NETWORK_DESTROYED, network);
+    this.emit(EVT_NETWORK_DESTROYED, mongooseNetwork);
 
-    // TODO: Update verbiage
     console.log("Successfully deregistered network");
   }
 
-  // TODO: Document
   // TODO: Only fetch networks available to the given client
-  async fetchNetworks(query = { isPublic: true, transcoderIsConnected: true }) {
+  /**
+   * @param {Object} query // TODO: Define query structure
+   * @return {mongoose.Model[]}
+   */
+  async fetchNetworks(
+    query = { isPublic: true, virtualServerIsConnected: true }
+  ) {
     try {
       // TODO: Convert to class method
-      const Network = mongoose.model(NETWORK_MODEL_NAME, this._networkSchema);
+      const MongooseNetwork = mongoose.model(
+        NETWORK_MODEL_NAME,
+        this._mongooseNetworkSchema
+      );
 
       // TODO: Exclude private fields (unless specified in options)
-      const networks = await Network.find(query);
+      const mongooseNetwork = await MongooseNetwork.find(query);
 
       // TODO: Return plain object (unless specified in options)
-      return networks;
+      return mongooseNetwork;
     } catch (err) {
       // Fix race condition where this method might be called before the schema
       // is registered
@@ -361,25 +393,38 @@ export default class NetworkController extends PhantomCore {
    * @property {string} channelId
    *
    * @param {NetworkDBObjectQuery}
-   * @return {Promise<NetworkDBObject>}
+   * @return {Promise<mongoose.Model | void>}
    */
   async _fetchNetwork({ realmId, channelId, ...rest }) {
     // TODO: Convert to class method
-    const Network = mongoose.model(NETWORK_MODEL_NAME, this._networkSchema);
+    const Network = mongoose.model(
+      NETWORK_MODEL_NAME,
+      this._mongooseNetworkSchema
+    );
 
-    const network = await Network.findOne({ realmId, channelId, ...rest });
+    const mongooseNetwork = await Network.findOne({
+      realmId,
+      channelId,
+      ...rest,
+    });
 
-    return network;
+    return mongooseNetwork;
   }
 
   /**
-   * @return {Promise<string>}
+   * Fetches the Socket ID of the virtual server which is hosting the network.
+   *
+   * This information is used to set up signaling communications via
+   * ZenRTCSignalBroker so that clients can connect to the network.
+   *
+   * @param {NetworkDBObjectQuery}
+   * @return {Promise<string | void>}
    */
-  async fetchTranscoderSocketId({ realmId, channelId }) {
-    const network = await this._fetchNetwork({ realmId, channelId });
+  async fetchVirtualServerSocketId({ realmId, channelId }) {
+    const mongooseNetwork = await this._fetchNetwork({ realmId, channelId });
 
-    if (network) {
-      return network["transcoderSocketId"];
+    if (mongooseNetwork) {
+      return mongooseNetwork["virtualServerSocketId"];
     } else {
       console.warn(
         `Unable to find network with realm "${realmId}" and channel "${channelId}"`

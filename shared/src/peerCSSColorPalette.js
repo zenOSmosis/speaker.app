@@ -1,4 +1,4 @@
-// TODO: Move into TranscoderZenRTCPeer as a static property
+// TODO: Move into VirtualServerZenRTCPeer as a static property
 
 /**
  * Used primarily by the backend to assign consistent colors to the frontend
