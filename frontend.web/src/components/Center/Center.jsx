@@ -26,15 +26,11 @@ export default function Center({
   const isOverflown = useOverflowDetection(centerEl, canOverflow);
 
   if (canOverflow && isOverflown) {
-    // Display without centering
+    // Display without flex centering
     return (
       <div
         ref={_setCenterEl}
-        className={classNames(
-          styles["non-center"],
-          canOverflow ? styles["can-overflow"] : null,
-          className
-        )}
+        className={classNames(styles["overflown"], className)}
       >
         {children}
       </div>

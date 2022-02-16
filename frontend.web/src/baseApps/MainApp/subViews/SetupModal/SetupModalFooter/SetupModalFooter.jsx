@@ -3,7 +3,7 @@ import { Row, Column } from "@components/Layout";
 import ButtonTransparent from "@components/ButtonTransparent";
 import Center from "@components/Center";
 // import LabeledLED from "@components/labeled/LabeledLED";
-import LabeledSwitch from "@components/labeled/LabeledSwitch";
+// import LabeledSwitch from "@components/labeled/LabeledSwitch";
 import SpeakerIcon from "@icons/SpeakerIcon";
 import LabeledIcon from "@components/labeled/LabeledIcon/LabeledIcon";
 
@@ -12,7 +12,7 @@ import SettingsIcon from "@icons/SettingsIcon";
 import useAppRoutesContext from "@hooks/useAppRoutesContext";
 // import useSocketContext from "@hooks/useSocketContext";
 import useWebPhantomSessionContext from "@hooks/useWebPhantomSessionContext";
-import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
+// import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 
 import {
   ROUTE_HOME,
@@ -30,11 +30,12 @@ export default function SetupModalFooter() {
     channelId,
   } = useWebPhantomSessionContext();
 
+  /*
   const {
     // hasUIMicPermission,
     // setHasUIMicPermission,
-    micAudioController,
   } = useInputMediaDevicesContext();
+  */
 
   return (
     <Row>
@@ -65,20 +66,22 @@ export default function SetupModalFooter() {
               disabled={getIsCurrentRoute(ROUTE_SETUP_CONFIGURE)}
             />
 
-            <LabeledSwitch
-              masterLabel="Mic"
-              labelOn=""
-              labelOff=""
-              isOn={!micAudioController || !micAudioController.getIsMuted()}
-              onChange={() =>
-                micAudioController && micAudioController.toggleMute()
-              }
-              disabled={!isSessionConnected}
-              style={{
-                // opacity: !isConnected ? 0 : 1,
-                verticalAlign: "bottom",
-              }}
-            />
+            {/**
+               <LabeledSwitch
+                masterLabel="Mic"
+                labelOn=""
+                labelOff=""
+                isOn={!micAudioController || !micAudioController.getIsMuted()}
+                onChange={() =>
+                  micAudioController && micAudioController.toggleMute()
+                }
+                disabled={!isSessionConnected}
+                style={{
+                  // opacity: !isConnected ? 0 : 1,
+                  verticalAlign: "bottom",
+                }}
+              />
+               */}
           </nav>
         </Center>
       </Column>

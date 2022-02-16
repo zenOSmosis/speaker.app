@@ -22,14 +22,15 @@ import useInputMediaDevicesContext from "@hooks/useInputMediaDevicesContext";
 // TODO: Hide if there is main view content, or menu is shown, and we don't have much height
 
 export default function AppFooter({ className }) {
-  const { publishableAudioInputControllerCollection } =
-    useInputMediaDevicesContext();
+  const {
+    publishableAudioInputControllerCollection,
+    allAudioInputMediaStreamTracks,
+  } = useInputMediaDevicesContext();
 
   const { toggleSidebar, sidebarMenuSelectedIdx, isSidebarOpen } =
     useAppLayoutContext();
 
-  const isMicOff =
-    publishableAudioInputControllerCollection.getChildren().length === 0;
+  const isMicOff = allAudioInputMediaStreamTracks.length === 0;
 
   return (
     <Footer>
@@ -56,14 +57,7 @@ export default function AppFooter({ className }) {
                     }}
                   />
                   <AudioMediaStreamTrackLevelMeter
-                    mediaStreamTracks={(() => {
-                      const mediaStream =
-                        publishableAudioInputControllerCollection.getOutputMediaStream();
-
-                      if (mediaStream) {
-                        return mediaStream.getAudioTracks();
-                      }
-                    })()}
+                    mediaStreamTracks={allAudioInputMediaStreamTracks}
                     style={{
                       marginLeft: 5,
                       marginBottom: 2,

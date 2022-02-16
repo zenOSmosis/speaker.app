@@ -27,7 +27,8 @@ export default function AudioMediaStreamTrackLevelAvatar({
   );
 
   if (avatarEl) {
-    avatarEl.style.borderColor = getPercentColor(percent);
+    // TODO: Add percent calculation into getPercentColor itself
+    avatarEl.style.borderColor = getPercentColor(percent / 100);
   }
 
   return <Avatar {...rest} onEl={setAvatarEl} />;

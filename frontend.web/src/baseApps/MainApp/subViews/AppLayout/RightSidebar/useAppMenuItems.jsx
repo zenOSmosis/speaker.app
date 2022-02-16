@@ -94,8 +94,10 @@ export default function useAppMenuItems() {
   //
   // There might be an easier way of accomplishing this
 
-  const { publishableAudioInputControllerCollection } =
-    useInputMediaDevicesContext();
+  const {
+    publishableAudioInputControllerCollection,
+    allAudioInputMediaStreamTracks,
+  } = useInputMediaDevicesContext();
 
   const { isScreenSharingSupported, isScreenSharing, toggleScreenCapture } =
     useScreenCaptureContext();
@@ -221,15 +223,7 @@ export default function useAppMenuItems() {
               }}
             />
             <AudioMediaStreamTrackLevelMeter
-              mediaStreamTracks={(() => {
-                const mediaStream =
-                  publishableAudioInputControllerCollection &&
-                  publishableAudioInputControllerCollection.getOutputMediaStream();
-
-                if (mediaStream) {
-                  return mediaStream.getAudioTracks();
-                }
-              })()}
+              mediaStreamTracks={allAudioInputMediaStreamTracks}
               style={{
                 marginLeft: 7,
                 height: 40,
@@ -253,7 +247,13 @@ export default function useAppMenuItems() {
         </div>
       ),
     }),
-    [publishableAudioInputControllerCollection, isMuted, isMicOff, toggleMute]
+    [
+      publishableAudioInputControllerCollection,
+      allAudioInputMediaStreamTracks,
+      isMuted,
+      isMicOff,
+      toggleMute,
+    ]
   );
 
   /*

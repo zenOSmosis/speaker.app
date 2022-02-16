@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import SpeakerAppLogoScene from "@components/SpeakerAppLogoScene";
+import ParticipantsGrid from "@components/ParticipantsGrid";
 import Cover from "@components/Cover";
 import Animation from "@components/Animation";
 import Background from "@components/Background";
@@ -37,8 +38,10 @@ export default function BackingView() {
             style={{ backgroundColor: "rgba(0,0,0,.2)" }}
           ></Background>
         </Animation>
-      ) : (
+      ) : !isConnected ? (
         <SpeakerAppLogoScene />
+      ) : (
+        <ParticipantsGrid />
       )}
     </Cover>
   );

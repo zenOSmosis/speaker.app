@@ -203,17 +203,22 @@ function useTieIns() {
 
     // If no active mic already, start the default device
     // TODO: Respect permissions either here or in the hook
-    // TODO: Don't perform this selection if the user has explicitly turned off devices
+    // TODO: Don't perform this selection if the user has explicitly turned off
+    // devices
     if (isConnected && !refSelectedAudioInputDevices.current.length) {
       getPublishableDefaultAudioInputDevice();
     }
   }, [isConnected, setIsInCall, getPublishableDefaultAudioInputDevice]);
 
+  // TODO: Each device should have its own media stream, I believe, or else,
+  // when adding / removing devices, existing streams can show as stopped on
+  // the remote peer; doesn't seem to occur when screenshare is added as well,
+  // and removed
   /**
    * The collection-based MediaStream which all audio input devices share.
    *
    * @type {MediaStream}
-   **/
+   */
   const audioInputDevicesMediaStream = useMemo(
     () => publishableAudioInputControllerCollection.getOutputMediaStream(),
     [publishableAudioInputControllerCollection]

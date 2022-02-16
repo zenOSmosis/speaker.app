@@ -17,29 +17,26 @@ export default function Avatar({
   description,
   onEl,
   style = {},
-  size,
+  size = 80,
   ...rest
 }) {
   const title = useMemo(
-    () => `${name}${description && ` | ${description}`}`,
+    () =>
+      !name && !description
+        ? ""
+        : `${name}${description && ` | ${description}`}`,
     [name, description]
   );
 
-  if (src) {
-    return (
-      <img
-        ref={onEl}
-        className={classNames(styles["avatar"], className)}
-        style={{ ...style, height: size, width: size }}
-        src={src}
-        alt={name}
-        title={title}
-        {...rest}
-      />
-    );
-  } else {
-    // TODO: Set dynamic icon if no source (use a question mark?)
-
-    return null;
-  }
+  return (
+    <img
+      ref={onEl}
+      className={classNames(styles["avatar"], className)}
+      style={{ ...style, height: size, width: size }}
+      src={src}
+      alt={name}
+      title={title}
+      {...rest}
+    />
+  );
 }

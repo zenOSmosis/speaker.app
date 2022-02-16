@@ -16,6 +16,8 @@ export default function MultiVideo({ mediaStreamTracks = [] }) {
     [mediaStreamTracks]
   );
 
+  // TODO: Allow arbitrary selection of video track?  Tile them?  What should
+  // we do with multiple tracks?
   const displayMediaStreamTrack = useMemo(
     () => videoMediaStreamTracks.length && videoMediaStreamTracks[0],
     [videoMediaStreamTracks]

@@ -76,6 +76,7 @@ services:
 
   avatar_server:
     build: ./avatar_server
+    restart: unless-stopped
     networks:
       - zen-rtc-service-network
     expose:

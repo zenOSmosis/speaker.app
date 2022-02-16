@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import useAppMenuItems from "./useAppMenuItems";
 import Animation from "@components/Animation";
 import useAppLayoutContext from "@hooks/useAppLayoutContext";
@@ -28,7 +28,7 @@ export default function RightSidebar({ ...params }) {
   } = useAppLayoutContext();
 
   useKeyboardEvents({
-    onKeyDown: (keyCode) => {
+    onKeyDown: keyCode => {
       // Ignore if there is an open modal
       if (modalView) {
         return;
@@ -40,10 +40,6 @@ export default function RightSidebar({ ...params }) {
       }
     },
   });
-
-  useEffect(() => {
-    setIsSidebarOpen(true);
-  }, [setIsSidebarOpen]);
 
   const appMenuItems = useAppMenuItems({
     zenRTCPeer,

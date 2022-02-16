@@ -20,16 +20,21 @@ const { EVT_DEBOUNCED_PEAK_AUDIO_LEVEL_TICK } =
 export default function useAudioMediaStreamTrackLevelMonitor(
   mediaStreamTrackOrTracks = []
 ) {
+  // TODO: This needs optimization; something about this monitor causes an infinite loop cycle
+
   /**
    * @type {MediaStreamTrack[]}
    */
   const mediaStreamTracks = useMemo(
     () =>
-      !mediaStreamTrackOrTracks
+      (!mediaStreamTrackOrTracks
         ? []
         : Array.isArray(mediaStreamTrackOrTracks)
         ? mediaStreamTrackOrTracks
-        : [mediaStreamTrackOrTracks],
+        : [mediaStreamTrackOrTracks]
+      ).filter(
+        track => track instanceof MediaStreamTrack && track.kind === "audio"
+      ),
     [mediaStreamTrackOrTracks]
   );
 
@@ -45,7 +50,7 @@ export default function useAudioMediaStreamTrackLevelMonitor(
     mediaStreamMonitor.on(EVT_DEBOUNCED_PEAK_AUDIO_LEVEL_TICK, ({ rms }) => {
       // FIXME: This is probably not supposed to be RMS, but it's close
       // enough for prototyping
-      _setPercent(rms);
+      _setPercent(rms * 0.8);
     });
 
     _setMediaStreamMonitor(mediaStreamMonitor);

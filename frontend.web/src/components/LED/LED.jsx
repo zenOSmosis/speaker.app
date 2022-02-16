@@ -12,6 +12,8 @@ LED.propTypes = {
  * @see https://github.com/aus/led.css
  * @see http://jsfiddle.net/XrHcA/
  */
-export default function LED({ color = null }) {
-  return <div className={classNames(styles["led"], styles[color])}></div>;
+export default function LED({ color = null, ...rest }) {
+  return (
+    <div {...rest} className={classNames(styles["led"], styles[color])}></div>
+  );
 }
