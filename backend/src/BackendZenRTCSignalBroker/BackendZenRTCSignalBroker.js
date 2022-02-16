@@ -33,7 +33,7 @@ export default class BackendZenRTCSignalBroker extends ZenRTCSignalBroker {
 
     this._networkController = new NetworkController();
 
-    this.registerShutdownHandler(() => {
+    this.registerCleanupHandler(() => {
       // IMPORTANT: The network controller shouldn't be shut down as it is a
       // singleton, so we're just disassociating it
       this._networkController = null;

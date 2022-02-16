@@ -39,7 +39,9 @@ if (cluster.isMaster) {
       // Remove dangling networks for this host
       await danglingHostNetworkController.deactivateHostNetworks();
 
-      await danglingHostNetworkController.destroy();
+      if (!danglingHostNetworkController.getIsDestroying()) {
+        await danglingHostNetworkController.destroy();
+      }
     })();
 
     console.log(

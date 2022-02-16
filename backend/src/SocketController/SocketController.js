@@ -147,7 +147,9 @@ export default class SocketController {
 
           // FIXME: (jh) Use event constant
           socket.on("disconnect", () => {
-            zenRTCSignalBroker.destroy();
+            if (!zenRTCSignalBroker.getIsDestroying()) {
+              zenRTCSignalBroker.destroy();
+            }
           });
 
           socket.on(
