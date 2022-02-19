@@ -29,7 +29,7 @@
     "module-alias": "^2.2.2",
     "mongoose": "^5.12.11",
     "net": "^1.0.2",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "phantom-core": "github:zenosmosis/phantom-core#v2.6.0",
     "socket.io": "^4.1.2",
     "socket.io-redis": "^6.1.1",
