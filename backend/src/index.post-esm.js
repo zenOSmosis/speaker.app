@@ -1,11 +1,11 @@
 /**
  * Node clustering with Socket.io based on information obtained from:
- * @link https://github.com/elad/node-cluster-socket.io
+ * @see {@link https://github.com/elad/node-cluster-socket.io}
  *
  * Potentially with ReShell's "host-bridge" support, the Socket.io Cluster
  * adapter might be of better use, and / or parts of it can be used to improve
  * this current setup.
- * @link https://socket.io/docs/v4/cluster-adapter/
+ * @see {@link https://socket.io/docs/v4/cluster-adapter/}
  */
 
 import "./node.console";

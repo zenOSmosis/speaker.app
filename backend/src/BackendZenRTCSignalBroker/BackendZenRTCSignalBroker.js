@@ -12,7 +12,7 @@ export { SOCKET_EVT_ZENRTC_SIGNAL };
 /**
  * @typedef {Object} BackendZenRTCSignalBrokerProps
  * @property {Server} io Constructed Socket.io server
- * (@link https://socket.io/docs/v4/server-api/)
+ * (@see {@link https://socket.io/docs/v4/server-api/)})
  * @property {socketIdFrom} string
  */
 

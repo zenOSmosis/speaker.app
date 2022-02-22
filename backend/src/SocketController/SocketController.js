@@ -52,7 +52,7 @@ export default class SocketController {
 
   /**
    * @param {Server} io Instantiated Socket.io server
-   * (@link https://socket.io/docs/v4/server-api/)
+   * (@see {@link https://socket.io/docs/v4/server-api/})
    * @return {void}
    */
   static initWithSocketIo(io) {
