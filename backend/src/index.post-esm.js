@@ -1,12 +1,11 @@
 /**
  * Node clustering with Socket.io based on information obtained from:
- * @link https://github.com/elad/node-cluster-socket.io
- *
+ * @see {@link https://github.com/elad/node-cluster-socket.io}
  *
  * Potentially with ReShell's "host-bridge" support, the Socket.io Cluster
  * adapter might be of better use, and / or parts of it can be used to improve
  * this current setup.
- * @link https://socket.io/docs/v4/cluster-adapter/
+ * @see {@link https://socket.io/docs/v4/cluster-adapter/}
  */
 
 import "./node.console";
@@ -47,13 +46,6 @@ if (cluster.isMaster) {
     console.log(
       `Hello from master process on ${process.env.GIT_BRANCH} branch with build hash ${process.env.GIT_HASH}.  Starting initialization sequence.`
     );
-
-    // Perform initial Sequelize sync on master thread, ensuring the schema is
-    // properly set up before passing off to workers
-    // initSequelize(true).then(async dbModels => {
-    // Reset any currently active socket connections for this host (as they're
-    // all disconnected)
-    // await BackendSocketSession.setInactiveForAllOnHost();
 
     // This stores our workers. We need to keep them to be able to reference
     // them based on source IP address. It's also useful for auto-restart,

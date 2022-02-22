@@ -7,7 +7,7 @@
 /**
  * NOTE: (jh) This documentation isn't conventional JSDoc, and I'm not yet sure
  * of the best way to go about documenting this.
- * @link https://jsdoc.app/tags-event.html
+ * @see {@link https://jsdoc.app/tags-event.html}
  *
  * However, in an effort to document it at all, the following is the
  * convention:

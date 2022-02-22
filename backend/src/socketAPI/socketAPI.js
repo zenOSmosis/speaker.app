@@ -1,5 +1,5 @@
 // TODO: Combine forces w/ ReShell's HostBridge SocketAPI:
-// @link https://github.com/jzombie/pre-re-shell/blob/master/host.bridge-prototype/src/SocketAPI.js
+// @see {@link https://github.com/jzombie/pre-re-shell/blob/master/host.bridge-prototype/src/SocketAPI.js}
 
 import { getSocketAPIRouteHandlers } from "./addSocketAPIRoute";
 import initSocketAPIRoutes from "./initSocketAPIRoutes";
