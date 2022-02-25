@@ -14,9 +14,9 @@
 
 # Speaker.app / zenRTC / Phantom Server
 
-**This program is a work in progress, the console may be spammy, and it may not work at all, however, [a stable version should be running here](https://speaker.app).**
-
 **This branch contains a highly experimental user interface (UI); For the original Speaker.app, use this branch: https://github.com/zenOSmosis/speaker.app/tree/original-speaker-app**
+
+**This program is a work in progress, the console may be spammy, and it may not work at all, however, [an older, stable version should be running here](https://speaker.app).**
 
 [Speaker.app](https://speaker.app) is a [batteries-included](#whats-in-the-box), quasi-decentralized, alternative free speech audio platform that is compatible on any device that supports a modern web browser.
 
