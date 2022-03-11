@@ -1,7 +1,3 @@
-###
-# speaker.app backend Dockerfile
-###
-
 FROM node:16.14
 LABEL maintainer="jeremy.harris@zenosmosis.com"
 
@@ -18,6 +14,7 @@ WORKDIR /app/backend
 # IMPORTANT: "--only=production" is used here in BE, while not being used
 # in FE as the FE can't build without development modules
 COPY package.json ./
+COPY package-lock.json ./
 RUN if [ "${BUILD_ENV}" = "production" ] ; then \
   chown -R node /app \
   && npm install --loglevel verbose --only=production \
