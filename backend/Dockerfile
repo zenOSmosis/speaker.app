@@ -31,12 +31,12 @@ RUN if [ "${BUILD_ENV}" = "production" ] ; then \
 COPY ./ ./
 
 # Copy shared modules from parent directory
-# USER root
+USER root
 RUN if [ "${BUILD_ENV}" = "production" ] ; then \
   rm src/shared \
   && mv src/tmp.shared src/shared \
   ; fi
-# USER node
+USER node
 
 # Used for version number
 ENV GIT_HASH="${GIT_HASH}"
