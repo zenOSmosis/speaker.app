@@ -275,4 +275,4 @@ To contribute, however slightly, to the commonwealth of all human innovation and
 
 ## License
 
-[GNU GENERAL PUBLIC LICENSE](LICENSE.txt)
+[GNU GENERAL PUBLIC LICENSE](LICENSE.txt) Copyright (c) 2010 - 2022 [zenOSmosis](https://zenosmosis.com). Included works are bound by their own copyrights and licensing and are not necessarily affiliated with zenOSmosis.
