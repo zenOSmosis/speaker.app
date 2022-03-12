@@ -69,7 +69,7 @@ Note, on every OS except iOS, Chrome is the recommended browser; On iOS, Safari 
 
 ## What's in the Box
 
-**Frontend**: [ReShell Web Desktop](https://github.com/zenOSmosis/reshell) mobile / desktop switchable paradigms, built with [Create React App](https://create-react-app.dev/).
+**Frontend**: [ReShell Web Desktop](https://github.com/zenOSmosis/reshell) window manager and UI service core with mobile / desktop switchable paradigms, built with [Create React App](https://create-react-app.dev/).
 
 **Backend:** Node.js app, using [Socket.io](https://github.com/socketio/socket.io) and [Express](https://github.com/expressjs/express). Cluster module is utilized to utilize multiple CPUs and a Redis store is utilize to scale Socket.io across the CPUs.
 
