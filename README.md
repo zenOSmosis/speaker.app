@@ -36,7 +36,7 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
   - [What's in the Box](#whats-in-the-box)
   - [WebRTC Topology Overview](#webrtc-topology-overview)
     - [Conventional WebRTC Network Topologies](#conventional-webrtc-network-topologies)
-    - [Speaker.app Peer-Based Network Topology](#speakerapp-peer-based-network-topology)
+    - [Speaker.app Virtual Server Network Topology](#speakerapp-virtual-server-network-topology)
   - [Inspiration to Create this Project](#inspiration-to-create-this-project)
   - [Getting Started](#getting-started)
     - [Dependencies / System Requirements](#dependencies--system-requirements)
@@ -103,11 +103,11 @@ _Centralized MCU / SFU example._
 
 More advanced calling platforms utilize a centralized MCU / SFU. While this is more efficient in terms of the network, additional considerations, and money, are needed in order to scale out the backend infrastructure.
 
-### Speaker.app Peer-Based Network Topology
+### Speaker.app Virtual Server Network Topology
 
 Using a topology similar to the MCU / SFU example above, Speaker.app attempts to solve the scalability issue without throwing a lot of extra money into hosting fees, by enabling individual participants to host their own networks, on their own hardware, using their own bandwidth, while at the same time providing greater privacy and flexibility.
 
-**zenRTC** (built with simple-peer) is based on WebRTC, adding additional functionality such as user-level network strength indication, events over data channels, and P2P-based shared state syncing.
+**zenRTC** (built on top of [webrtc-peer](https://github.com/zenOSmosis/webrtc-peer)) is the WebRTC controller, adding additional functionality such as user-level network strength indication, events over data channels, and P2P-based shared state syncing on top of conventional WebRTC.
 
 **Phantom Server** is a network host which runs in your web browser, and acts as the host, shared state manager, proxy, and virtualServer for all connected participants within a WebRTC network.
 
