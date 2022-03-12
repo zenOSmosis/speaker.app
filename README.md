@@ -2,6 +2,8 @@
 [![ci][ci-image]][ci-url]
 [![CodeFactor][codefactor-image]][codefactor-url]
 [![phantom-core-architecture][phantom-core-architecture-image]][phantom-core-architecture-url]
+[![buy-me-a-coffee][buy-me-a-coffee-image]][buy-me-a-coffee-url]
+[![paypal-me][paypal-me-image]][paypal-me-url]
 [![tweet-url][tweet-image]][tweet-url]
 
 [license-image]: https://img.shields.io/github/license/zenosmosis/speaker.app
@@ -12,6 +14,10 @@
 [codefactor-url]: https://www.codefactor.io/repository/github/zenOSmosis/speaker.app
 [phantom-core-architecture-image]: https://img.shields.io/badge/architecture-phantom--core-red
 [phantom-core-architecture-url]: https://github.com/zenosmosis/phantom-core
+[buy-me-a-coffee-image]: https://img.shields.io/badge/sponsor-buymeacoffee-green
+[buy-me-a-coffee-url]: https://www.buymeacoffee.com/Kg8VCULYI
+[paypal-me-image]: https://img.shields.io/badge/sponsor-paypal.me-blue
+[paypal-me-url]: https://www.paypal.com/paypalme/zenOSmosis
 [tweet-image]: https://img.shields.io/twitter/url/http/shields.io.svg?style=social
 [tweet-url]: https://twitter.com/intent/tweet?text=Private%20audio%20chat%20rooms%20using%20your%20browser%20as%20a%20virtual%20server&url=https://github.com/zenOSmosis/speaker.app&hashtags=webrtc,audio,screensharing,virtual-server,group-chat,communications,private
 
