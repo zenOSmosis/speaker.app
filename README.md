@@ -26,7 +26,7 @@
 
 # Speaker.app / zenRTC / Phantom Server
 
-**This branch contains a highly experimental user interface (UI); For the original Speaker.app, use this branch: https://github.com/zenOSmosis/speaker.app/tree/original-speaker-app**
+**This branch contains a [highly experimental user interface (UI)](https://github.com/zenOSmosis/reshell); For the original Speaker.app, use this branch: https://github.com/zenOSmosis/speaker.app/tree/original-speaker-app**
 
 **This program is a work in progress, the console may be spammy, and it may not work at all, however, [an older, stable version should be running here](https://speaker.app).**
 
