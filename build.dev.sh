@@ -43,7 +43,7 @@ echo "*** Starting development modules install ***" \
 
 # TODO: Implement ability to not run Docker Compose
 echo "*** Building development Docker Compose ***"
-docker-compose \
+docker compose \
   -f docker-compose.yml \
   -f docker-compose.dev.yml \
   build \

@@ -38,7 +38,7 @@ cd frontend.web/src/portals/SpeakerAppPortal \
   && cd ../../../../
 
 echo "*** Building production Docker Compose config ***"
-docker-compose \
+docker compose \
   -f docker-compose.yml \
   -f docker-compose.prod.yml \
   build \
