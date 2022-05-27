@@ -10,4 +10,4 @@ echo "Launching production Docker Compose configuration"
 docker compose \
   -f docker-compose.yml \
   -f docker-compose.prod.yml \
-  up
+  -p "speakerapp-prod" up

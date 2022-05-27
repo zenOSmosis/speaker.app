@@ -12,4 +12,4 @@ echo "Launching development Docker Compose configuration"
 GIT_HASH=${GIT_HASH} docker compose \
   -f docker-compose.yml \
   -f docker-compose.dev.yml \
-  up
+  -p "speakerapp-dev" up

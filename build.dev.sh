@@ -47,7 +47,7 @@ echo "*** Building development Docker Compose ***"
 docker compose \
   -f docker-compose.yml \
   -f docker-compose.dev.yml \
-  build \
+  -p "speakerapp-dev" build \
   --build-arg BUILD_ENV="development" \
   --build-arg SYS_USER=$(id -u) \
   --build-arg SYS_GROUP=$(id -g)
