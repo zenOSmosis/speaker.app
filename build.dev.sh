@@ -14,6 +14,7 @@ set -e
 # @see https://coryrylan.com/blog/faster-npm-installs-with-npm-ci
 NPM_INSTALL_CMD="npm install"
 
+
 echo "*** Installing and updating git modules ***"
 git submodule init
 git submodule update
@@ -47,6 +48,8 @@ docker compose \
   -f docker-compose.yml \
   -f docker-compose.dev.yml \
   build \
-  --build-arg BUILD_ENV="development"
+  --build-arg BUILD_ENV="development" \
+  --build-arg SYS_USER=$(id -u) \
+  --build-arg SYS_GROUP=$(id -g)
 
 echo "*** Development build complete ***"
