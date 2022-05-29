@@ -134,6 +134,7 @@ export default class SocketController {
               _handleNetworksUpdated
             );
 
+            // TODO: Use Phantom logger
             console.log(`Socket.io client disconnected with id ${socket.id}`);
           });
         })();

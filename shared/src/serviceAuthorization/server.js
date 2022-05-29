@@ -9,6 +9,7 @@ import SparkMD5 from "spark-md5";
  * @return {Object}
  */
 export function receiveClientAuthentication(clientAuthentication) {
+  // TODO: Use Phantom logger
   console.log("Validating client identity");
 
   const {
@@ -41,6 +42,7 @@ export function receiveClientAuthentication(clientAuthentication) {
     throw new ReferenceError("Server checksum hash does not match clientHash");
   }
 
+  // TODO: Use Phantom logger
   console.log("Client identity validated");
 
   return {
