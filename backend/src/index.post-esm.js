@@ -43,7 +43,7 @@ if (cluster.isMaster) {
       }
     })();
 
-    // TODO: Use Phantom logger
+    // TODO: Use Phantom globalLogger
     console.log(
       `Hello from master process on ${process.env.GIT_BRANCH} branch with build hash ${process.env.GIT_HASH}.  Starting initialization sequence.`
     );
@@ -67,7 +67,7 @@ if (cluster.isMaster) {
 
       // Optional: Restart worker on exit
       workers[i].on("exit", () => {
-        // TODO: Use Phantom logger
+        // TODO: Use Phantom globalLogger
         console.log("respawning worker", i);
         spawn(i);
       });
@@ -195,7 +195,7 @@ if (cluster.isMaster) {
     app.get("/*", (req, res) => {
       proxyServer.web(req, res, { target: FRONTEND_PROXY_URL }, err => {
         // TODO: Implement better frontend server error handling
-        // TODO: Use Phantom logger
+        // TODO: Use Phantom globalLogger
         console.error(err);
 
         res.status(500).send("Frontend server offline");

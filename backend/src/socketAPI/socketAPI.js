@@ -18,7 +18,7 @@ initSocketAPIRoutes();
  * @return {void}
  */
 export default function initSocketAPI(io, socket) {
-  // TODO: Use Phantom logger
+  // TODO: Use Phantom globalLogger
   console.log(`HELLO to socket id: ${socket.id}`);
 
   // Per-socket SocketAPI task number
@@ -54,7 +54,7 @@ export default function initSocketAPI(io, socket) {
       let resp = null;
 
       try {
-        // TODO: Use Phantom logger
+        // TODO: Use Phantom globalLogger
         console.log(
           `"${socket.id}" SocketAPI task ${taskNumber} (${routeName}) started [${totalRunningTasks} concurrent]`
         );
@@ -106,7 +106,7 @@ export default function initSocketAPI(io, socket) {
 
   // TODO: Use event constant
   socket.on("disconnect", () => {
-    // TODO: Use Phantom logger
+    // TODO: Use Phantom globalLogger
     console.log(`BYE to socket id: ${socket.id}`);
   });
 }
