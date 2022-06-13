@@ -21,7 +21,7 @@
     "flat": "^5.0.2",
     "jest": "^27.0.1",
     "jest-environment-jsdom": "^27.0.1",
-    "phantom-core": "github:zenosmosis/phantom-core#v3.0.0--adjustable-log-levels",
+    "phantom-core": "github:zenosmosis/phantom-core#v3.0.0",
     "sdp-transform": "^2.14.1",
     "spark-md5": "^3.0.1",
     "uuid": "^8.3.2"

@@ -64,7 +64,7 @@ export default class SocketController {
       ++_coreConnectionCount;
 
       // Log connection count after other startup work has been performed
-      // FIXME: (jh) Replace w/ setImmediate?
+      // FIXME: (jh) Replace w/ queueMicrotask?
       // @see https://github.com/zenOSmosis/phantom-core/issues/76
       process.nextTick(_logCoreConnectionCount);
 
@@ -73,7 +73,7 @@ export default class SocketController {
         --_coreConnectionCount;
 
         // Log connection count after other cleanup work has been performed
-        // FIXME: (jh) Replace w/ setImmediate?
+        // FIXME: (jh) Replace w/ queueMicrotask?
         // @see https://github.com/zenOSmosis/phantom-core/issues/76
         process.nextTick(_logCoreConnectionCount);
       });
