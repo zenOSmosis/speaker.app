@@ -262,7 +262,12 @@ Related to scaling Socket.io across CPU cores. Make sure all npm installs are ex
 
 ### Error: ENOSPC: System limit for number of file watchers reached
 
-Solution: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+Solution:
+
+```bash
+$ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+```
+
 Reference: https://github.com/gatsbyjs/gatsby/issues/11406 (note, Gatsby is not utilized in this project)
 
 ### Linux check CPU speed
