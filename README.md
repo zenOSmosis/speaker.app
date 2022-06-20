@@ -44,7 +44,7 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
 
 ## Table of Contents
 
-- [Speaker.app / zenRTC / Phantom Server](#speakerapp--zenrtc--phantom-server)
+- [Speaker.app / zenRTC Virtual Server](#speakerapp--zenrtc-virtual-server)
   - [Table of Contents](#table-of-contents)
   - [Browser Support Matrix](#browser-support-matrix)
   - [What's in the Box](#whats-in-the-box)
