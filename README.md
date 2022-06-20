@@ -24,11 +24,13 @@
 [tweet-image]: https://img.shields.io/twitter/url/http/shields.io.svg?style=social
 [tweet-url]: https://twitter.com/intent/tweet?text=Private%20audio%20chat%20rooms%20using%20your%20browser%20as%20a%20virtual%20server&url=https://github.com/zenOSmosis/speaker.app&hashtags=webrtc,audio,screensharing,virtual-server,group-chat,communications,private
 
-# Speaker.app / zenRTC / Phantom Server
+# Speaker.app / zenRTC Virtual Server
 
-**This branch contains a [highly experimental user interface (UI)](https://github.com/zenOSmosis/reshell); For the original Speaker.app, use this branch: https://github.com/zenOSmosis/speaker.app/tree/original-speaker-app**
+**This branch contains the [ReShell user interface (UI)](https://github.com/zenOSmosis/reshell); For the original Speaker.app without ReShell, use this branch: https://github.com/zenOSmosis/speaker.app/tree/original-speaker-app**
 
 **This program is a work in progress, the console may be spammy, and it may not work at all, however, [an older, stable version should be running here](https://speaker.app).**
+
+**Development Update (June 20, 2022): Over the next year, portions of this codebase will be swapped out with a revamped server, written in TypeScript, called _HostBridge_. HostBridge will enable multiple users to run local servers and link them together using [ReShell](https://github.com/zenOSmosis/reshell) frontends.**
 
 [Speaker.app](https://speaker.app) is a [batteries-included](#whats-in-the-box), quasi-decentralized, alternative free speech audio platform that is compatible on any device that supports a modern web browser.
 
@@ -42,7 +44,7 @@ To see it live, navigate to [https://speaker.app](https://speaker.app).
 
 ## Table of Contents
 
-- [Speaker.app / zenRTC / Phantom Server](#speakerapp--zenrtc--phantom-server)
+- [Speaker.app / zenRTC Virtual Server](#speakerapp--zenrtc-virtual-server)
   - [Table of Contents](#table-of-contents)
   - [Browser Support Matrix](#browser-support-matrix)
   - [What's in the Box](#whats-in-the-box)
