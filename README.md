@@ -30,7 +30,7 @@
 
 **This program is a work in progress, the console may be spammy, and it may not work at all, however, [an older, stable version should be running here](https://speaker.app).**
 
-**Over the next year, many portions of this codebase will be swapped out with a revamped server, written in TypeScript, called "HostBridge".**
+**Development Update (June 20, 2022): Over the next year, portions of this codebase will be swapped out with a revamped server, written in TypeScript, called _HostBridge_. HostBridge will enable multiple users to run local servers and link them together using [ReShell](https://github.com/zenOSmosis/reshell) frontends.**
 
 [Speaker.app](https://speaker.app) is a [batteries-included](#whats-in-the-box), quasi-decentralized, alternative free speech audio platform that is compatible on any device that supports a modern web browser.
 
