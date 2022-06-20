@@ -24,7 +24,7 @@
 [tweet-image]: https://img.shields.io/twitter/url/http/shields.io.svg?style=social
 [tweet-url]: https://twitter.com/intent/tweet?text=Private%20audio%20chat%20rooms%20using%20your%20browser%20as%20a%20virtual%20server&url=https://github.com/zenOSmosis/speaker.app&hashtags=webrtc,audio,screensharing,virtual-server,group-chat,communications,private
 
-# Speaker.app / zenRTC / Phantom Server
+# Speaker.app / zenRTC Virtual Server
 
 **This branch contains the [ReShell user interface (UI)](https://github.com/zenOSmosis/reshell); For the original Speaker.app without ReShell, use this branch: https://github.com/zenOSmosis/speaker.app/tree/original-speaker-app**
 
