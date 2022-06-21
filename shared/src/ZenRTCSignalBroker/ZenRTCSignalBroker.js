@@ -1,9 +1,9 @@
-import PhantomCore, { EVT_DESTROYED } from "phantom-core";
+import PhantomCore, { EVT_DESTROY } from "phantom-core";
 import { SOCKET_EVT_ZENRTC_SIGNAL } from "../socketEvents";
 
 export const EVT_ZENRTC_SIGNAL = "zenrtc-signal";
 
-export { EVT_DESTROYED, SOCKET_EVT_ZENRTC_SIGNAL };
+export { EVT_DESTROY, SOCKET_EVT_ZENRTC_SIGNAL };
 
 /**
  * @typedef {Object} ZenRTCSignalBrokerProps
