@@ -341,6 +341,7 @@ export default class NetworkController extends PhantomCore {
 
     this.emit(EVT_NETWORK_DESTROYED, mongooseNetwork);
 
+    // TODO: Use Phantom globalLogger
     console.log("Successfully deregistered network");
   }
 

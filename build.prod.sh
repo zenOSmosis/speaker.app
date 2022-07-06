@@ -38,10 +38,10 @@ cd frontend.web/src/portals/SpeakerAppPortal \
   && cd ../../../../
 
 echo "*** Building production Docker Compose config ***"
-docker-compose \
+docker compose \
   -f docker-compose.yml \
   -f docker-compose.prod.yml \
-  build \
+  -p "speakerapp-prod" build \
   --build-arg GIT_HASH="$GIT_HASH" \
   --build-arg GIT_BRANCH="$GIT_BRANCH" \
   --build-arg BUILD_ENV="production"

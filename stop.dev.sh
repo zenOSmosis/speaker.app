@@ -4,4 +4,4 @@
 set -e
 
 echo "*** Completely stopping containers ***"
-docker-compose down --remove-orphans
+docker compose -p "speakerapp-dev" down --remove-orphans

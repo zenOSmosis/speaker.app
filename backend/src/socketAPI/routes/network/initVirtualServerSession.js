@@ -6,11 +6,6 @@ import { KEY_SOCKET_NETWORK } from "./__constants";
 export default async function initVirtualServerSession(props, { socket }) {
   const networkController = NetworkController.getInstance();
 
-  // TODO: Remove
-  console.log({
-    props,
-  });
-
   const {
     networkName: name,
     realmId,
